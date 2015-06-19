@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# qemu-brillo <qemu root> <android root>
+
+"$1/qemu-system-arm" -M vexpress-a9 -m 1024M -kernel "$2/device/generic/brillo/brillo-emulator-arm/kernels/mainline/zImage" -dtb "$2/device/generic/brillo/brillo-emulator-arm/kernels/mainline/vexpress-v2p-ca9.dtb" -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=disabled" -nographic -initrd "$2/out/target/product/brillo-emulator-arm/ramdisk.img" -device virtio-scsi-device,id=scsi -device scsi-hd,drive=system -drive file="$2/out/target/product/brillo-emulator-arm/system.img,if=none,id=system,format=raw" -device scsi-hd,drive=userdata -drive file="$2/out/target/product/brillo-emulator-arm/userdata.img,if=none,id=userdata,format=raw" -redir tcp:5555::5555
