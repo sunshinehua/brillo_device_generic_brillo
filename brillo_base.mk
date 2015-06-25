@@ -1,5 +1,5 @@
 #
-# Copyright 2015 The Android Open-Source Project
+# Copyright (C) 2015 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,27 @@
 # limitations under the License.
 #
 
-$(call inherit-product, device/generic/brillo/brillo-emulator-arm/device.mk)
-$(call inherit-product, device/generic/brillo/brillo_base.mk)
+# This is a build configuration for the base of a brillo system.
+# It contains the mandatory targets required to boot a brillo device.
 
-PRODUCT_NAME := brillo_emulator_arm
-PRODUCT_BRAND := Android
+PRODUCT_PACKAGES = \
+  adbd \
+  init \
+  init.environ.rc \
+  init.rc \
+  linker \
+  logcat \
+  logd \
+  sh \
+  toolbox \
+  toybox \
 
-PRODUCT_DEVICE := brillo-emulator-arm
+# SELinux packages
+PRODUCT_PACKAGES += \
+  sepolicy \
+  file_contexts \
+  seapp_contexts \
+  property_contexts \
+  mac_permissions.xml \
+  selinux_version \
+  service_contexts
