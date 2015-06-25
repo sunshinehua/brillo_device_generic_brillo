@@ -1,5 +1,62 @@
 #!/bin/bash
 
-# qemu-brillo <qemu root> <android root>
+# To use this script you need to build QEMU and an image to run in QEMU.
 
-"$1/qemu-system-arm" -M vexpress-a9 -m 1024M -kernel "$2/device/generic/brillo/brillo-emulator-arm/kernels/android-3.14/zImage" -dtb "$2/device/generic/brillo/brillo-emulator-arm/kernels/mainline/vexpress-v2p-ca9.dtb" -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=permissive" -nographic -initrd "$2/out/target/product/brillo-emulator-arm/ramdisk.img" -device virtio-scsi-device,id=scsi -device scsi-hd,drive=system -drive file="$2/out/target/product/brillo-emulator-arm/system.img,if=none,id=system,format=raw" -device scsi-hd,drive=userdata -drive file="$2/out/target/product/brillo-emulator-arm/userdata.img,if=none,id=userdata,format=raw" -redir tcp:5555::5555
+# ===== QEMU =====
+# Android has two modified qemu’s in external/ - they are not in the default
+# checkout, they are prebuilt and placed here prebuilts/android-emulator/ It
+# produces this ‘emulator’ binary which fires up the full skinned mobile phone.
+# We dont really need all this and want more control of the command line for
+# now.  I’ve used mainline qemu for my testing. We should work out how to use
+# the ones supplied with Android.
+#
+# Building (do this outside of tree, maybe your home directory?)
+#   git clone git://git.qemu-project.org/qemu.git
+#   ./configure  # sudo apt-get packages until this works.
+#   make -j32
+#
+# You’ll now have arm-softmmu/qemu-system-arm which you can use for testing.
+#
+# To quit out of Qemu do ctrl-a x
+
+# ===== Building a runnable image =====
+# Start with a checkout of mnc-brillo-dev
+#   cd <root of android tree>
+#   source build/envsetup.sh
+#   lunch brillo_emulator_arm-eng
+#   make -j32
+
+# You’ll now find a minimal bootable system image
+# in ‘out/target/product/brillo-emulator-arm’:
+#   ramdisk.img is the initramfs
+#   system.img is whats mounted at /system
+
+if [[ "$#" != 2 ]] ; then
+	echo "Usage:"
+        echo "  $0 <qemu root> <android root>"
+	exit 1
+fi
+
+"$1/qemu-system-arm" \
+	-M vexpress-a9 -m 1024M \
+	-kernel "$2/device/generic/brillo/brillo-emulator-arm/kernels/android-3.14/zImage" \
+	-dtb "$2/device/generic/brillo/brillo-emulator-arm/kernels/mainline/vexpress-v2p-ca9.dtb" \
+	-append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=permissive" \
+	-nographic \
+	-initrd "$2/out/target/product/brillo-emulator-arm/ramdisk.img" \
+	-device virtio-scsi-device,id=scsi \
+	-device scsi-hd,drive=system \
+	-drive file="$2/out/target/product/brillo-emulator-arm/system.img,if=none,id=system,format=raw" \
+	-device scsi-hd,drive=userdata \
+	-drive file="$2/out/target/product/brillo-emulator-arm/userdata.img,if=none,id=userdata,format=raw" \
+	-redir tcp:5555::5555
+
+
+# A note on init:
+#
+#   Android provides a single init.rc which is installed to every android
+#   device.  This init.rc imports a device specific init file for custom device
+#   stuff (ours is init.brillo.rc).  The main init.rc defines loads of daemons
+#   and stuff, mostly which we dont have. We need a way to customise this for
+#   brillo.  We could build a better init.rc at compile time based on some
+#   build config.  Or we could use our init.brillo.rc to disable services.
