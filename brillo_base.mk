@@ -38,3 +38,35 @@ PRODUCT_PACKAGES += \
   mac_permissions.xml \
   selinux_version \
   service_contexts
+
+
+# Required helpers for Brillo targets.
+# TODO(wad,leecam) once stable, move into build/core.
+BRILLO_BSP_PREFIX := device/generic/brillo/bsp
+BRILLO_BOARD_PREFIX := $(BRILLO_BSP_PREFIX)/boards
+BRILLO_PLATFORM_PREFIX := $(BRILLO_BSP_PREFIX)/platforms
+BRILLO_ARCH_PREFIX := $(BRILLO_BSP_PREFIX)/arch
+
+# TODO(wad) collect all the mks using find even though a hierarchy is faster.
+define inherit-board
+  $(eval board_vendor := $(strip $(1))) \
+  $(eval board_name := $(strip $(2))) \
+  $(eval board_make_file := $(BRILLO_BOARD_PREFIX)/$(board_vendor)/$(board_name)/board.mk) \
+  $(if $(wildcard $(board_make_file)),$(eval include $(board_make_file)), \
+    $(error Can't find board definition. Vendor: $(board_vendor) Board: $(board_name)))
+endef
+
+define inherit-platform
+  $(eval platform_vendor := $(strip $(1))) \
+  $(eval plaform_name := $(strip $(2))) \
+  $(eval platform_make_file := $(BRILLO_PLATFORM_PREFIX)/$(platform_vendor)/$(plaform_name)/platform.mk) \
+  $(if $(wildcard $(platform_make_file)),$(eval include $(platform_make_file)), \
+    $(error Can't find platform definition. Vendor: $(platform_vendor) Board: $(plaform_name)))
+endef
+
+define inherit-arch
+  $(eval arch_name := $(strip $(1))) \
+  $(eval arch_make_file := $(BRILLO_ARCH_PREFIX)/$(arch_name)/arch.mk) \
+  $(if $(wildcard $(arch_make_file)),$(eval include $(arch_make_file)), \
+    $(error Can't find arch definition: $(arch_name)))
+endef

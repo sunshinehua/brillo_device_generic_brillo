@@ -14,6 +14,11 @@
 # limitations under the License.
 #
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/brillo_emulator_arm.mk
+$(call inherit-product, device/generic/brillo/brillo_base.mk)
+
+PRODUCT_NAME := brilloemulator
+PRODUCT_BRAND := Android
+
+PRODUCT_DEVICE := brilloemulator
+
 

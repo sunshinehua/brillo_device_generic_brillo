@@ -1,5 +1,5 @@
 #
-# Copyright 2015 The Android Open-Source Project
+# Copyright 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,4 @@
 # limitations under the License.
 #
 
-$(call inherit-product, device/generic/brillo/brillo-emulator-arm/device.mk)
-$(call inherit-product, device/generic/brillo/brillo_base.mk)
-
-PRODUCT_NAME := brillo_emulator_arm
-PRODUCT_BRAND := Android
-
-PRODUCT_DEVICE := brillo-emulator-arm
+add_lunch_combo brilloemulator-eng

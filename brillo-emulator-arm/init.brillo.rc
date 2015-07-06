@@ -1,8 +1,0 @@
-on fs
-    mount_all /fstab.brillo
-    start mynetwork
-
-service mynetwork /system/bin/initnetwork.sh
-    user root
-    group root
-    oneshot

@@ -1,5 +1,5 @@
 #
-# Copyright 2015 The Android Open Source Project
+# Copyright (C) 2015 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,4 +14,10 @@
 # limitations under the License.
 #
 
-add_lunch_combo brillo_emulator_arm-eng
+TARGET_ARCH := arm
+
+TARGET_ARCH_VARIANT := armv7-a
+TARGET_CPU_VARIANT := generic
+TARGET_CPU_ABI := armeabi-v7a
+TARGET_CPU_ABI2 := armeabi
+

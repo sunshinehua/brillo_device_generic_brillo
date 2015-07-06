@@ -12,8 +12,8 @@
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-aarch64 \
 	-M vexpress-a9 \
 	-m 1024M \
-	-kernel "${ANDROID_BUILD_TOP}/device/generic/brillo/brillo-emulator-arm/kernels/android-3.14/zImage" \
-	-dtb "${ANDROID_BUILD_TOP}/device/generic/brillo/brillo-emulator-arm/kernels/mainline/vexpress-v2p-ca9.dtb" \
+	-kernel "${ANDROID_BUILD_TOP}/device/generic/brillo/bsp/platforms/armltd/vexpressa9/kernels/android-3.14/zImage" \
+	-dtb "${ANDROID_BUILD_TOP}/device/generic/brillo/bsp/platforms/armltd/vexpressa9/kernels/android-3.14/vexpress-v2p-ca9.dtb" \
 	-append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=permissive" \
 	-nographic \
 	-initrd "${ANDROID_PRODUCT_OUT}/ramdisk.img" \
