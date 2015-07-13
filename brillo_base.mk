@@ -37,8 +37,17 @@ PRODUCT_PACKAGES += \
   property_contexts \
   mac_permissions.xml \
   selinux_version \
-  service_contexts
+  service_contexts \
 
+# D-Bus daemon and utilities.
+PRODUCT_PACKAGES += \
+  dbus-daemon \
+  dbus-monitor \
+  dbus-send \
+
+# TODO(derat): Move this config file to a saner place.
+PRODUCT_COPY_FILES += \
+  device/generic/brillo/dbus.conf:system/etc/dbus.conf \
 
 # Required helpers for Brillo targets.
 # TODO(wad,leecam) once stable, move into build/core.
