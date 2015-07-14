@@ -25,6 +25,7 @@ PRODUCT_PACKAGES = \
   linker \
   logcat \
   logd \
+  reboot \
   sh \
   toolbox \
   toybox \
