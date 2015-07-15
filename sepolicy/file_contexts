@@ -1,0 +1,2 @@
+/dev/socket/dbus           u:object_r:dbus_daemon_socket:s0
+/system/bin/dbus-daemon    u:object_r:dbus_daemon_exec:s0

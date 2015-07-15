@@ -1,2 +1,8 @@
 on fs
     mount_all /fstab.brillo
+
+service dbus /system/bin/dbus-daemon --system --nofork
+    class main
+    socket dbus stream 0660 dbus dbus
+    user dbus
+    group dbus

@@ -50,6 +50,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dbus.conf:system/etc/dbus.conf \
 
+BOARD_SEPOLICY_DIRS += device/generic/brillo/sepolicy
+
 # Required helpers for Brillo targets.
 # TODO(wad,leecam) once stable, move into build/core.
 BRILLO_BSP_PREFIX := device/generic/brillo/bsp
