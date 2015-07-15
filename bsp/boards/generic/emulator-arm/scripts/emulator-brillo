@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # Copyright 2015 The Android Open Source Project
 #
@@ -14,4 +15,12 @@
 # limitations under the License.
 #
 
-# Brillo specific init stuffs.
+emulator-arm \
+	-memory 1024 \
+	-no-window \
+	-no-skin \
+	-shell \
+	-ramdisk "${ANDROID_PRODUCT_OUT}/ramdisk.img" \
+	-system "${ANDROID_PRODUCT_OUT}/system.img" \
+	-data "${ANDROID_PRODUCT_OUT}/userdata.img" \
+	$@ \
