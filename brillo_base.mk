@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 The Android Open-Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 # limitations under the License.
 #
 
-# This is a build configuration for the base of a brillo system.
-# It contains the mandatory targets required to boot a brillo device.
+# This is a build configuration for the base of a Brillo system.
+# It contains the mandatory targets required to boot a Brillo device.
 
 PRODUCT_PACKAGES = \
   adbd \
   init \
   init.environ.rc \
   init.rc \
+  libminijail \
   linker \
   logcat \
   logd \
