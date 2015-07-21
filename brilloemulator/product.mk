@@ -20,5 +20,3 @@ PRODUCT_NAME := brilloemulator
 PRODUCT_BRAND := Android
 
 PRODUCT_DEVICE := brilloemulator
-
-

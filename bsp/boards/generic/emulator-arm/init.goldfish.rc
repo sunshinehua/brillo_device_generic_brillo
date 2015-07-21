@@ -14,4 +14,18 @@
 # limitations under the License.
 #
 
-# Brillo specific init stuffs.
+on boot
+	setprop net.eth0.gw 10.0.2.2
+	setprop net.eth0.dns1 10.0.2.3
+	start goldfish-setup
+
+on fs
+	mount_all /fstab.goldfish
+
+service goldfish-setup /system/etc/init.goldfish.sh
+	user root
+	group root
+	oneshot
+
+# Trampoline to init.brillo.rc.
+import init.brillo.rc
