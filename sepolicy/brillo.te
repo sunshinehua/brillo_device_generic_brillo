@@ -1,0 +1,5 @@
+# Temporary domain for Brillo daemons.
+type brillo, domain;
+type brillo_exec, exec_type, file_type;
+
+init_daemon_domain(brillo)

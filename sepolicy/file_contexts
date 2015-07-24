@@ -1,2 +1,6 @@
 /dev/socket/dbus           u:object_r:dbus_daemon_socket:s0
 /system/bin/dbus-daemon    u:object_r:dbus_daemon_exec:s0
+
+# Brillo system service binaries are 'brillo_exec' objects for now.
+# E.g.
+#/system/bin/testservice    u:object_r:brillo_exec:s0
