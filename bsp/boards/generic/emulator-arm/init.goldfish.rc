@@ -20,7 +20,7 @@ on boot
 	start goldfish-setup
 
 on fs
-	mount_all /fstab.goldfish
+	mount_all /fstab.${ro.hardware}
 
 service goldfish-setup /system/etc/init.goldfish.sh
 	user root
