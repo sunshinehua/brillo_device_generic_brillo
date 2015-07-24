@@ -41,9 +41,11 @@ PRODUCT_PACKAGES += \
   selinux_version \
   service_contexts \
 
-# D-Bus daemon and utilities.
+# D-Bus daemon, utilities, and example programs.
 PRODUCT_PACKAGES += \
   dbus-daemon \
+  dbus-example-client \
+  dbus-example-daemon \
   dbus-monitor \
   dbus-send \
 
