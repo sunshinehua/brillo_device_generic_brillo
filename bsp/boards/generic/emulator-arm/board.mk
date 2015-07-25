@@ -33,7 +33,9 @@ BOARD_SEPOLICY_DIRS += \
 
 PRODUCT_COPY_FILES += \
 	device/generic/brillo/bsp/boards/generic/emulator-arm/init.goldfish.rc:root/init.goldfish.rc \
+	device/generic/brillo/bsp/boards/generic/emulator-arm/init.goldfish.rc:root/init.qemu.rc \
 	device/generic/brillo/bsp/boards/generic/emulator-arm/init.goldfish.sh:system/etc/init.goldfish.sh \
 	device/generic/brillo/bsp/boards/generic/emulator-arm/fstab.goldfish:root/fstab.goldfish \
+	device/generic/brillo/bsp/boards/generic/emulator-arm/fstab.qemu:root/fstab.qemu \
 	device/generic/brillo/bsp/boards/generic/emulator-arm/ueventd.goldfish.rc:root/ueventd.goldfish.rc \
 	system/core/rootdir/ueventd.rc:root/ueventd.rc \
