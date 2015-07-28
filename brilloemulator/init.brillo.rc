@@ -21,3 +21,5 @@ service dbus /system/bin/dbus-daemon --system --nofork
     socket dbus stream 0660 dbus dbus
     user dbus
     group dbus
+
+import /initrc.d

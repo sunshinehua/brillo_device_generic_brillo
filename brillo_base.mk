@@ -17,6 +17,9 @@
 # This is a build configuration for the base of a Brillo system.
 # It contains the mandatory targets required to boot a Brillo device.
 
+# Directory for init files.
+TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d
+
 PRODUCT_PACKAGES = \
   adbd \
   init \
