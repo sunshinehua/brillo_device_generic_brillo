@@ -15,6 +15,7 @@
 #
 
 $(call inherit-product, device/generic/brillo/brillo_base.mk)
+$(call inherit-product, device/generic/brillo/bsp/boards/generic/emulator-arm/device.mk)
 
 PRODUCT_NAME := brilloemulator
 PRODUCT_BRAND := Android
