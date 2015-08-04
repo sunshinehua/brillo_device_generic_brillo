@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef DEVICE_GENERIC_BRILLO_DBUS_EXAMPLE_CONSTANTS_H_
-#define DEVICE_GENERIC_BRILLO_DBUS_EXAMPLE_CONSTANTS_H_
+#ifndef DEVICE_GENERIC_BRILLO_EXAMPLES_DBUS_CONSTANTS_H_
+#define DEVICE_GENERIC_BRILLO_EXAMPLES_DBUS_CONSTANTS_H_
 
 namespace dbus_example {
 
@@ -27,4 +27,4 @@ static const char kMethodName[] = "Ping";
 
 }  // namespace dbus_example
 
-#endif  // DEVICE_GENERIC_BRILLO_DBUS_EXAMPLE_CONSTANTS_H_
+#endif  // DEVICE_GENERIC_BRILLO_EXAMPLES_DBUS_CONSTANTS_H_
