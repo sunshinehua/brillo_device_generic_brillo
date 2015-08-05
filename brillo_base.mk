@@ -55,6 +55,20 @@ PRODUCT_PACKAGES += \
   dbus-monitor \
   dbus-send \
 
+# Connectivity packages.
+PRODUCT_PACKAGES += \
+  dhcpcd \
+  wpa_supplicant \
+
+# We must select a wpa_supplicant version, or the AOSP version won't be built.
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+
+# Wireless debugging.
+PRODUCT_PACKAGES += \
+  iw \
+  libnl \
+  wpa_cli \
+
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dbus.conf:system/etc/dbus.conf \
