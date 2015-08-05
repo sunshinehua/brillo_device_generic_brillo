@@ -20,6 +20,9 @@
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d
 
+# Template for init files.
+INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
+
 PRODUCT_PACKAGES = \
   adbd \
   init \

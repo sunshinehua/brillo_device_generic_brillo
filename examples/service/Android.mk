@@ -14,17 +14,23 @@
 
 LOCAL_PATH := $(call my-dir)
 
+LOCAL_INIT_SERVICE := testservice
+
 include $(CLEAR_VARS)
-LOCAL_MODULE := testservice
-LOCAL_REQUIRED_MODULES := init.testservice.rc
+LOCAL_MODULE := $(LOCAL_INIT_SERVICE)
+LOCAL_REQUIRED_MODULES := init.$(LOCAL_INIT_SERVICE).rc
 LOCAL_SRC_FILES := testservice.c
 LOCAL_SHARED_LIBRARIES := libc liblog
 LOCAL_CFLAGS := -Werror
 include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := init.testservice.rc
+LOCAL_MODULE := init.$(LOCAL_INIT_SERVICE).rc
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
-LOCAL_SRC_FILES := init.testservice.rc
-include $(BUILD_PREBUILT)
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+$(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
+	@echo "Generate: $< -> $@"
+	$(hide) sed -e 's?%SERVICENAME%?$(LOCAL_INIT_SERVICE)?g' $< > $@

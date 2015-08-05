@@ -1,0 +1,5 @@
+service %SERVICENAME% /system/bin/%SERVICENAME%
+    class main
+    user system
+    group system
+    seclabel u:r:brillo:s0
