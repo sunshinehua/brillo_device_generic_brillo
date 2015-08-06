@@ -58,16 +58,25 @@ PRODUCT_PACKAGES += \
 # Connectivity packages.
 PRODUCT_PACKAGES += \
   dhcpcd \
+  dnsmasq \
+  hostapd \
   wpa_supplicant \
 
 # We must select a wpa_supplicant version, or the AOSP version won't be built.
 WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_HOSTAPD_DRIVER := NL80211
 
 # Wireless debugging.
 PRODUCT_PACKAGES += \
   iw \
   libnl \
+  ping \
   wpa_cli \
+
+# Stop-gap connectivity solution.
+PRODUCT_PACKAGES += \
+  wifi_connect \
 
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
