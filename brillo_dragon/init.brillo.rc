@@ -22,5 +22,12 @@ service dbus /system/bin/dbus-daemon --system --nofork
     user dbus
     group dbus
 
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -Dnl80211 -c/system/etc/wpa_supplicant.conf -u
+    class main
+    user system
+    group system dbus
+    disabled
+
 import /init.platform.rc
 import /initrc.d
