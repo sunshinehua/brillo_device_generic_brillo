@@ -3,3 +3,5 @@ type brillo, domain;
 type brillo_exec, exec_type, file_type;
 
 init_daemon_domain(brillo)
+
+unix_socket_connect(brillo, dbus_daemon, dbus_daemon)
