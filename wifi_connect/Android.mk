@@ -14,14 +14,13 @@
 #
 
 LOCAL_PATH := $(call my-dir)
+
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := wifi_connect
+LOCAL_REQUIRED_MODULES := dnsmasq
 LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SRC_FILES := wifi_connect
-
-LOCAL_POST_INSTALL_CMD := \
-	ln -sf /data/misc/dhcp/resolv.conf $(TARGET_OUT)/etc/resolv.conf
 
 include $(BUILD_PREBUILT)

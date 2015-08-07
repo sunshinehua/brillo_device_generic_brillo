@@ -26,8 +26,8 @@ client_config_file="${data_dir}/wpa_supplicant.conf"
 # DHCP server daemon directory.
 dhcp_dir=/data/misc/dhcp
 
-# Storage for the current nameservers -- note that Android ignores this.
-resolv_conf="${dhcp_dir}/resolv.conf"
+# Storage for the current nameservers.
+nameserver_list="${dhcp_dir}/nameservers.txt"
 
 # Expected WiFi interface names.
 client_interface="wlan0"
@@ -41,6 +41,9 @@ default_serial_number="00000000"
 
 # Property to retrieve via "getprop" in order to get the device serial number.
 serial_number_property="ro.boot.serialno"
+
+# Use these DNS servers if none are supplied.
+google_domain_name_servers="8.8.8.8 8.8.4.4"
 
 startup_wcnss () {
   # Loads the WiFi peripheral.  This is a no-op if performed before.
@@ -215,14 +218,30 @@ start_dhcp () {
   rm -f "${dhcp_dir}"/*
   dhcpcd --script "$0" --env FROM_DHCPCD=1 "${client_interface}"
   for try in $(seq 1 15) ; do
-    if check_ip_status ; then
+    if [ -e "${nameserver_list}" ]; then
       echo "Connected!"
+      start_dns
       return 0
     fi
     sleep 1
   done
+
   echo "DHCP timed out."
   return 1
+}
+
+start_dns () {
+  # Starts local DNS proxy for bionic clients.
+  killall dnsmasq 2>/dev/null || true
+  local nameservers=$(cat "${nameserver_list}")
+  if [ -z "${nameservers}" ] ; then
+    nameservers="${google_domain_name_servers}"
+  fi
+  local args="--no-hosts --listen-address=127.0.0.1 --no-resolv --pid-file"
+  for dns_server in $nameservers; do
+    args="${args} --server=${dns_server}"
+  done
+  dnsmasq $args
 }
 
 configure_client () {
@@ -232,21 +251,18 @@ configure_client () {
   if [ -z "$interface" ] ; then
     return 1
   fi
+
   if [ -n "$new_ip_address" ] ; then
     ifconfig "$interface" "$new_ip_address" \
-        netmask "$new_subnet_mask" 2>/dev/null
+        netmask "$new_subnet_mask" 2>/dev/null || true
   fi
+
   for router in $new_routers $old_routers; do
     route add default gw "$router" && break
   done
-  # TODO(pstew): Bionic explictly ignores resolv.conf.  We need to make
-  # a proxy to support DNS resolution.
-  if [ -n "$new_domain_name_servers$old_domain_name_servers" ] ; then
-    touch "${resolv_conf}"
-    for server in $new_domain_name_servers $old_domain_name_servers; do
-      echo "nameserver $server" >> "${resolv_conf}"
-    done
-    chmod 644 "${resolv_conf}"
+
+  if [ "$reason" = "BOUND" -o "$reason" = "REBOOT" ] ; then
+    echo "$new_domain_name_servers" > "${nameserver_list}"
   fi
 }
 
