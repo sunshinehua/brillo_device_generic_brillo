@@ -33,4 +33,5 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
 	@echo "Generate: $< -> $@"
+	@mkdir -p $(dir $@)
 	$(hide) sed -e 's?%SERVICENAME%?$(LOCAL_INIT_SERVICE)?g' $< > $@
