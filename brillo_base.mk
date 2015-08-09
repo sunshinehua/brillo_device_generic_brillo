@@ -36,6 +36,9 @@ PRODUCT_PACKAGES = \
   sh \
   toolbox \
   toybox \
+  firewalld \
+  iptables \
+  ip \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
