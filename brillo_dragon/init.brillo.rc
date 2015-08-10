@@ -16,5 +16,11 @@
 
 # Brillo-specific init stuff.
 
+service dbus /system/bin/dbus-daemon --system --nofork
+    class main
+    socket dbus stream 0660 dbus dbus
+    user dbus
+    group dbus
+
 import /init.platform.rc
 import /initrc.d
