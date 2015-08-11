@@ -105,3 +105,11 @@ define inherit-arch
   $(if $(wildcard $(arch_make_file)),$(eval include $(arch_make_file)), \
     $(error Can't find arch definition: $(arch_name)))
 endef
+
+# TODO(jorgelo): Move into main build.
+define generate-initrc-file
+  @echo "Generate: $< -> $@"
+  @mkdir -p $(dir $@)
+  $(hide) sed -e 's?%SERVICENAME%?$(1)?g' $< > $@
+  $(hide) sed -i -e 's?%ARGS%?$(2)?g' $@
+endef
