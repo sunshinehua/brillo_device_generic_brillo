@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \
+  cacerts \
   dhcpcd \
   wpa_supplicant \
 
