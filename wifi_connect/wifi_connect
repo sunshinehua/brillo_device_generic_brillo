@@ -1,0 +1,325 @@
+#!/system/bin/sh -e
+# Copyright 2015 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Directory for (persistent) WiFi information.
+data_dir=/data/misc/wifi
+
+# Configuration for hostapd daemon.
+ap_config_file="${data_dir}/hostapd.conf"
+
+# Configuration for wpa_supplicant daemon.
+client_config_file="${data_dir}/wpa_supplicant.conf"
+
+# DHCP server daemon directory.
+dhcp_dir=/data/misc/dhcp
+
+# Storage for the current nameservers -- note that Android ignores this.
+resolv_conf="${dhcp_dir}/resolv.conf"
+
+# Expected WiFi interface names.
+client_interface="wlan0"
+ap_interface="softap.0"
+
+# Device parameter for getting / setting serial number.
+serial_number_ctrl="/sys/devices/soc.0/a000000.qcom,wcnss-wlan/serial_number"
+
+# Default value of the serial number at boot.
+default_serial_number="00000000"
+
+# Property to retrieve via "getprop" in order to get the device serial number.
+serial_number_property="ro.boot.serialno"
+
+startup_wcnss () {
+  # Loads the WiFi peripheral.  This is a no-op if performed before.
+  set_serial_number
+  echo 1 > /dev/wcnss_wlan || true
+}
+
+startup_wifi () {
+  # Starts up WiFi in mode |mode| for |interface|.  Can be "ap" or "client".
+  startup_wcnss
+  local mode="$1"
+  local interface="$2"
+  if [ -e "/sys/class/net/$interface" ] ; then
+    return 0
+  fi
+  local con_mode
+  case "$mode" in
+    ap) con_mode=1 ;;
+    client) con_mode=0 ;;
+    *)
+      echo "Invalid mode $mode"
+      return 1
+  esac
+  for tries in 1 2 3 4 5 ; do
+    # Although we are supposed to be setting the mode to $mode, we've seen this
+    # toggle the interface state through different modes instead.  The "echo"
+    # should be blocked while the kernel reconfigures the device so there is
+    # no need to sleep before checking.
+    echo "$con_mode" > /sys/module/wlan/parameters/con_mode
+    if [ -e "/sys/class/net/$interface" ] ; then
+      return 0
+    fi
+  done
+  echo "Interface $interface never appeared."
+  return 1
+}
+
+set_serial_number () {
+  # Make sure the qcom wireless driver has a non-default serial number so
+  # we all don't have the same MAC address.
+  local serial_number=$(cat "${serial_number_ctrl}")
+
+  if [ "${serial_number}" != "${default_serial_number}" ] ; then
+    # Serial number already set.
+    return 0
+  fi
+
+  # Retrieve the serial number out of ROM and supply it to the wireless driver.
+  getprop "${serial_number_property}" > "${serial_number_ctrl}"
+}
+
+kill_servers () {
+  # Kills the running supplicant.
+  killall 2>/dev/null wpa_supplicant && sleep 1
+  killall 2>/dev/null hostapd && sleep 1
+  killall 2>/dev/null dnsmasq || true
+  killall 2>/dev/null dhcpcd || true
+}
+
+start_supplicant () {
+  # Start up wpa_supplicant on |interface|.
+  local interface="$1"
+  kill_servers
+  startup_wifi client "$interface"
+  make_config_dir
+  get_supplicant_config "$@" > "$client_config_file"
+  chmod 644 "$client_config_file"
+  wpa_supplicant -B -d -Dnl80211 -i"$interface" -c "$client_config_file"
+}
+
+start_hostapd () {
+  # Start up hostapd on |interface|.
+  local interface="$1"
+  kill_servers
+  startup_wifi ap "$interface"
+  make_config_dir
+  get_hostap_config "$@" > "$ap_config_file"
+  chmod 644 "$ap_config_file"
+  hostapd -B -d "$ap_config_file"
+}
+
+make_config_dir () {
+  # Creates the parent directory for the supplicant configuration.
+  mkdir -m 755 -p "$data_dir"
+}
+
+get_supplicant_config () {
+  # Returns the wpa_supplicant.conf content.
+  # Usage: get_supplicant_config <interface> <ssid> [passphrase]
+  local interface="$1"
+  local ssid="$2"
+  local passphrase="$3"
+  local wpa_mode
+
+  echo "ap_scan=1"
+  echo "network={"
+  echo "	ssid=\"$ssid\""
+  if [ -z "$passphrase" ] ; then
+    echo "	key_mgmt=NONE"
+  else
+    echo "	psk=\"$passphrase\""
+  fi
+  echo "}"
+}
+
+get_hostap_config () {
+  # Returns the hostapd.conf content.
+  # Usage: get_supplicant_config <interface> <ssid> [passphrase]
+  local interface="$1"
+  local ssid="$2"
+  local passphrase="$3"
+
+  echo "interface=$interface"
+  echo "ssid=$ssid"
+  echo "channel=1"
+  echo "driver=nl80211"
+  if [ -n "$passphrase" ] ; then
+    echo "auth_algs=1"
+    echo "wpa=2"
+    echo "wpa_key_mgmt=WPA-PSK"
+    echo "rsn_pairwise=CCMP"
+    echo "wpa_passphrase=$passphrase"
+  fi
+  # Hack -- the prima driver cannot accept a zero tail-length.
+  echo "vendor_elements=dd0411223301"
+}
+
+check_link_status () {
+  # Debug: Print link IP status.
+  for word in $(iw "${client_interface}" link) ; do
+    if [ "$word" = "Connected" ] ; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+check_ip_status () {
+  # Debug: Print link status.
+  for word in $(ifconfig "${client_interface}") ; do
+    if [ "$word" = "inet" ] ; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+connect_client () {
+  # Start up a client.
+  start_supplicant "${client_interface}" "$@"
+
+  # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
+  pkill -1 wpa_supplicant
+
+  for try in $(seq 1 30) ; do
+    if check_link_status ; then
+      start_dhcp
+      return
+    fi
+    sleep 1
+  done
+  echo "Association timed out."
+  return 1
+}
+
+start_dhcp () {
+  # Starts a DHCP client.  dhcpcd is configured to run a second instance
+  # of this script.  This child instance will call the "configure_client"
+  # method, which will apply the IP configuration gained from DHCP.  After
+  # starting dhcpcd, the parent process monitors the progress of dhcpcd
+  # below.
+  rm -f "${dhcp_dir}"/*
+  dhcpcd --script "$0" --env FROM_DHCPCD=1 "${client_interface}"
+  for try in $(seq 1 15) ; do
+    if check_ip_status ; then
+      echo "Connected!"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "DHCP timed out."
+  return 1
+}
+
+configure_client () {
+  # Configures IP parameters from a successful run of the dhcp client.
+  # All parameters (including "$interface" below) are provided in the
+  # environment by dhcpcd.
+  if [ -z "$interface" ] ; then
+    return 1
+  fi
+  if [ -n "$new_ip_address" ] ; then
+    ifconfig "$interface" "$new_ip_address" \
+        netmask "$new_subnet_mask" 2>/dev/null
+  fi
+  for router in $new_routers $old_routers; do
+    route add default gw "$router" && break
+  done
+  # TODO(pstew): Bionic explictly ignores resolv.conf.  We need to make
+  # a proxy to support DNS resolution.
+  if [ -n "$new_domain_name_servers$old_domain_name_servers" ] ; then
+    touch "${resolv_conf}"
+    for server in $new_domain_name_servers $old_domain_name_servers; do
+      echo "nameserver $server" >> "${resolv_conf}"
+    done
+    chmod 644 "${resolv_conf}"
+  fi
+}
+
+setup_ap () {
+  # Start up an access point.
+  start_hostapd "${ap_interface}" "$@"
+  local ip_prefix=192.168.69
+  ifconfig "${ap_interface}" "${ip_prefix}.1"
+  local config_file="${data_dir}/dnsmasq.conf"
+  cat > "${config_file}" << EOF
+port=0
+bind-interfaces
+log-dhcp
+dhcp-range=${ip_prefix}.10,${ip_prefix}.100
+interface=${ap_interface}
+dhcp-leasefile="${dhcp_dir}/dnsmasq.leases"
+EOF
+  chmod 644 "$config_file"
+  dnsmasq --conf-file="${config_file}" --pid-file="${dhcp_dir}/dnsmasq.pid"
+}
+
+resume_client () {
+  # Start up supplicant and DHCP if configuration is left over from a previous
+  # boot.
+  if [ ! -f "${client_config_file}" ] ; then
+    log -t wifi_connect "No saved configuration."
+    return 0
+  fi
+  log -t wifi_connect "Starting up using saved configuration."
+  kill_servers
+  startup_wifi client "${client_interface}"
+  chmod 644 "$client_config_file"
+  wpa_supplicant -B -d -Dnl80211 -i"${client_interface}" \
+      -c "$client_config_file"
+  pkill -1 wpa_supplicant
+  start_dhcp
+}
+
+get_status () {
+  if check_link_status ; then
+    iw "${client_interface}" link
+    ifconfig "${client_interface}"
+  else
+    echo "We are not connected."
+  fi
+}
+
+main () {
+  if [ "$FROM_DHCPCD" = 1 ] ; then
+    configure_client
+    return
+  fi
+
+  local cmd="$1"
+  if [ -z "$cmd" ] ; then
+    resume_client
+    return
+  fi
+
+  shift
+
+  case "$cmd" in
+    ap) setup_ap "$@" ;;
+    boot) resume_client ;;
+    client) connect_client "$@" ;;
+    status) get_status ;;
+    disable) kill_servers ;;
+    *)
+      log -t wifi_connect "Run with unknown command $cmd"
+      echo "Command '$cmd' not supported"
+      echo "Usage: $0 <ap|client> <ssid> [passphrase] [more-ap-opts...]"
+      return 1
+  esac
+}
+
+main "$@"
