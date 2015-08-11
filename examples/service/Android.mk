@@ -31,7 +31,6 @@ LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
+my_args := arg1 arg2
 $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
-	@echo "Generate: $< -> $@"
-	@mkdir -p $(dir $@)
-	$(hide) sed -e 's?%SERVICENAME%?$(LOCAL_INIT_SERVICE)?g' $< > $@
+	$(call generate-initrc-file,$(LOCAL_INIT_SERVICE),$(my_args))
