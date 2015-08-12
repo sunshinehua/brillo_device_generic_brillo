@@ -1,5 +1,5 @@
 service %SERVICENAME% /system/bin/%SERVICENAME% %ARGS%
     class main
     user system
-    group system dbus
+    group system dbus %CAPABILITIES%
     seclabel u:r:brillo:s0
