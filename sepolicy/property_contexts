@@ -1,1 +1,2 @@
 brillo.setup_firewall      u:object_r:brillo_setup_prop:s0
+crash_reporter         u:object_r:crash_reporter_prop:s0

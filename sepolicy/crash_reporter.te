@@ -1,0 +1,53 @@
+type crash_reporter, domain;
+type crash_reporter_exec, exec_type, file_type;
+type crash_reporter_prop, property_type;
+
+# Permissions for crash collector directory.
+allow crash_reporter crash_reporter:dir create_dir_perms;
+allow crash_reporter crash_reporter:file create_file_perms;
+
+# Allow starting from init.
+init_daemon_domain(crash_reporter)
+
+# Allow init to create required directories.
+allow init crash_reporter:dir create_dir_perms;
+allow init shell_data_file:dir create_dir_perms;
+allow crash_reporter labeledfs:filesystem associate;
+
+# Allow setting supplementary groups.
+allow crash_reporter crash_reporter:capability { setgid };
+
+# Allow using metrics_lib.
+allow crash_reporter metrics_data_file:dir { add_name search write };
+allow crash_reporter metrics_data_file:file { append create getattr lock open read setattr write };
+
+# Allow setting crash reporter properties.
+set_prop(crash_reporter, crash_reporter_prop)
+
+# Allow triggering by kernel during core dumps.
+domain_auto_trans(kernel, crash_reporter_exec, crash_reporter)
+
+# Allow access to core dump files.
+allow crash_reporter kernel:fifo_file { open read };
+allow crash_reporter su:dir { search };
+allow crash_reporter su:lnk_file { read };
+allow crash_reporter su:file { open read };
+
+# Permissions for calling dbus-send and signaling metrics.
+allow crash_reporter su:file { getattr };
+allow crash_reporter kernel:fifo_file { getattr ioctl };
+#TODO(stevefung): Remove shell_exec policy once system() call is removed.
+allow crash_reporter shell_exec:file rx_file_perms;
+
+# Permissions for writing to tmp storage.
+allow crash_reporter shell_data_file:dir create_dir_perms;
+
+# Allow calling core2md.
+allow crash_reporter crash_reporter_exec:file execute_no_trans;
+
+# Allow calling dbus-send.
+allow crash_reporter crash_reporter:capability { setuid };
+allow crash_reporter dbus_daemon_exec:file rx_file_perms;
+unix_socket_connect(crash_reporter, dbus_daemon, dbus_daemon)
+
+dontaudit crash_reporter kernel:system module_request;
