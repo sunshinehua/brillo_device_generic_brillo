@@ -1,0 +1,2 @@
+# Allow WPA supplicant to use the D-Bus socket.
+unix_socket_connect(wpa, dbus_daemon, dbus_daemon)

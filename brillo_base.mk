@@ -68,6 +68,10 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_HOSTAPD_DRIVER := NL80211
 
+# Enable WPA supplicant D-Bus support.
+CONFIG_CTRL_IFACE_DBUS=y
+CONFIG_CTRL_IFACE_DBUS_NEW=y
+
 # Wireless debugging.
 PRODUCT_PACKAGES += \
   iw \
@@ -82,6 +86,10 @@ PRODUCT_PACKAGES += \
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dbus.conf:system/etc/dbus.conf \
+
+# TODO(samueltan): Move this config file to a saner place.
+PRODUCT_COPY_FILES += \
+  device/generic/brillo/wpa_supplicant.conf:system/etc/wpa_supplicant.conf \
 
 BOARD_SEPOLICY_DIRS += device/generic/brillo/sepolicy
 
