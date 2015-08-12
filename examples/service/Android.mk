@@ -24,6 +24,7 @@ LOCAL_SHARED_LIBRARIES := libc liblog
 LOCAL_CFLAGS := -Werror
 include $(BUILD_EXECUTABLE)
 
+ifdef INITRC_TEMPLATE
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.$(LOCAL_INIT_SERVICE).rc
 LOCAL_MODULE_CLASS := ETC
@@ -33,4 +34,5 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 my_args := arg1 arg2
 $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
-	$(call generate-initrc-file,$(LOCAL_INIT_SERVICE),$(my_args))
+	$(call generate-initrc-file,$(LOCAL_INIT_SERVICE),$(my_args),)
+endif
