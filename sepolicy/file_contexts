@@ -4,3 +4,5 @@
 # Brillo system service binaries are 'brillo_exec' objects for now.
 # E.g.
 #/system/bin/testservice    u:object_r:brillo_exec:s0
+#
+/system/bin/firewalld      u:object_r:brillo_exec:s0
