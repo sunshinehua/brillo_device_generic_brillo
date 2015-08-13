@@ -34,3 +34,5 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     device/generic/brillo/bsp/platforms/qcom/msm8916/kernel/zImage-dtb:kernel
+
+BOARD_SEPOLICY_DIRS += device/generic/brillo/bsp/platforms/qcom/msm8916/sepolicy
