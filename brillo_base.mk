@@ -86,6 +86,13 @@ PRODUCT_PACKAGES += \
   metrics_client \
   metrics_daemon \
 
+# Avahi packages.
+PRODUCT_PACKAGES += \
+  avahi-browse \
+  avahi-client \
+  avahi-daemon \
+  libdaemon \
+
 # We must select a wpa_supplicant version, or the AOSP version won't be built.
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
