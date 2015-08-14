@@ -84,8 +84,8 @@ int ConnectivityListener::ConnectCommand::runCommand(
     args.push_back(argv[1]);
   } else if (argc == 3) {
     // SSID plus passphrase.
+    args.push_back(argv[1]);
     args.push_back(argv[2]);
-    args.push_back(argv[3]);
   } else {
     client->sendMsg(ConnectivityCommon::kResponseCodeFailure,
                     "Must either be 1 or two arguments", false);
@@ -170,6 +170,7 @@ bool ConnectivityListener::RunWifiConnect(
   for (const auto& arg : args) {
     full_args.push_back(arg);
   }
+  full_args.push_back(nullptr);
 
   struct minijail *jail = minijail_new();
 
