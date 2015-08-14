@@ -33,6 +33,7 @@ LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
 include $(BUILD_SYSTEM)/base_rules.mk
 
 my_args := arg1 arg2
+.PHONY: $(LOCAL_BUILT_MODULE)
 $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
 	$(call generate-initrc-file,$(LOCAL_INIT_SERVICE),$(my_args),)
 endif
