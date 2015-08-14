@@ -20,5 +20,3 @@ PRODUCT_NAME := brillo_dragon
 PRODUCT_BRAND := Android
 
 PRODUCT_DEVICE := brillo_dragon
-
-
