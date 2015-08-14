@@ -241,7 +241,8 @@ start_dns () {
   for dns_server in $nameservers; do
     args="${args} --server=${dns_server}"
   done
-  dnsmasq $args
+  # dnsmasq appears to read from stdin, even when not in debug mode.
+  dnsmasq $args < /dev/null
 }
 
 configure_client () {
