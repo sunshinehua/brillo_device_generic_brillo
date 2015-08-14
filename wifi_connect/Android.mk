@@ -14,13 +14,65 @@
 #
 
 LOCAL_PATH := $(call my-dir)
+LOCAL_INIT_SERVICE := connectivity
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := $(LOCAL_INIT_SERVICE)
+LOCAL_CLANG := true
+LOCAL_CPPFLAGS := -std=c++11 -Wall -Werror
+LOCAL_SHARED_LIBRARIES := libcutils libminijail libsysutils
+LOCAL_SRC_FILES := connectivity_listener.cpp connectivity_common.cpp
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libconnectivity
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_CLANG := true
+LOCAL_CPPFLAGS := -std=c++11 -Wall -Werror
+LOCAL_SHARED_LIBRARIES := libcutils
+LOCAL_SRC_FILES := connectivity_client.cpp connectivity_common.cpp
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := connectivity_test
+LOCAL_CLANG := true
+LOCAL_CPPFLAGS := -Wall -Werror
+LOCAL_SHARED_LIBRARIES := libconnectivity
+LOCAL_SRC_FILES := connectivity_test.cpp
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := init.$(LOCAL_INIT_SERVICE).rc
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+$(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
+	@echo "Generate: $< -> $@"
+	@mkdir -p $(dir $@)
+	$(hide) sed -e 's?%SERVICENAME%?$(LOCAL_INIT_SERVICE)?g' \
+	            -e 's?group.*?group system?g' \
+	            -e 's?user.*?user root?g' \
+	            -e 's?seclabel.*?seclabel u:r:shell:s0?g' $< > $@
+	$(hide) echo "    socket connectivity stream 0666 root inet" >> $@
+	cat $@
 
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := wifi_connect
-LOCAL_REQUIRED_MODULES := dnsmasq
 LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SRC_FILES := wifi_connect
+LOCAL_REQUIRED_MODULES := \
+  $(LOCAL_INIT_SERVICE) \
+  connectivity_test \
+  dnsmasq \
+  init.$(LOCAL_INIT_SERVICE).rc \
 
 include $(BUILD_PREBUILT)
