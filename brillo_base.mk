@@ -20,6 +20,12 @@
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d
 
+# Skip API checks.
+WITHOUT_CHECK_API := true
+# Don't try to build and run all tests by defaults. Several tests have
+# dependencies on the framework.
+ANDROID_NO_TEST_CHECK := true
+
 # Template for init files.
 INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 
