@@ -18,6 +18,8 @@
 # migrate to build/envsetup.sh over time.
 
 # Execute the contents of any productsetup.sh files we can find.
+
+# TODO(leecam): Remove this as soon as BSP refactor is done.
 scan_for_brillo_products()
 {
 	test -n "$NO_BRILLO" && return
@@ -30,3 +32,17 @@ scan_for_brillo_products()
 }
 
 scan_for_brillo_products
+
+# TODO(leecam): Move this to /build
+scan_for_brillo_devices()
+{
+  test -n "$NO_BRILLO" && return
+  local f
+  for f in `test -d device/ && find -L device/ -maxdepth 4 -name 'devicesetup.sh' 2> /dev/null | sort`;
+  do
+    echo "including $f"
+    . $f
+  done
+}
+
+scan_for_brillo_devices

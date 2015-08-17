@@ -28,7 +28,7 @@ BOARD_FLASH_BLOCK_SIZE := 131072
 # TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 PRODUCT_COPY_FILES += \
-  device/generic/brillo/bsp/platforms/qcom/msm8916/init.platform.rc:root/init.platform.rc \
+  device/generic/brillo/bsp/platforms/qcom/msm8916/init.platform.rc:root/initrc.d/init.platform.rc \
   system/core/rootdir/init.usb.rc:root/init.usb.rc \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \
 

@@ -16,8 +16,3 @@
 
 # This product uses the dragon board
 $(call inherit-board, qcom, dragon_410c)
-
-PRODUCT_COPY_FILES += \
-  device/generic/brillo/brillo_dragon/init.brillo.rc:root/init.brillo.rc
-
-

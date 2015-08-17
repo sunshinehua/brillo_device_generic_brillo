@@ -14,5 +14,21 @@
 # limitations under the License.
 #
 
-# This product uses the emulator board.
-$(call inherit-board, generic, emulator-arm)
+# Common Brillo init script. This is loaded by init.rc.
+# Services should define their own init scripts and install
+# them into /initrc.d.
+
+service dbus /system/bin/dbus-daemon --system --nofork
+    class main
+    socket dbus stream 0660 dbus dbus
+    user dbus
+    group dbus
+
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -Dnl80211 -c/system/etc/wpa_supplicant.conf -u
+    class main
+    user system
+    group system dbus
+    disabled
+
+import /initrc.d

@@ -17,6 +17,10 @@
 # This is a build configuration for the base of a Brillo system.
 # It contains the mandatory targets required to boot a Brillo device.
 
+# Common Brillo init script
+PRODUCT_COPY_FILES += \
+  device/generic/brillo/init.brillo.rc:root/init.brillo.rc \
+
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d
 
@@ -134,4 +138,15 @@ define generate-initrc-file
   $(hide) sed -e 's?%SERVICENAME%?$(1)?g' $< > $@
   $(hide) sed -i -e 's?%ARGS%?$(2)?g' $@
   $(hide) sed -i -e 's?%GROUPS%?$(3)?g' $@
+endef
+
+
+HARDWARE_BSP_PREFIX := hardware/bsp
+# New BSP helpers - move to /build once stable.
+define set_soc
+  $(eval soc_vendor := $(strip $(1))) \
+  $(eval soc_name := $(strip $(2))) \
+  $(eval soc_make_file := $(HARDWARE_BSP_PREFIX)/$(soc_vendor)/soc/$(soc_name)/soc.mk) \
+  $(if $(wildcard $(soc_make_file)),$(eval include $(soc_make_file)), \
+    $(error Can't find SoC definition. Vendor: $(soc_vendor) SoC: $(soc_name)))
 endef

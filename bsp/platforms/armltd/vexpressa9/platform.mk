@@ -11,4 +11,4 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 PRODUCT_COPY_FILES += \
   device/generic/brillo/bsp/platforms/armltd/vexpressa9/fstab.brillo:root/fstab.brillo \
-  device/generic/brillo/bsp/platforms/armltd/vexpressa9/init.platform.rc:root/init.platform.rc
+  device/generic/brillo/bsp/platforms/armltd/vexpressa9/init.platform.rc:root/initrc.d/init.platform.rc
