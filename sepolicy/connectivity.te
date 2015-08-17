@@ -1,0 +1,32 @@
+# Temporary domain for stop-gap connectivity daemon.
+type connectivity, domain;
+type connectivity_exec, exec_type, file_type;
+type connectivity_device, dev_type;
+type connectivity_sysfs_entry, fs_type, sysfs_type;
+
+init_daemon_domain(connectivity)
+net_domain(connectivity)
+
+# Following permissions are needed for connectivity.
+allow connectivity connectivity_device:chr_file { write open };
+allow connectivity connectivity_exec:file execute_no_trans;
+allow connectivity connectivity_sysfs_entry:file { read write getattr open };
+allow connectivity dhcp_data_file:dir { add_name read remove_name open write };
+allow connectivity dhcp_data_file:file { create getattr lock open read write unlink };
+allow connectivity dhcp_exec:file { read getattr open execute execute_no_trans };
+allow connectivity dhcp_prop:property_service set;
+allow connectivity dnsmasq_exec:file { read getattr open execute execute_no_trans };
+allow connectivity init:unix_stream_socket connectto;
+allow connectivity proc_net:file write;
+allow connectivity property_socket:sock_file write;
+allow connectivity self:capability { setuid fsetid kill net_admin net_bind_service net_raw setgid };
+allow connectivity self:netlink_route_socket { write getattr nlmsg_write read bind create nlmsg_read };
+allow connectivity self:packet_socket { write ioctl setopt read bind create };
+allow connectivity sysfs:file write;
+allow connectivity system_file:file execute_no_trans;
+allow connectivity wifi_data_file:dir { write getattr add_name };
+allow connectivity wifi_data_file:file { create read getattr open setattr write };
+allow connectivity wpa_exec:file { read getattr open execute execute_no_trans };
+allow connectivity self:capability { sys_module dac_override };
+allow connectivity self:netlink_socket { write getattr setopt read bind create };
+allow connectivity shell_exec:file { read execute open };
