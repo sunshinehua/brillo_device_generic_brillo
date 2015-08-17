@@ -15,5 +15,5 @@ allow brillo self:rawip_socket setopt;
 allow brillo self:udp_socket create;
 allow brillo system_file:file execute_no_trans;
 
-# bind()
+# Needed for webservd.
 allow brillo self:capability { net_bind_service };
