@@ -3,6 +3,7 @@ type brillo, domain;
 type brillo_exec, exec_type, file_type;
 
 init_daemon_domain(brillo)
+net_domain(brillo)
 
 unix_socket_connect(brillo, dbus_daemon, dbus_daemon)
 
@@ -13,3 +14,6 @@ allow brillo self:rawip_socket getopt;
 allow brillo self:rawip_socket setopt;
 allow brillo self:udp_socket create;
 allow brillo system_file:file execute_no_trans;
+
+# bind()
+allow brillo self:capability { net_bind_service };
