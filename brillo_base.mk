@@ -133,5 +133,5 @@ define generate-initrc-file
   @mkdir -p $(dir $@)
   $(hide) sed -e 's?%SERVICENAME%?$(1)?g' $< > $@
   $(hide) sed -i -e 's?%ARGS%?$(2)?g' $@
-  $(hide) sed -i -e 's?%CAPABILITIES%?$(3)?g' $@
+  $(hide) sed -i -e 's?%GROUPS%?$(3)?g' $@
 endef
