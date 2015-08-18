@@ -49,6 +49,7 @@ PRODUCT_PACKAGES = \
   sh \
   toolbox \
   toybox \
+  weaved \
   webservd \
 
 # SELinux packages
