@@ -100,6 +100,9 @@ PRODUCT_COPY_FILES += \
 
 BOARD_SEPOLICY_DIRS += device/generic/brillo/sepolicy
 
+# Define that identifies Brillo targets
+BRILLO := 1
+
 # Required helpers for Brillo targets.
 # TODO(wad,leecam) once stable, move into build/core.
 BRILLO_BSP_PREFIX := device/generic/brillo/bsp
