@@ -78,6 +78,12 @@ PRODUCT_PACKAGES += \
   hostapd \
   wpa_supplicant \
 
+# Metrics daemon and metrics library
+PRODUCT_PACKAGES += \
+  libmetrics \
+  metrics_client \
+  metrics_daemon \
+
 # We must select a wpa_supplicant version, or the AOSP version won't be built.
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211

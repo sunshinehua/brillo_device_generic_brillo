@@ -17,3 +17,9 @@ allow brillo system_file:file execute_no_trans;
 
 # Needed for webservd.
 allow brillo self:capability { net_bind_service };
+
+# Rules for the metrics daemon.
+type metrics_data_file, file_type, data_file_type;
+dontaudit brillo kernel:system module_request;
+allow brillo metrics_data_file:dir {add_name search write};
+allow brillo metrics_data_file:file {create getattr lock open read write};
