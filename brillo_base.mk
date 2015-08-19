@@ -106,7 +106,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
   device/generic/brillo/wpa_supplicant.conf:system/etc/wpa_supplicant.conf \
 
-BOARD_SEPOLICY_DIRS += device/generic/brillo/sepolicy
+BOARD_SEPOLICY_DIRS := device/generic/brillo/sepolicy
 
 # Define that identifies Brillo targets
 BRILLO := 1
