@@ -2,6 +2,7 @@
 type connectivity, domain;
 type connectivity_exec, exec_type, file_type;
 type connectivity_device, dev_type;
+type connectivity_socket, file_type;
 type connectivity_sysfs_entry, fs_type, sysfs_type;
 
 init_daemon_domain(connectivity)
@@ -30,3 +31,6 @@ allow connectivity wpa_exec:file { read getattr open execute execute_no_trans };
 allow connectivity self:capability { sys_module dac_override };
 allow connectivity self:netlink_socket { write getattr setopt read bind create };
 allow connectivity shell_exec:file { read execute open };
+
+# Don't spam the logs.
+dontaudit connectivity kernel:system module_request;
