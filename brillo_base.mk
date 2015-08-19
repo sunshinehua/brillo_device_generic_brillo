@@ -29,9 +29,12 @@ INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 
 PRODUCT_PACKAGES = \
   adbd \
+  firewalld \
   init \
   init.environ.rc \
   init.rc \
+  ip \
+  iptables \
   libminijail \
   linker \
   logcat \
@@ -40,9 +43,7 @@ PRODUCT_PACKAGES = \
   sh \
   toolbox \
   toybox \
-  firewalld \
-  iptables \
-  ip \
+  webservd \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
