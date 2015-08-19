@@ -9,7 +9,6 @@
 /system/bin/firewalld      u:object_r:brillo_exec:s0
 /system/bin/weaved         u:object_r:brillo_exec:s0
 /system/bin/webservd       u:object_r:brillo_exec:s0
-/system/bin/wifi_connect   u:object_r:brillo_exec:s0
 /system/bin/wifi_connect   u:object_r:connectivity_exec:s0
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
 /dev/wcnss_wlan            u:object_r:connectivity_device:s0
