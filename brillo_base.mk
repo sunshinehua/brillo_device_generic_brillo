@@ -153,3 +153,11 @@ define set_soc
   $(if $(wildcard $(soc_make_file)),$(eval include $(soc_make_file)), \
     $(error Can't find SoC definition. Vendor: $(soc_vendor) SoC: $(soc_name)))
 endef
+
+define add_peripheral
+  $(eval peripheral_vendor := $(strip $(1))) \
+  $(eval peripheral_name := $(strip $(2))) \
+  $(eval peripheral_make_file := $(HARDWARE_BSP_PREFIX)/$(peripheral_vendor)/peripheral/$(peripheral_name)/peripheral.mk) \
+  $(if $(wildcard $(peripheral_make_file)),$(eval include $(peripheral_make_file)), \
+    $(error Can't find peripheral definition. Vendor: $(peripheral_vendor) peripheral: $(peripheral_name)))
+endef
