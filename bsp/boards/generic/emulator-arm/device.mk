@@ -20,7 +20,6 @@ BOARD_SEPOLICY_DIRS += \
 PRODUCT_PACKAGES += \
 	audio.primary.goldfish \
 	camera.goldfish \
-	camera.goldfish.jpeg \
 	gps.goldfish \
 	lights.goldfish \
 	power.goldfish \
