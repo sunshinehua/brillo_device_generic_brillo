@@ -209,6 +209,19 @@ configure_client () {
   fi
 }
 
+get_dnsmasq_config () {
+  # Returns the dnsmasq.conf content.
+  # Usage: get_dnsmasq_config <interface> <ip_prefix>
+  local interface="$1"
+  local ip_prefix="$2"
+  echo "port=0"
+  echo "bind-interfaces"
+  echo "log-dhcp"
+  echo "dhcp-range=${ip_prefix}.10,${ip_prefix}.100"
+  echo "interface=${interface}"
+  echo "dhcp-leasefile="${dhcp_dir}/dnsmasq.leases""
+}
+
 setup_ap () {
   # Start up an access point.
   local interface
@@ -216,14 +229,7 @@ setup_ap () {
   local ip_prefix=192.168.69
   ifconfig "${interface}" "${ip_prefix}.1"
   local config_file="${data_dir}/dnsmasq.conf"
-  cat > "${config_file}" << EOF
-port=0
-bind-interfaces
-log-dhcp
-dhcp-range=${ip_prefix}.10,${ip_prefix}.100
-interface=${interface}
-dhcp-leasefile="${dhcp_dir}/dnsmasq.leases"
-EOF
+  get_dnsmasq_config "${interface}" "${ip_prefix}" > "${config_file}"
   chmod 644 "$config_file"
   dnsmasq --conf-file="${config_file}" --pid-file="${dhcp_dir}/dnsmasq.pid"
 }
