@@ -20,6 +20,7 @@
 # Common Brillo init script
 PRODUCT_COPY_FILES += \
   device/generic/brillo/init.brillo.rc:root/init.brillo.rc \
+  device/generic/brillo/init.brillo-setup-firewall.sh:system/etc/init.brillo-setup-firewall.sh \
 
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d

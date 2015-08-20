@@ -1,0 +1,22 @@
+# Brillo setup services; used for the different init.brillo-setup-*.sh scripts.
+type brillo_setup, domain;
+type brillo_setup_exec, exec_type, file_type;
+type brillo_setup_prop, property_type;
+
+init_daemon_domain(brillo_setup)
+net_domain(brillo_setup)
+
+# Inherit open file to shell (interpreter) for script.
+allow brillo_setup shell_exec:file read;
+
+# Configure interfaces, routes and firewall rules.
+allow brillo_setup self:capability { net_admin net_raw };
+allow brillo_setup self:rawip_socket create;
+allow brillo_setup self:rawip_socket getopt;
+allow brillo_setup self:rawip_socket setopt;
+allow brillo_setup system_file:file execute_no_trans;
+
+# Set properties for init.
+allow brillo_setup brillo_setup_prop:property_service set;
+allow brillo_setup init:unix_stream_socket connectto;
+allow brillo_setup property_socket:sock_file write;

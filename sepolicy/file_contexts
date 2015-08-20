@@ -9,6 +9,7 @@
 /system/bin/firewalld      u:object_r:brillo_exec:s0
 /system/bin/weaved         u:object_r:brillo_exec:s0
 /system/bin/webservd       u:object_r:brillo_exec:s0
+
 /system/bin/wifi_connect   u:object_r:connectivity_exec:s0
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
 /dev/wcnss_wlan            u:object_r:connectivity_device:s0
@@ -18,3 +19,5 @@
 /data/misc/metrics(/.*)?    u:object_r:metrics_data_file:s0
 /system/bin/metrics_daemon  u:object_r:brillo_exec:s0
 /system/bin/metrics_client  u:object_r:brillo_exec:s0
+
+/system/etc/init.brillo-setup-firewall.sh  u:object_r:brillo_setup_exec:s0

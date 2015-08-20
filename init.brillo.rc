@@ -18,6 +18,17 @@
 # Services should define their own init scripts and install
 # them into /initrc.d.
 
+on boot
+    start brillo-firewall
+
+on property:brillo.setup_firewall=1
+    enable firewalld
+
+service brillo-firewall /system/etc/init.brillo-setup-firewall.sh
+    user root
+    group root net_admin net_raw
+    oneshot
+
 service dbus /system/bin/dbus-daemon --system --nofork
     class main
     socket dbus stream 0660 dbus dbus
