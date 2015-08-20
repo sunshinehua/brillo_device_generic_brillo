@@ -1,4 +1,4 @@
-#
+#!/system/bin/sh -e
 # Copyright 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,22 @@
 # limitations under the License.
 #
 
-$(call inherit-product, device/generic/brillo/brillo_base.mk)
+# The default WiFi init file.
 
-PRODUCT_NAME := brillo_dragon
-PRODUCT_BRAND := Android
-
-PRODUCT_DEVICE := brillo_dragon
-
-WIFI_INIT_MODULE := qcwcn
+startup_wifi () {
+  local mode="$1"
+  local interface
+  case "$mode" in
+    ap) interface="wlan0" ;;
+    client) interface="softap.0" ;;
+    *)
+      echo "Invalid mode $mode"
+      return 1
+  esac
+  if [ -e "/sys/class/net/$interface" ] ; then
+    echo "${interface}"
+    return 0
+  fi
+  echo "Interface $interface is not present."
+  return 1
+}

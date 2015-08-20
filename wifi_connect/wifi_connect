@@ -29,71 +29,13 @@ dhcp_dir=/data/misc/dhcp
 # Storage for the current nameservers.
 nameserver_list="${dhcp_dir}/nameservers.txt"
 
-# Expected WiFi interface names.
-client_interface="wlan0"
-ap_interface="softap.0"
-
-# Device parameter for getting / setting serial number.
-serial_number_ctrl="/sys/devices/soc.0/a000000.qcom,wcnss-wlan/serial_number"
-
-# Default value of the serial number at boot.
-default_serial_number="00000000"
-
-# Property to retrieve via "getprop" in order to get the device serial number.
-serial_number_property="ro.boot.serialno"
-
 # Use these DNS servers if none are supplied.
 google_domain_name_servers="8.8.8.8 8.8.4.4"
 
-startup_wcnss () {
-  # Loads the WiFi peripheral.  This is a no-op if performed before.
-  set_serial_number
-  echo 1 > /dev/wcnss_wlan || true
-}
-
-startup_wifi () {
-  # Starts up WiFi in mode |mode| for |interface|.  Can be "ap" or "client".
-  startup_wcnss
-  local mode="$1"
-  local interface="$2"
-  if [ -e "/sys/class/net/$interface" ] ; then
-    return 0
-  fi
-  local con_mode
-  case "$mode" in
-    ap) con_mode=1 ;;
-    client) con_mode=0 ;;
-    *)
-      echo "Invalid mode $mode"
-      return 1
-  esac
-  for tries in 1 2 3 4 5 ; do
-    # Although we are supposed to be setting the mode to $mode, we've seen this
-    # toggle the interface state through different modes instead.  The "echo"
-    # should be blocked while the kernel reconfigures the device so there is
-    # no need to sleep before checking.
-    echo "$con_mode" > /sys/module/wlan/parameters/con_mode
-    if [ -e "/sys/class/net/$interface" ] ; then
-      return 0
-    fi
-  done
-  echo "Interface $interface never appeared."
-  return 1
-}
-
-set_serial_number () {
-  # Make sure the qcom wireless driver has a non-default serial number so
-  # we all don't have the same MAC address.
-  local serial_number=$(cat "${serial_number_ctrl}")
-
-  if [ "${serial_number}" != "${default_serial_number}" ] ; then
-    # Serial number already set.
-    return 0
-  fi
-
-  # Retrieve the serial number out of ROM and supply it to the wireless driver.
-  getprop "${serial_number_property}" > "${serial_number_ctrl}"
-}
+# This file contains platform-specific information.  It defines the
+# startup_wifi method, which sets up client and AP functionality and
+# returns the interface name created.
+wifi_init_script=/system/usr/share/wifi/wifi_init
 
 kill_servers () {
   # Kills the running supplicant.
@@ -105,9 +47,9 @@ kill_servers () {
 
 start_supplicant () {
   # Start up wpa_supplicant on |interface|.
-  local interface="$1"
   kill_servers
-  startup_wifi client "$interface"
+  local interface
+  interface="$(startup_wifi client)"
   make_config_dir
   get_supplicant_config "$@" > "$client_config_file"
   chmod 644 "$client_config_file"
@@ -116,13 +58,14 @@ start_supplicant () {
 
 start_hostapd () {
   # Start up hostapd on |interface|.
-  local interface="$1"
   kill_servers
-  startup_wifi ap "$interface"
+  local interface
+  interface="$(startup_wifi ap)"
   make_config_dir
-  get_hostap_config "$@" > "$ap_config_file"
+  get_hostap_config "${interface}" "$@" > "$ap_config_file"
   chmod 644 "$ap_config_file"
   hostapd -B -d "$ap_config_file"
+  echo "${interface}"
 }
 
 make_config_dir () {
@@ -132,10 +75,9 @@ make_config_dir () {
 
 get_supplicant_config () {
   # Returns the wpa_supplicant.conf content.
-  # Usage: get_supplicant_config <interface> <ssid> [passphrase]
-  local interface="$1"
-  local ssid="$2"
-  local passphrase="$3"
+  # Usage: get_supplicant_config <ssid> [passphrase]
+  local ssid="$1"
+  local passphrase="$2"
   local wpa_mode
 
   echo "ap_scan=1"
@@ -151,7 +93,7 @@ get_supplicant_config () {
 
 get_hostap_config () {
   # Returns the hostapd.conf content.
-  # Usage: get_supplicant_config <interface> <ssid> [passphrase]
+  # Usage: get_hostap_config <interface> <ssid> [passphrase]
   local interface="$1"
   local ssid="$2"
   local passphrase="$3"
@@ -193,7 +135,7 @@ check_ip_status () {
 
 connect_client () {
   # Start up a client.
-  start_supplicant "${client_interface}" "$@"
+  start_supplicant "$@"
 
   # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
   pkill -1 wpa_supplicant
@@ -269,16 +211,17 @@ configure_client () {
 
 setup_ap () {
   # Start up an access point.
-  start_hostapd "${ap_interface}" "$@"
+  local interface
+  interface="$(start_hostapd "$@")"
   local ip_prefix=192.168.69
-  ifconfig "${ap_interface}" "${ip_prefix}.1"
+  ifconfig "${interface}" "${ip_prefix}.1"
   local config_file="${data_dir}/dnsmasq.conf"
   cat > "${config_file}" << EOF
 port=0
 bind-interfaces
 log-dhcp
 dhcp-range=${ip_prefix}.10,${ip_prefix}.100
-interface=${ap_interface}
+interface=${interface}
 dhcp-leasefile="${dhcp_dir}/dnsmasq.leases"
 EOF
   chmod 644 "$config_file"
@@ -294,10 +237,10 @@ resume_client () {
   fi
   log -t wifi_connect "Starting up using saved configuration."
   kill_servers
-  startup_wifi client "${client_interface}"
+  local interface
+  interface="$(startup_wifi client)"
   chmod 644 "$client_config_file"
-  wpa_supplicant -B -d -Dnl80211 -i"${client_interface}" \
-      -c "$client_config_file"
+  wpa_supplicant -B -d -Dnl80211 -i"${interface}" -c "$client_config_file"
   pkill -1 wpa_supplicant
   start_dhcp
 }
@@ -338,5 +281,9 @@ main () {
       return 1
   esac
 }
+
+if [ -f "${wifi_init_script}" ] ; then
+  . "${wifi_init_script}"
+fi
 
 main "$@"
