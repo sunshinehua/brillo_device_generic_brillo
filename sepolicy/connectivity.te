@@ -26,9 +26,9 @@ allow connectivity self:netlink_route_socket { write getattr nlmsg_write read bi
 allow connectivity self:packet_socket { write ioctl setopt read bind create };
 allow connectivity sysfs:file write;
 allow connectivity system_file:file execute_no_trans;
-allow connectivity wifi_data_file:dir { write getattr add_name search };
-allow connectivity wifi_data_file:file { create read getattr open setattr write };
-allow connectivity wpa_exec:file { read getattr open execute execute_no_trans };
+allow connectivity wifi_data_file:dir { rw_dir_perms };
+allow connectivity wifi_data_file:file { create_file_perms };
+allow connectivity wpa_exec:file { rx_file_perms };
 allow connectivity self:capability { sys_module dac_override };
 allow connectivity self:netlink_socket { write getattr setopt read bind create };
 allow connectivity shell_exec:file { read execute open };
