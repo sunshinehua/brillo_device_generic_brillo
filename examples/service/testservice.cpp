@@ -18,14 +18,14 @@
 
 #include <unistd.h>
 
-#include <log/log.h>
+#include <base/logging.h>
 
 int main(int argc __unused, char **argv __unused) {
-    ALOGI("starting");
+    LOG(INFO) << "starting";
     while (1) {
-        ALOGI("loop iteration");
+        LOG(INFO) << "loop iteration";
         sleep(5);
     }
-    ALOGI("exiting");
+    LOG(INFO) << "exiting";
     return 0;
 }

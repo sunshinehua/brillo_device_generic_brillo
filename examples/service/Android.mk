@@ -17,8 +17,8 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := testservice
 LOCAL_REQUIRED_MODULES := init.testservice.rc
-LOCAL_SRC_FILES := testservice.c
-LOCAL_SHARED_LIBRARIES := libc liblog
+LOCAL_SRC_FILES := testservice.cpp
+LOCAL_SHARED_LIBRARIES := libc libbase
 LOCAL_CFLAGS := -Werror
 include $(BUILD_EXECUTABLE)
 
