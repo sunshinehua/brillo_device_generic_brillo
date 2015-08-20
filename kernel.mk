@@ -62,13 +62,12 @@ endif
 
 # Set the output for the kernel build products.
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
+
 KERNEL_CONFIG := $(KERNEL_OUT)/.config
 # Get the absolute path of the out folder.
-KERNEL_OUT_ABS := $(shell readlink -f $(KERNEL_OUT))
+KERNEL_OUT_ABS := $(ANDROID_BUILD_TOP)/$(KERNEL_OUT)
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/$(KERNEL_NAME)
-
-TARGET_PREBUILT_KERNEL := $(KERNEL_BIN)
 
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
@@ -82,7 +81,7 @@ $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=$(KERNEL_OUT_ABS) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) $(KERNEL_CFLAGS)
 
-$(PRODUCT_OUT)/kernel: $(TARGET_PREBUILT_KERNEL) | $(ACP)
+$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) | $(ACP)
 	$(ACP) -fp $< $@
 
 endif
