@@ -20,9 +20,16 @@
 
 on boot
     start firewall-setup
+    start set-sane-date
 
 on property:firewall.init=1
     enable firewalld
+
+# TODO(drewry): Remove once tlsdated is in. http://b/22118919
+service set-sane-date /system/etc/init.set-sane-initial-date.sh
+    user root
+    group root
+    oneshot
 
 service firewall-setup /system/etc/init.firewall-setup.sh
     user root
