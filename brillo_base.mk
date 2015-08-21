@@ -41,6 +41,7 @@ PRODUCT_PACKAGES = \
   init.environ.rc \
   init.rc \
   ip \
+  ip6tables \
   iptables \
   libminijail \
   linker \
