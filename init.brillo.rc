@@ -19,12 +19,12 @@
 # them into /initrc.d.
 
 on boot
-    start brillo-firewall
+    start firewall-setup
 
 on property:firewall.init=1
     enable firewalld
 
-service brillo-firewall /system/etc/init.brillo-setup-firewall.sh
+service firewall-setup /system/etc/init.firewall-setup.sh
     user root
     group root net_admin net_raw
     oneshot
