@@ -13,6 +13,7 @@
 # E.g.
 #/system/bin/testservice    u:object_r:brillo_exec:s0
 #
+/system/bin/avahi-daemon   u:object_r:brillo_exec:s0
 /system/bin/firewalld      u:object_r:brillo_exec:s0
 /system/bin/weaved         u:object_r:brillo_exec:s0
 /system/bin/webservd       u:object_r:brillo_exec:s0
