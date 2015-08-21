@@ -61,4 +61,4 @@ done
 
 
 # Set completion property.
-setprop brillo.setup_firewall 1
+setprop firewall.init 1

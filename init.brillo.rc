@@ -21,7 +21,7 @@
 on boot
     start brillo-firewall
 
-on property:brillo.setup_firewall=1
+on property:firewall.init=1
     enable firewalld
 
 service brillo-firewall /system/etc/init.brillo-setup-firewall.sh
