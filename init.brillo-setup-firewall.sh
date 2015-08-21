@@ -53,6 +53,10 @@ for iptables in ip{,6}tables; do
 
   # Accept inbound mDNS traffic.
   ${iptables}_mdns_setup
+
+  # Accept DHCP traffic (communicating as either client or server).
+  ${iptables_bin} -I INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT -w
+  ${iptables_bin} -I OUTPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT -w
 done
 
 
