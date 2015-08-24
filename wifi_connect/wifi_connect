@@ -35,14 +35,62 @@ google_domain_name_servers="8.8.8.8 8.8.4.4"
 # This file contains platform-specific information.  It defines the
 # startup_wifi method, which sets up client and AP functionality and
 # returns the interface name created.
-wifi_init_script=/system/usr/share/wifi/wifi_init
+wifi_init_script="/system/usr/share/wifi/wifi_init"
+
+pid_file_for () {
+  # Return the pid file for |process_name|.
+  local process_name="$1"
+  echo "${data_dir}/${process_name}.pid"
+}
+
+kill_process () {
+  # Kill |process_name| with signal |signal|.
+  local process_name="$1"
+  local signal="$2"
+  if [ -z "${signal}" ] ; then
+    signal=TERM
+  fi
+  local pid_file="$(pid_file_for "${process_name}")"
+  if [ -z "${pid_file}" -o ! -f "${pid_file}" ] ; then
+    return 0
+  fi
+  local pid
+  pid="$(cat "${pid_file}")"
+  if [ "$signal" != "HUP" ] ; then
+    rm -f "${pid_file}"
+  fi
+  if [ -z "${pid}" ] ; then
+    return 0
+  fi
+  kill "-${signal}" "${pid}" || return 0
+  sleep 1
+}
+
+kill_dhcp_for () {
+  # Kill the dhcp process running on |interface|.
+  local interface="$1"
+  local pid="$(getprop dhcp.${interface}.pid)"
+  if [ -z "${pid}" ] ; then
+    return 0
+  fi
+  kill "${pid}" || true
+}
 
 kill_servers () {
   # Kills the running supplicant.
-  killall 2>/dev/null wpa_supplicant && sleep 1
-  killall 2>/dev/null hostapd && sleep 1
-  killall 2>/dev/null dnsmasq || true
-  killall 2>/dev/null dhcpcd || true
+  kill_process wpa_supplicant
+  kill_process hostapd
+  kill_process dnsmasq
+}
+
+run_supplicant () {
+  # Startup supplicant process on |interface|.
+  local interface="$1"
+  wpa_supplicant -B -d -Dnl80211 -i"${interface}" -c "$client_config_file" \
+      -P"$(pid_file_for wpa_supplicant)"
+
+  # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
+  kill_process wpa_supplicant HUP
 }
 
 start_supplicant () {
@@ -53,7 +101,7 @@ start_supplicant () {
   make_config_dir
   get_supplicant_config "$@" > "$client_config_file"
   chmod 644 "$client_config_file"
-  wpa_supplicant -B -d -Dnl80211 -i"$interface" -c "$client_config_file"
+  run_supplicant "${interface}"
 }
 
 start_hostapd () {
@@ -64,7 +112,7 @@ start_hostapd () {
   make_config_dir
   get_hostap_config "${interface}" "$@" > "$ap_config_file"
   chmod 644 "$ap_config_file"
-  hostapd -B -d "$ap_config_file"
+  hostapd -B -d -P "$(pid_file_for hostapd)" "$ap_config_file"
   echo "${interface}"
 }
 
@@ -137,9 +185,6 @@ connect_client () {
   # Start up a client.
   start_supplicant "$@"
 
-  # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
-  pkill -1 wpa_supplicant
-
   for try in $(seq 1 30) ; do
     if check_link_status ; then
       start_dhcp
@@ -157,6 +202,7 @@ start_dhcp () {
   # method, which will apply the IP configuration gained from DHCP.  After
   # starting dhcpcd, the parent process monitors the progress of dhcpcd
   # below.
+  kill_dhcp_for "${client_interface}"
   rm -f "${dhcp_dir}"/*
   dhcpcd --script "$0" --env FROM_DHCPCD=1 "${client_interface}"
   for try in $(seq 1 15) ; do
@@ -174,17 +220,17 @@ start_dhcp () {
 
 start_dns () {
   # Starts local DNS proxy for bionic clients.
-  killall dnsmasq 2>/dev/null || true
+  kill_process dnsmasq
   local nameservers=$(cat "${nameserver_list}")
   if [ -z "${nameservers}" ] ; then
     nameservers="${google_domain_name_servers}"
   fi
-  local args="--no-hosts --listen-address=127.0.0.1 --no-resolv --pid-file"
+  local args="--no-hosts --listen-address=127.0.0.1 --no-resolv"
   for dns_server in $nameservers; do
     args="${args} --server=${dns_server}"
   done
   # dnsmasq appears to read from stdin, even when not in debug mode.
-  dnsmasq $args < /dev/null
+  dnsmasq $args "--pid-file=$(pid_file_for dnsmasq)" < /dev/null
 }
 
 configure_client () {
@@ -209,7 +255,7 @@ configure_client () {
   fi
 }
 
-get_dnsmasq_config () {
+get_dnsmasq_server_config () {
   # Returns the dnsmasq.conf content.
   # Usage: get_dnsmasq_config <interface> <ip_prefix>
   local interface="$1"
@@ -227,11 +273,12 @@ setup_ap () {
   local interface
   interface="$(start_hostapd "$@")"
   local ip_prefix=192.168.69
+  kill_dhcp_for "${interface}"
   ifconfig "${interface}" "${ip_prefix}.1"
   local config_file="${data_dir}/dnsmasq.conf"
-  get_dnsmasq_config "${interface}" "${ip_prefix}" > "${config_file}"
+  get_dnsmasq_server_config "${interface}" "${ip_prefix}" > "${config_file}"
   chmod 644 "$config_file"
-  dnsmasq --conf-file="${config_file}" --pid-file="${dhcp_dir}/dnsmasq.pid"
+  dnsmasq --conf-file="${config_file}" --pid-file="$(pid_file_for dnsmasq)"
 }
 
 resume_client () {
@@ -246,8 +293,7 @@ resume_client () {
   local interface
   interface="$(startup_wifi client)"
   chmod 644 "$client_config_file"
-  wpa_supplicant -B -d -Dnl80211 -i"${interface}" -c "$client_config_file"
-  pkill -1 wpa_supplicant
+  run_supplicant "${interface}"
   start_dhcp
 }
 
