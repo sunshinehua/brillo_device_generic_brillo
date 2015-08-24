@@ -1,45 +1,36 @@
 type crash_reporter, domain;
+type crash_reporter_data_file, file_type, data_file_type;
 type crash_reporter_exec, exec_type, file_type;
 type crash_reporter_prop, property_type;
 
 # Permissions for crash collector directory.
-allow crash_reporter crash_reporter:dir create_dir_perms;
-allow crash_reporter crash_reporter:file create_file_perms;
+allow crash_reporter crash_reporter_data_file:dir create_dir_perms;
+allow crash_reporter crash_reporter_data_file:file create_file_perms;
 
 # Allow starting from init.
 init_daemon_domain(crash_reporter)
-
-# Allow init to create required directories.
-allow init crash_reporter:dir create_dir_perms;
-allow crash_reporter labeledfs:filesystem associate;
 
 # Allow setting supplementary groups.
 allow crash_reporter crash_reporter:capability { setgid };
 
 # Allow using metrics_lib.
-allow crash_reporter metrics_data_file:dir { add_name search write };
-allow crash_reporter metrics_data_file:file { append create getattr lock open read setattr write };
+allow crash_reporter metrics_data_file:dir ra_dir_perms;
+allow crash_reporter metrics_data_file:file create_file_perms;
 
 # Allow setting crash reporter properties.
 set_prop(crash_reporter, crash_reporter_prop)
 
-# Allow triggering by kernel during core dumps.
-domain_auto_trans(kernel, crash_reporter_exec, crash_reporter)
-
-# Allow access to core dump files.
-allow crash_reporter kernel:fifo_file { open read };
-allow crash_reporter su:dir { search };
-allow crash_reporter su:lnk_file { read };
-allow crash_reporter su:file { open read };
+# Allow access to brillo core dump files.
+r_dir_file(crash_reporter, brillo)
+allow crash_reporter brillo_exec:file r_file_perms;
 
 # Permissions for calling dbus-send and signaling metrics.
-allow crash_reporter su:file { getattr };
-allow crash_reporter kernel:fifo_file { getattr ioctl };
-#TODO(stevefung): Remove shell_exec policy once system() call is removed.
+allow crash_reporter kernel:fifo_file r_file_perms;
+#TODO(b/23280203): Remove shell_exec policy once system() call is removed.
 allow crash_reporter shell_exec:file rx_file_perms;
 
 # Allow calling core2md.
-allow crash_reporter crash_reporter_exec:file execute_no_trans;
+allow crash_reporter crash_reporter_exec:file rx_file_perms;
 
 # Allow calling dbus-send.
 allow crash_reporter crash_reporter:capability { setuid };
