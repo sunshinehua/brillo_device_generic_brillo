@@ -22,10 +22,15 @@ allow brillo self:capability { net_bind_service };
 # Rules for the metrics daemon.
 type metrics_data_file, file_type, data_file_type;
 dontaudit brillo kernel:system module_request;
-allow brillo metrics_data_file:dir {add_name search write};
-allow brillo metrics_data_file:file {append create getattr lock open read setattr write};
+allow brillo metrics_data_file:dir { add_name search write };
+allow brillo metrics_data_file:file { append create getattr lock open read setattr write };
 
 # Needed for avahi-daemon
 allow brillo self:netlink_route_socket { write setopt read bind create nlmsg_read };
 allow brillo system_data_file:dir open;
 allow brillo system_data_file:file open;
+
+# Rules for weaved
+type weaved_data_file, file_type, data_file_type;
+allow brillo weaved_data_file:dir { w_dir_perms };
+allow brillo weaved_data_file:file { create_file_perms };

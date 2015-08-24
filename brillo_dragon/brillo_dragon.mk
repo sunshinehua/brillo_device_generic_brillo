@@ -23,7 +23,7 @@ PRODUCT_DEVICE := brillo_dragon
 
 WIFI_INIT_MODULE := qcwcn
 
-# Install DragonBoard-specific config file for weaved
+# Install DragonBoard-specific config file for weaved.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo_dragon/weaved.conf:system/etc/weaved/weaved.conf \
 
