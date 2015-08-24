@@ -11,7 +11,6 @@ init_daemon_domain(crash_reporter)
 
 # Allow init to create required directories.
 allow init crash_reporter:dir create_dir_perms;
-allow init shell_data_file:dir create_dir_perms;
 allow crash_reporter labeledfs:filesystem associate;
 
 # Allow setting supplementary groups.
@@ -38,9 +37,6 @@ allow crash_reporter su:file { getattr };
 allow crash_reporter kernel:fifo_file { getattr ioctl };
 #TODO(stevefung): Remove shell_exec policy once system() call is removed.
 allow crash_reporter shell_exec:file rx_file_perms;
-
-# Permissions for writing to tmp storage.
-allow crash_reporter shell_data_file:dir create_dir_perms;
 
 # Allow calling core2md.
 allow crash_reporter crash_reporter_exec:file execute_no_trans;
