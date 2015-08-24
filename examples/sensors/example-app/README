@@ -1,0 +1,9 @@
+This folder contains example code for writing native apps that use Brillo
+sensors.
+
+Example files:
+  hal-example-app.cpp:
+    An example app that uses the sensors HAL (defined in
+    hardware/libhardware/include/sensors.h) directly. In the app, the list of
+    sensors found on the device is printed. And if an accelerometer exists, the
+    app will read the data and print it out.
