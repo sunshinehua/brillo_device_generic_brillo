@@ -6,7 +6,7 @@
 # Crash Reporter contexts.
 /system/bin/core2md              u:object_r:crash_reporter_exec:s0
 /system/bin/crash_reporter       u:object_r:crash_reporter_exec:s0
-/data/misc/crash_reporter(/.*)?  u:object_r:crash_reporter:s0
+/data/misc/crash_reporter(/.*)?  u:object_r:crash_reporter_data_file:s0
 
 # Brillo system service binaries are 'brillo_exec' objects for now.
 # E.g.
