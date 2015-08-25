@@ -38,7 +38,7 @@ scan_for_brillo_devices()
 {
   test -n "$NO_BRILLO" && return
   local f
-  for f in `test -d device/ && find -L device/ -maxdepth 4 -name 'devicesetup.sh' 2> /dev/null | sort`;
+  for f in `test -d device/ && find -L device/ -maxdepth 6 -name 'devicesetup.sh' 2> /dev/null | sort`;
   do
     echo "including $f"
     . $f
