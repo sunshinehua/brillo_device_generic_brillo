@@ -45,7 +45,11 @@ ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
 KERNEL_TOOLCHAIN_ABS := $(shell readlink -f $(TARGET_TOOLCHAIN_ROOT)/bin)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
+ifdef TARGET_KERNEL_DTB
+KERNEL_NAME := zImage
+else
 KERNEL_NAME := zImage-dtb
+endif
 else
 $(error only arm32 supported at the present)
 endif
@@ -68,6 +72,12 @@ KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/$(KERNEL_NAME)
 
+ifdef TARGET_KERNEL_DTB
+KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
+$(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) | $(ACP)
+	$(ACP) -fp $(KERNEL_DTB) $@
+endif
+
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 
@@ -80,8 +90,13 @@ $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=`readlink -f $(KERNEL_OUT)` ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) $(KERNEL_CFLAGS)
 
+ifdef TARGET_KERNEL_DTB
+$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel-dtb | $(ACP)
+	$(ACP) -fp $< $@
+else
 $(PRODUCT_OUT)/kernel: $(KERNEL_BIN) | $(ACP)
 	$(ACP) -fp $< $@
+endif
 
 endif
 
