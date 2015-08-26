@@ -23,3 +23,6 @@ allow brillo_setup property_socket:sock_file write;
 
 # Needed for set-sane-date.sh.
 allow brillo_setup self:capability { sys_time };
+
+# Quiet logging.
+dontaudit brillo_setup kernel:system module_request;
