@@ -15,10 +15,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -e
+
+function PrintUsage() {
+  echo "$0 -m <mem>"
+  echo -e "\t-m <mem>\tSet memory size in MB"
+  exit 1
+}
+
+MEM=1024
+ARGS=$(getopt -o hm: -- "$@")
+eval set -- "$ARGS"
+while true ; do
+   case "$1" in
+     -m)
+        case "$2" in
+          *) MEM=$2; shift 2;;
+        esac ;;
+     -h) PrintUsage ;;
+     --) shift; break ;;
+   esac
+done
+
+echo Starting Emulator with ${MEM}MB Memory
 
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-aarch64 \
   -M vexpress-a9 \
-  -m 1024M \
+  -m ${MEM}M \
   -kernel ${ANDROID_PRODUCT_OUT}/kernel \
   -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=enforcing" \
   -nographic \
