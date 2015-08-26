@@ -35,6 +35,7 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 PRODUCT_COPY_FILES += \
   $(LOCAL_PATH)/init.qemu.rc:root/initrc.d/init.qemu.rc \
+  $(LOCAL_PATH)/initnetwork.sh:system/bin/initnetwork.sh \
   system/core/rootdir/init.usb.rc:root/init.usb.rc \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \
 
@@ -43,3 +44,5 @@ TARGET_KERNEL_SRC := hardware/bsp/kernel/common/android-3.18
 TARGET_KERNEL_DEFCONFIG := vexpress_defconfig
 TARGET_KERNEL_DTB := vexpress-v2p-ca9.dtb
 TARGET_KERNEL_CONFIGS := $(shell readlink -f $(LOCAL_PATH)/brillo.kconf)
+
+BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) $(LOCAL_PATH)/sepolicy
