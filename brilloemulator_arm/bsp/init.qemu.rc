@@ -16,3 +16,11 @@
 
 on fs
     mount_all /fstab.device
+
+on boot
+    start initnetwork
+
+service initnetwork /system/bin/initnetwork.sh
+    user root
+    group root
+    oneshot
