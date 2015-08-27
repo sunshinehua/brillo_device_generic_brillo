@@ -34,7 +34,7 @@ BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 PRODUCT_COPY_FILES += \
-  $(LOCAL_PATH)/init.qemu.rc:root/initrc.d/init.qemu.rc \
+  $(LOCAL_PATH)/init.qemu.rc:root/init.qemu.rc \
   $(LOCAL_PATH)/initnetwork.sh:system/bin/initnetwork.sh \
   system/core/rootdir/init.usb.rc:root/init.usb.rc \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \

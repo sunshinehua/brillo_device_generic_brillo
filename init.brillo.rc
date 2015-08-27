@@ -48,5 +48,3 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     user system
     group system dbus
     disabled
-
-import /initrc.d

@@ -43,7 +43,7 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -M vexpress-a9 \
   -m ${MEM}M \
   -kernel ${ANDROID_PRODUCT_OUT}/kernel \
-  -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=brillo qemu=1 androidboot.selinux=enforcing" \
+  -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=qemu qemu=1 androidboot.selinux=enforcing" \
   -nographic \
   -initrd ${ANDROID_PRODUCT_OUT}/ramdisk.img \
   -device virtio-scsi-device,id=scsi \
