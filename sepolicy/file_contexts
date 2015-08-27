@@ -14,6 +14,9 @@
 #
 /system/bin/avahi-daemon   u:object_r:brillo_exec:s0
 /system/bin/firewalld      u:object_r:brillo_exec:s0
+/system/bin/tlsdated       u:object_r:brillo_exec:s0
+/system/bin/tlsdate-helper u:object_r:brillo_exec:s0
+/system/bin/tlsdate        u:object_r:brillo_exec:s0
 /system/bin/webservd       u:object_r:brillo_exec:s0
 
 /system/bin/wifi_connect   u:object_r:connectivity_exec:s0

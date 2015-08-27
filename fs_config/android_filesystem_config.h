@@ -30,5 +30,6 @@
 ** and will allow partial matches.
 */
 static const struct fs_path_config android_device_files[] = {
-    { 00700, AID_SYSTEM,    AID_SHELL,     (1ULL << CAP_NET_BIND_SERVICE), "system/bin/webservd" },
+    { 00700, AID_SYSTEM, AID_SHELL, (1ULL << CAP_SYS_TIME),         "system/bin/tlsdated" },
+    { 00700, AID_SYSTEM, AID_SHELL, (1ULL << CAP_NET_BIND_SERVICE), "system/bin/webservd" },
 };

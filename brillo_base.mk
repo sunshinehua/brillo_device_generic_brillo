@@ -95,6 +95,12 @@ PRODUCT_PACKAGES += \
   avahi-daemon \
   libdaemon \
 
+# tlsdate binaries.
+PRODUCT_PACKAGES += \
+  tlsdate \
+  tlsdate-helper \
+  tlsdated \
+
 # For android_filesystem_config.h
 # This configures filesystem capabilities.
 TARGET_ANDROID_FILESYSTEM_CONFIG_H := \
