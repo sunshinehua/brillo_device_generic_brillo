@@ -80,6 +80,8 @@ PRODUCT_PACKAGES += \
   dnsmasq \
   hostapd \
   wpa_supplicant \
+  dhcpcd-6.8.2 \
+  dhcpcd-6.8.2.conf \
 
 # Metrics daemon and metrics library
 PRODUCT_PACKAGES += \
@@ -102,6 +104,10 @@ BOARD_HOSTAPD_DRIVER := NL80211
 # Enable WPA supplicant D-Bus support.
 CONFIG_CTRL_IFACE_DBUS=y
 CONFIG_CTRL_IFACE_DBUS_NEW=y
+
+# Settings for dhcpcd-6.8.2.
+DHCPCD_USE_IPV6=yes
+DHCPCD_USE_DBUS=yes
 
 # Wireless debugging.
 PRODUCT_PACKAGES += \
