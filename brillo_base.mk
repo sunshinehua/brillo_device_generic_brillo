@@ -94,6 +94,13 @@ PRODUCT_PACKAGES += \
   avahi-daemon \
   libdaemon \
 
+# For android_filesystem_config.h
+# This configures filesystem capabilities.
+TARGET_ANDROID_FILESYSTEM_CONFIG_H := \
+device/generic/brillo/fs_config/android_filesystem_config.h
+PRODUCT_PACKAGES += \
+  fs_config_files \
+
 # We must select a wpa_supplicant version, or the AOSP version won't be built.
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
