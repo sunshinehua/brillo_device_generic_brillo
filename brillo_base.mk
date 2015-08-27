@@ -19,12 +19,12 @@
 
 # Common Brillo init script
 PRODUCT_COPY_FILES += \
-  device/generic/brillo/init.brillo.rc:root/init.brillo.rc \
+  device/generic/brillo/init.brillo.rc:system/etc/init/init.brillo.rc \
   device/generic/brillo/init.firewall-setup.sh:system/etc/init.firewall-setup.sh \
   device/generic/brillo/init.set-sane-initial-date.sh:system/etc/init.set-sane-initial-date.sh
 
 # Directory for init files.
-TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_ROOT)/initrc.d
+TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_SYSTEM)/etc/init
 
 # Skip API checks.
 WITHOUT_CHECK_API := true
