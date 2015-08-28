@@ -40,18 +40,22 @@ $(error TARGET_KERNEL_ARCH not defined)
 endif
 
 # Check target arch.
-TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
-ifeq ($(TARGET_KERNEL_ARCH), arm)
-KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
 KERNEL_TOOLCHAIN_ABS := $(shell readlink -f $(TARGET_TOOLCHAIN_ROOT)/bin)
+TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
+KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
+
+ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
 ifdef TARGET_KERNEL_DTB
 KERNEL_NAME := zImage
 else
 KERNEL_NAME := zImage-dtb
 endif
+else ifeq ($(TARGET_KERNEL_ARCH), arm64)
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-android-
+KERNEL_NAME := Image
 else
-$(error only arm32 supported at the present)
+$(error kernel arch not supported at present)
 endif
 
 # Allow caller to override toolchain.
