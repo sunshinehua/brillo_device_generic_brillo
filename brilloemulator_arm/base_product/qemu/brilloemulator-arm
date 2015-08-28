@@ -42,14 +42,14 @@ echo Starting Emulator with ${MEM}MB Memory
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-aarch64 \
   -M vexpress-a9 \
   -m ${MEM}M \
-  -kernel ${ANDROID_PRODUCT_OUT}/kernel \
+  -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/kernel \
   -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=qemu qemu=1 androidboot.selinux=enforcing" \
   -nographic \
-  -initrd ${ANDROID_PRODUCT_OUT}/ramdisk.img \
+  -initrd ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/ramdisk.img \
   -device virtio-scsi-device,id=scsi \
   -device scsi-hd,drive=system \
-  -drive file="${ANDROID_PRODUCT_OUT}/system.img,if=none,id=system,format=raw" \
+  -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/system.img,if=none,id=system,format=raw" \
   -device scsi-hd,drive=userdata \
-  -drive file="${ANDROID_PRODUCT_OUT}/userdata.img,if=none,id=userdata,format=raw" \
+  -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/userdata.img,if=none,id=userdata,format=raw" \
   -redir tcp:5555::5555 \
-  -dtb ${ANDROID_PRODUCT_OUT}/kernel-dtb
+  -dtb ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/kernel-dtb

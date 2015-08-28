@@ -43,15 +43,15 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -M virt \
   -cpu cortex-a57 \
   -m ${MEM}M \
-  -kernel ${ANDROID_PRODUCT_OUT}/kernel \
+  -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/kernel \
   -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=qemu qemu=1 androidboot.selinux=enforcing" \
   -nographic \
-  -initrd ${ANDROID_PRODUCT_OUT}/ramdisk.img \
+  -initrd ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/ramdisk.img \
   -device virtio-scsi-device,id=scsi \
   -device scsi-hd,drive=system \
-  -drive file="${ANDROID_PRODUCT_OUT}/system.img,if=none,id=system,format=raw" \
+  -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/system.img,if=none,id=system,format=raw" \
   -device scsi-hd,drive=userdata \
-  -drive file="${ANDROID_PRODUCT_OUT}/userdata.img,if=none,id=userdata,format=raw" \
+  -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/userdata.img,if=none,id=userdata,format=raw" \
   -redir tcp:5555::5555 \
   -netdev user,id=net0 \
   -device virtio-net-device,netdev=net0 \
