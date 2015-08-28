@@ -89,6 +89,14 @@ run_supplicant () {
   wpa_supplicant -B -d -Dnl80211 -i"${interface}" -c "$client_config_file" \
       -P"$(pid_file_for wpa_supplicant)"
 
+  # Wait until supplicant has fully daemonized.
+  for try in $(seq 1 3) ; do
+    sleep 1
+    if [ -f $(pid_file_for wpa_supplicant) ] ; then
+      break
+    fi
+  done
+
   # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
   kill_process wpa_supplicant HUP
 }
