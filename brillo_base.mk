@@ -49,6 +49,7 @@ PRODUCT_PACKAGES = \
   logcat \
   logd \
   reboot \
+  servicemanager \
   sh \
   toolbox \
   toybox \
