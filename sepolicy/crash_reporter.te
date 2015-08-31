@@ -26,8 +26,6 @@ allow crash_reporter brillo_exec:file r_file_perms;
 
 # Permissions for calling dbus-send and signaling metrics.
 allow crash_reporter kernel:fifo_file r_file_perms;
-#TODO(b/23280203): Remove shell_exec policy once system() call is removed.
-allow crash_reporter shell_exec:file rx_file_perms;
 
 # Allow calling core2md.
 allow crash_reporter crash_reporter_exec:file rx_file_perms;
