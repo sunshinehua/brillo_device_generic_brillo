@@ -208,6 +208,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
   wifi_connect \
 
+# Bluetooth.
+PRODUCT_PACKAGES += \
+  bluetoothtbd \
+  bluetooth-cli \
+
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dbus.conf:system/etc/dbus.conf \
