@@ -96,11 +96,10 @@ PRODUCT_PACKAGES += \
   libdaemon \
 
 # tlsdate binaries.
-# TODO(garnold) Restore once all AOSP fixes propagate.
-#PRODUCT_PACKAGES += \
-#  tlsdate \
-#  tlsdate-helper \
-#  tlsdated \
+PRODUCT_PACKAGES += \
+  tlsdate \
+  tlsdate-helper \
+  tlsdated \
 
 # For android_filesystem_config.h
 # This configures filesystem capabilities.
