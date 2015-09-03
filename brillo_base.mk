@@ -44,6 +44,8 @@ PRODUCT_PACKAGES = \
   ip \
   ip6tables \
   iptables \
+  keymaster \
+  keystore \
   libminijail \
   linker \
   logcat \
