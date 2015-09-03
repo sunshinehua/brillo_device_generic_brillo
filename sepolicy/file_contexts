@@ -3,21 +3,18 @@
 /system/bin/dbus-send      u:object_r:dbus_daemon_exec:s0
 /dev/socket/connectivity   u:object_r:connectivity_socket:s0
 
-# Crash Reporter contexts.
 /system/bin/core2md              u:object_r:crash_reporter_exec:s0
 /system/bin/crash_reporter       u:object_r:crash_reporter_exec:s0
 /system/bin/crash_sender         u:object_r:crash_reporter_exec:s0
 /system/bin/periodic_scheduler   u:object_r:crash_reporter_exec:s0
 /data/misc/crash_reporter(/.*)?  u:object_r:crash_reporter_data_file:s0
 
-# Brillo system service binaries are 'brillo_exec' objects for now.
-# E.g.
-#/system/bin/testservice    u:object_r:brillo_exec:s0
-#
+# Some Brillo system service binaries are still 'brillo_exec' objects, but
+# introducing more-specific domains to avoid granting unneeded permissions is
+# preferred.
 /system/bin/avahi-daemon   u:object_r:brillo_exec:s0
 /system/bin/firewalld      u:object_r:brillo_exec:s0
 
-# Defining the contexts for webservd.
 /system/bin/webservd       u:object_r:webservd_exec:s0
 /data/misc/webservd(/.*)?  u:object_r:webservd_data_file:s0
 
@@ -25,22 +22,20 @@
 /system/bin/wifi_init      u:object_r:connectivity_exec:s0
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
 
-# Defining the contexts for metricsd.
-/data/misc/metrics(/.*)?    u:object_r:metrics_data_file:s0
-/system/bin/metrics_daemon  u:object_r:brillo_exec:s0
-/system/bin/metrics_client  u:object_r:brillo_exec:s0
+/data/misc/metrics(/.*)?   u:object_r:metrics_data_file:s0
+/system/bin/metrics_daemon u:object_r:brillo_exec:s0
+/system/bin/metrics_client u:object_r:brillo_exec:s0
 
-# Defining the contexts for weaved.
 /data/misc/weaved(/.*)?    u:object_r:weaved_data_file:s0
 /system/bin/weaved         u:object_r:brillo_exec:s0
 
-# Defining the contexts for tlsdated.
 /data/misc/tlsdated(/.*)?  u:object_r:tlsdated_data_file:s0
 /system/bin/tlsdated       u:object_r:brillo_exec:s0
 /system/bin/tlsdate-helper u:object_r:brillo_exec:s0
 /system/bin/tlsdate        u:object_r:brillo_exec:s0
 
-# Defining the contexts for update_engine.
+/system/bin/nativepowerman u:object_r:nativepowerman_exec:s0
+
 /system/bin/update_engine        u:object_r:update_engine_exec:s0
 /system/bin/update_engine_client u:object_r:update_engine_exec:s0
 /data/misc/update_engine(/.*)?   u:object_r:update_engine_data_file:s0
