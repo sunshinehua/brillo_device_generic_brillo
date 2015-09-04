@@ -9,7 +9,7 @@ init_daemon_domain(connectivity)
 net_domain(connectivity)
 
 # Following permissions are needed for connectivity.
-allow connectivity connectivity_device:chr_file { write open };
+allow connectivity connectivity_device:chr_file { read write open };
 allow connectivity connectivity_exec:file execute_no_trans;
 allow connectivity connectivity_sysfs_entry:file { read write getattr open };
 allow connectivity dhcp_data_file:dir { add_name read remove_name open write search };
@@ -35,3 +35,4 @@ allow connectivity shell_exec:file { read execute open };
 
 # Don't spam the logs.
 dontaudit connectivity kernel:system module_request;
+dontaudit connectivity connectivity_device:chr_file { getattr ioctl };
