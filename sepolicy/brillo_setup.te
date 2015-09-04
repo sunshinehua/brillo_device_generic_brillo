@@ -21,9 +21,6 @@ allow brillo_setup brillo_setup_prop:property_service set;
 allow brillo_setup init:unix_stream_socket connectto;
 allow brillo_setup property_socket:sock_file write;
 
-# Needed for set-sane-date.sh.
-allow brillo_setup self:capability { sys_time };
-
 allow brillo_setup toolbox_exec:file { rx_file_perms };
 
 # Quiet logging.
