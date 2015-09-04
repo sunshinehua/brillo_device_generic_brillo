@@ -182,19 +182,24 @@ endef
 
 
 HARDWARE_BSP_PREFIX := hardware/bsp
+HARDWARE_BSP_PREBUILTS_PREFIX := vendor/bsp
 # New BSP helpers - move to /build once stable.
 define set_soc
   $(eval soc_vendor := $(strip $(1))) \
   $(eval soc_name := $(strip $(2))) \
   $(eval soc_make_file := $(HARDWARE_BSP_PREFIX)/$(soc_vendor)/soc/$(soc_name)/soc.mk) \
+  $(eval soc_prebuilts_make_file := $(HARDWARE_BSP_PREBUILTS_PREFIX)/$(soc_vendor)/hardware/soc/$(soc_name)/soc.mk) \
   $(if $(wildcard $(soc_make_file)),$(eval include $(soc_make_file)), \
-    $(error Can't find SoC definition. Vendor: $(soc_vendor) SoC: $(soc_name)))
+    $(if $(wildcard $(soc_prebuilts_make_file)),$(eval include $(soc_prebuilts_make_file)), \
+       $(error Can't find SoC definition. Vendor: $(soc_vendor) SoC: $(soc_name))))
 endef
 
 define add_peripheral
   $(eval peripheral_vendor := $(strip $(1))) \
   $(eval peripheral_name := $(strip $(2))) \
   $(eval peripheral_make_file := $(HARDWARE_BSP_PREFIX)/$(peripheral_vendor)/peripheral/$(peripheral_name)/peripheral.mk) \
+  $(eval peripheral_prebuilts_make_file := $(HARDWARE_BSP_PREBUILTS_PREFIX)/$(peripheral_vendor)/hardware/peripheral/$(peripheral_name)/peripheral.mk) \
   $(if $(wildcard $(peripheral_make_file)),$(eval include $(peripheral_make_file)), \
-    $(error Can't find peripheral definition. Vendor: $(peripheral_vendor) peripheral: $(peripheral_name)))
+    $(if $(wildcard $(peripheral_prebuilts_make_file)),$(eval include $(peripheral_prebuilts_make_file)), \
+      $(error Can't find peripheral definition. Vendor: $(peripheral_vendor) peripheral: $(peripheral_name))))
 endef
