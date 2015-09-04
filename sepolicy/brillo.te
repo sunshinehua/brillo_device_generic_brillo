@@ -36,5 +36,8 @@ allow brillo weaved_data_file:dir { w_dir_perms };
 allow brillo weaved_data_file:file { create_file_perms };
 
 # Rules for tlsdated and helpers.
-allow brillo self:capability { sys_time setuid setgid };
+type tlsdated_data_file, file_type, data_file_type;
 allow brillo brillo_exec:file execute_no_trans;
+allow brillo self:capability { sys_time setuid setgid };
+allow brillo tlsdated_data_file:dir { w_dir_perms };
+allow brillo tlsdated_data_file:file { create_file_perms };
