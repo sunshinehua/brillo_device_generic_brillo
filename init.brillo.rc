@@ -20,6 +20,7 @@
 
 on boot
     start firewall-setup
+    setprop dev.bootcomplete 1
 
 on property:firewall.init=1
     enable firewalld
