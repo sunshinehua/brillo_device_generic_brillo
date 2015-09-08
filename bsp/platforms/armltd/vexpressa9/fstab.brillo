@@ -1,3 +1,0 @@
-/dev/block/sda   /system             ext4      ro                                                    wait
-/dev/block/sdb   /data               ext4      noatime,nosuid,nodev,nomblk_io_submit,errors=panic    wait,check
-
