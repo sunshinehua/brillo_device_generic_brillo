@@ -1,0 +1,14 @@
+# Domain for webservd daemon.
+type webservd, domain;
+type webservd_exec, exec_type, file_type;
+type webservd_data_file, file_type, data_file_type;
+
+init_daemon_domain(webservd)
+net_domain(webservd)
+unix_socket_connect(webservd, dbus_daemon, dbus_daemon)
+
+dontaudit webservd kernel:system module_request;
+
+allow webservd self:capability { net_bind_service };
+allow webservd webservd_data_file:dir ra_dir_perms;
+allow webservd webservd_data_file:file create_file_perms;

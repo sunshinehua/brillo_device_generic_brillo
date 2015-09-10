@@ -14,7 +14,10 @@
 #
 /system/bin/avahi-daemon   u:object_r:brillo_exec:s0
 /system/bin/firewalld      u:object_r:brillo_exec:s0
-/system/bin/webservd       u:object_r:brillo_exec:s0
+
+# Defining the contexts for webservd.
+/system/bin/webservd       u:object_r:webservd_exec:s0
+/data/misc/webservd(/.*)?  u:object_r:webservd_data_file:s0
 
 /system/bin/wifi_connect   u:object_r:connectivity_exec:s0
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
