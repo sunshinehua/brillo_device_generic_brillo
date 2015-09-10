@@ -16,9 +16,6 @@ allow brillo self:rawip_socket setopt;
 allow brillo self:udp_socket create;
 allow brillo system_file:file execute_no_trans;
 
-# Rules for webservd.
-allow brillo self:capability { net_bind_service };
-
 # Rules for the metrics daemon.
 type metrics_data_file, file_type, data_file_type;
 dontaudit brillo kernel:system module_request;
