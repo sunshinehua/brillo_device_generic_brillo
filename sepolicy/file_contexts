@@ -22,10 +22,8 @@
 /data/misc/webservd(/.*)?  u:object_r:webservd_data_file:s0
 
 /system/bin/wifi_connect   u:object_r:connectivity_exec:s0
+/system/bin/wifi_init      u:object_r:connectivity_exec:s0
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
-/system/usr/share/wifi/wifi_init u:object_r:connectivity_exec:s0
-/dev/wcnss_wlan            u:object_r:connectivity_device:s0
-/sys/devices/soc.0/a000000.qcom,wcnss-wlan/serial_number  u:object_r:connectivity_sysfs_entry:s0
 
 # Defining the contexts for metricsd.
 /data/misc/metrics(/.*)?    u:object_r:metrics_data_file:s0

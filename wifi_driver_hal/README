@@ -1,0 +1,12 @@
+This folder contains the abstraction library for device driver
+setup in Brillo.  This abstraction provides three major pieces
+of functionality:
+
+  - Initial driver setup, for devices that are not ready at boot.
+    This method will be called at boot time.
+
+  - Selecting between AP mode and station mode.  This is guaranteed
+    to be called only after inital driver setup.
+
+  - The method above will return the device name of the WiFi hardware
+    that was created to the caller.

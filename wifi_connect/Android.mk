@@ -77,16 +77,3 @@ LOCAL_REQUIRED_MODULES := \
   wifi_init \
 
 include $(BUILD_PREBUILT)
-
-include $(CLEAR_VARS)
-
-ifeq ($(WIFI_INIT_MODULE),)
-WIFI_INIT_MODULE := generic
-endif
-
-LOCAL_MODULE := wifi_init
-LOCAL_MODULE_PATH := $(TARGET_OUT)/usr/share/wifi
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES := chipset/$(WIFI_INIT_MODULE)/wifi_init
-
-include $(BUILD_PREBUILT)

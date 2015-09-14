@@ -32,11 +32,6 @@ nameserver_list="${dhcp_dir}/nameservers.txt"
 # Use these DNS servers if none are supplied.
 google_domain_name_servers="8.8.8.8 8.8.4.4"
 
-# This file contains platform-specific information.  It defines the
-# startup_wifi method, which sets up client and AP functionality and
-# returns the interface name created.
-wifi_init_script="/system/usr/share/wifi/wifi_init"
-
 pid_file_for () {
   # Return the pid file for |process_name|.
   local process_name="$1"
@@ -105,18 +100,19 @@ start_supplicant () {
   # Start up wpa_supplicant on |interface|.
   kill_servers
   local interface
-  interface="$(startup_wifi client)"
+  interface="$(wifi_init client)"
   make_config_dir
   get_supplicant_config "$@" > "$client_config_file"
   chmod 644 "$client_config_file"
   run_supplicant "${interface}"
+  echo "${interface}"
 }
 
 start_hostapd () {
   # Start up hostapd on |interface|.
   kill_servers
   local interface
-  interface="$(startup_wifi ap)"
+  interface="$(wifi_init ap)"
   make_config_dir
   get_hostap_config "${interface}" "$@" > "$ap_config_file"
   chmod 644 "$ap_config_file"
@@ -171,18 +167,9 @@ get_hostap_config () {
 
 check_link_status () {
   # Debug: Print link IP status.
-  for word in $(iw "${client_interface}" link) ; do
+  local interface="$1"
+  for word in $(iw "${interface}" link) ; do
     if [ "$word" = "Connected" ] ; then
-      return 0
-    fi
-  done
-  return 1
-}
-
-check_ip_status () {
-  # Debug: Print link status.
-  for word in $(ifconfig "${client_interface}") ; do
-    if [ "$word" = "inet" ] ; then
       return 0
     fi
   done
@@ -191,11 +178,12 @@ check_ip_status () {
 
 connect_client () {
   # Start up a client.
-  start_supplicant "$@"
+  local interface
+  interface=$(start_supplicant "$@")
 
   for try in $(seq 1 30) ; do
-    if check_link_status ; then
-      start_dhcp
+    if check_link_status "${interface}"; then
+      start_dhcp "${interface}"
       return
     fi
     sleep 1
@@ -210,9 +198,10 @@ start_dhcp () {
   # method, which will apply the IP configuration gained from DHCP.  After
   # starting dhcpcd, the parent process monitors the progress of dhcpcd
   # below.
-  kill_dhcp_for "${client_interface}"
+  local interface="$1"
+  kill_dhcp_for "${interface}"
   rm -f "${dhcp_dir}"/*
-  dhcpcd --script "$0" --env FROM_DHCPCD=1 "${client_interface}"
+  dhcpcd --script "$0" --env FROM_DHCPCD=1 "${interface}"
   for try in $(seq 1 15) ; do
     if [ -e "${nameserver_list}" ]; then
       echo "Connected!"
@@ -299,22 +288,40 @@ resume_client () {
   log -t wifi_connect "Starting up using saved configuration."
   kill_servers
   local interface
-  interface="$(startup_wifi client)"
+  interface="$(wifi_init client)"
   chmod 644 "$client_config_file"
   run_supplicant "${interface}"
-  start_dhcp
+  start_dhcp "${interface}"
+}
+
+get_wifi_interfaces () {
+  local word
+  local last_word
+  for word in $(iw dev); do
+    if [ "${last_word}" = "Interface" ] ; then
+      echo "${word}"
+    fi
+    last_word="${word}"
+  done
 }
 
 get_status () {
-  if check_link_status ; then
-    iw "${client_interface}" link
-    ifconfig "${client_interface}"
-  else
-    echo "We are not connected."
-  fi
+  # Get status for the client interface.
+  local interface
+  for interface in $(get_wifi_interfaces); do
+    if check_link_status "${interface}"; then
+      iw "${interface}" link
+      ifconfig "${interface}"
+      return
+    fi
+  done
+  echo "We are not connected."
 }
 
 main () {
+  if [ "$VERBOSE" = 1 ] ; then
+    set -x
+  fi
   if [ "$FROM_DHCPCD" = 1 ] ; then
     configure_client
     return
@@ -341,9 +348,5 @@ main () {
       return 1
   esac
 }
-
-if [ -f "${wifi_init_script}" ] ; then
-  . "${wifi_init_script}"
-fi
 
 main "$@"
