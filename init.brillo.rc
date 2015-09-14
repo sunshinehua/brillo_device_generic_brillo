@@ -16,7 +16,7 @@
 
 # Common Brillo init script. This is loaded by init.rc.
 # Services should define their own init scripts and install
-# them into /initrc.d.
+# them into /system/etc/init.
 
 on boot
     start firewall-setup
@@ -31,7 +31,7 @@ service firewall-setup /system/etc/init.firewall-setup.sh
     oneshot
 
 service dbus /system/bin/dbus-daemon --system --nofork
-    class main
+    class core
     socket dbus stream 0660 dbus dbus
     user dbus
     group dbus
