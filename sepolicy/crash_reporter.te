@@ -35,4 +35,20 @@ allow crash_reporter crash_reporter:capability { setuid };
 allow crash_reporter dbus_daemon_exec:file rx_file_perms;
 unix_socket_connect(crash_reporter, dbus_daemon, dbus_daemon)
 
+# Allow crash_sender to call metrics client.
+allow crash_reporter brillo_exec:file rx_file_perms;
+
+# Allow crash_sender to run shell.
+allow crash_reporter shell_exec:file rx_file_perms;
+
+# Allow crash_sender to call grep.
+allow crash_reporter system_file:file rx_file_perms;
+
+# Allow crash_sender to call toybox.
+allow crash_reporter toolbox_exec:file rx_file_perms;
+
+# crash_sender network access policies.
+net_domain(crash_reporter)
+allow crash_reporter self:capability net_raw;
+
 dontaudit crash_reporter kernel:system module_request;
