@@ -88,6 +88,10 @@ PRODUCT_PACKAGES += \
   metrics_client \
   metrics_daemon \
 
+# Crash reporter package.
+PRODUCT_PACKAGES += \
+  crash_reporter \
+
 # Avahi packages.
 PRODUCT_PACKAGES += \
   avahi-browse \
