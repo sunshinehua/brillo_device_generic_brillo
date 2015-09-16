@@ -38,27 +38,44 @@ pid_file_for () {
   echo "${data_dir}/${process_name}.pid"
 }
 
-kill_process () {
-  # Kill |process_name| with signal |signal|.
-  local process_name="$1"
-  local signal="$2"
-  if [ -z "${signal}" ] ; then
-    signal=TERM
-  fi
+pid_for () {
+  # Return process id for |process_name|.
   local pid_file="$(pid_file_for "${process_name}")"
   if [ -z "${pid_file}" -o ! -f "${pid_file}" ] ; then
-    return 0
+    return 1
   fi
   local pid
   pid="$(cat "${pid_file}")"
-  if [ "$signal" != "HUP" ] ; then
-    rm -f "${pid_file}"
-  fi
   if [ -z "${pid}" ] ; then
-    return 0
+    return 1
   fi
-  kill "-${signal}" "${pid}" || return 0
+  echo "${pid}"
+}
+
+kill_process () {
+  # Kill |process_name|.
+  local process_name="$1"
+  local pid
+
+  # It's not an error if the process we want to kill does not exist.
+  pid="$(pid_for "${process_name}")" || return 0
+  rm -f "$(pid_file_for ${process_name})"
+  kill "${pid}" || return 0
   sleep 1
+}
+
+signal_process () {
+  # Signal |process_name| with |signal|.  Do not remove PID file.
+  local process_name="$1"
+  local signal="$2"
+  local pid
+
+  # It is an error if the pid is not found for signal.
+  pid="$(pid_for "${process_name}")" || return 1
+  kill "-${signal}" "${pid}" || return 1
+  if [ "${signal}" != "0" ] ; then
+    sleep 1
+  fi
 }
 
 kill_dhcp_for () {
@@ -93,7 +110,8 @@ run_supplicant () {
   done
 
   # Trigger a re-configuration in wpa_supplicant, which will initiate scans.
-  kill_process wpa_supplicant HUP
+  signal_process wpa_supplicant HUP ||
+      log -t wifi_connect "Could not launch scan in wpa_supplicant."
 }
 
 start_supplicant () {
@@ -165,11 +183,20 @@ get_hostap_config () {
   echo "vendor_elements=dd0411223301"
 }
 
-check_link_status () {
-  # Debug: Print link IP status.
+is_link_connected () {
   local interface="$1"
   for word in $(iw "${interface}" link) ; do
     if [ "$word" = "Connected" ] ; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+is_ip_connected () {
+  local interface="$1"
+  for word in $(ifconfig "${interface}") ; do
+    if [ "$word" = "inet" ] ; then
       return 0
     fi
   done
@@ -182,13 +209,13 @@ connect_client () {
   interface=$(start_supplicant "$@")
 
   for try in $(seq 1 30) ; do
-    if check_link_status "${interface}"; then
+    if is_link_connected "${interface}"; then
       start_dhcp "${interface}"
       return
     fi
     sleep 1
   done
-  echo "Association timed out."
+  log -t wifi_connect "Association timed out."
   return 1
 }
 
@@ -211,7 +238,7 @@ start_dhcp () {
     sleep 1
   done
 
-  echo "DHCP timed out."
+  log -t wifi_connect "DHCP timed out."
   return 1
 }
 
@@ -226,8 +253,16 @@ start_dns () {
   for dns_server in $nameservers; do
     args="${args} --server=${dns_server}"
   done
+
   # dnsmasq appears to read from stdin, even when not in debug mode.
   dnsmasq $args "--pid-file=$(pid_file_for dnsmasq)" < /dev/null
+}
+
+ensure_dns_running () {
+  if ! signal_process dnsmasq 0; then
+    log -t wifi_connect "Starting dnsmasq."
+    start_dns
+  fi
 }
 
 configure_client () {
@@ -309,10 +344,15 @@ get_status () {
   # Get status for the client interface.
   local interface
   for interface in $(get_wifi_interfaces); do
-    if check_link_status "${interface}"; then
-      iw "${interface}" link
-      ifconfig "${interface}"
-      return
+    if is_link_connected "${interface}"; then
+      if is_ip_connected "${interface}"; then
+        ensure_dns_running
+        iw "${interface}" link
+        ifconfig "${interface}"
+        return
+      else
+        echo "${interface} has link but has no IP address"
+      fi
     fi
   done
   echo "We are not connected."
