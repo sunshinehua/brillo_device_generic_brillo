@@ -83,6 +83,18 @@ PRODUCT_PACKAGES += \
   dbus-monitor \
   dbus-send \
 
+# Audio example program.
+PRODUCT_PACKAGES += \
+  audio_test \
+
+# Audio example program dependencies.
+PRODUCT_PACKAGES += \
+  libtinycompress \
+  libtinyalsa \
+  libaudioroute \
+  mediaserver \
+  local_time.default \
+
 # Connectivity packages.
 PRODUCT_PACKAGES += \
   cacerts \
