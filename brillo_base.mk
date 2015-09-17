@@ -36,6 +36,7 @@ INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 
 PRODUCT_PACKAGES = \
   adbd \
+  bootctl \
   firewalld \
   init \
   init.environ.rc \
