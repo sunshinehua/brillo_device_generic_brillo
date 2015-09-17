@@ -9,5 +9,5 @@ unix_socket_connect(update_engine, dbus_daemon, dbus_daemon)
 
 dontaudit update_engine kernel:system module_request;
 
-allow update_engine update_engine_data_file:dir { ra_dir_perms };
+allow update_engine update_engine_data_file:dir { create_dir_perms };
 allow update_engine update_engine_data_file:file { create_file_perms };
