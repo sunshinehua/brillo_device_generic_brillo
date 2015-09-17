@@ -54,6 +54,7 @@ PRODUCT_PACKAGES = \
   toolbox \
   toybox \
   update_engine \
+  update_engine_client \
   weaved \
   webservd \
 
