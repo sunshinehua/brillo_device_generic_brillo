@@ -10,5 +10,5 @@ unix_socket_connect(webservd, dbus_daemon, dbus_daemon)
 dontaudit webservd kernel:system module_request;
 
 allow webservd self:capability { net_bind_service };
-allow webservd webservd_data_file:dir ra_dir_perms;
+allow webservd webservd_data_file:dir rw_dir_perms;
 allow webservd webservd_data_file:file create_file_perms;
