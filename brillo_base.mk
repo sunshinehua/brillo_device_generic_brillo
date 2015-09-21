@@ -58,6 +58,10 @@ PRODUCT_PACKAGES = \
   weaved \
   webservd \
 
+# TODO(deymo): Remove the example postinst once payload v2 is used.
+PRODUCT_PACKAGES += \
+  postinst_example \
+
 # SELinux packages
 PRODUCT_PACKAGES += \
   sepolicy \
