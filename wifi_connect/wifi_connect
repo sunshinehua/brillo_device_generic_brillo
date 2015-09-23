@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+EXPECTED_CONTEXT="u:r:connectivity:s0"
+
 # Directory for (persistent) WiFi information.
 data_dir=/data/misc/wifi
 
@@ -389,4 +391,16 @@ main () {
   esac
 }
 
+assert_connectivity_context () {
+  local our_context
+  our_context=$(< /proc/self/attr/current)
+  if [ "${our_context}" != "${EXPECTED_CONTEXT}" ] ; then
+    log -t wifi_connect "Unexpected invocation with context ${our_context}"
+    echo "$0 must be run from connectivity context. This is normally done"
+    echo "using the connectivity_test program."
+    return 1
+  fi
+}
+
+assert_connectivity_context
 main "$@"
