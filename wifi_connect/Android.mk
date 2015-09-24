@@ -57,7 +57,7 @@ $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
 	@mkdir -p $(dir $@)
 	$(hide) sed -e 's?%SERVICENAME%?connectivity?g' \
 		    -e 's?%GROUPS%??g' \
-		    -e 's?%ARGS%??g' $@ \
+		    -e 's?%ARGS%??g' \
 		    -e 's?user.*?user root?g' \
 		    -e 's?seclabel.*?seclabel u:r:connectivity:s0?g' $< > $@
 	$(hide) echo "    socket connectivity stream 0666 root inet" >> $@
