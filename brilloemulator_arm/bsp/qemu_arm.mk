@@ -43,6 +43,6 @@ PRODUCT_COPY_FILES += \
 TARGET_KERNEL_SRC := hardware/bsp/kernel/common/android-3.18
 TARGET_KERNEL_DEFCONFIG := vexpress_defconfig
 TARGET_KERNEL_DTB := vexpress-v2p-ca9.dtb
-TARGET_KERNEL_CONFIGS := $(shell readlink -f $(LOCAL_PATH)/brillo.kconf)
+TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/brillo.kconf)
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) $(LOCAL_PATH)/sepolicy
