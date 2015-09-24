@@ -10,7 +10,7 @@ unix_socket_connect(webservd, dbus_daemon, dbus_daemon)
 # Allow to pass file descriptors from webserver over D-Bus.
 allow dbus_daemon webservd:fd use;
 allow dbus_daemon webservd_data_file:file r_file_perms;
-allow dbus_daemon webservd:fifo_file r_file_perms;
+allow dbus_daemon webservd:fifo_file rw_file_perms;
 
 dontaudit webservd kernel:system module_request;
 

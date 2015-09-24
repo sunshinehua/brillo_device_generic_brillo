@@ -34,7 +34,7 @@ type weaved_data_file, file_type, data_file_type;
 allow brillo weaved_data_file:dir { w_dir_perms };
 allow brillo weaved_data_file:file { create_file_perms };
 allow brillo webservd:fd use;
-allow brillo webservd:fifo_file r_file_perms;
+allow brillo webservd:fifo_file rw_file_perms;
 allow brillo webservd_data_file:file r_file_perms;
 
 # Rules for tlsdated and helpers.
