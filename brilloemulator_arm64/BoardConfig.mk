@@ -20,9 +20,13 @@ include device/generic/brillo/brilloemulator_arm64/bsp/qemu_arm.mk
 
 
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 786432000
+# No ramdisk.
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 
+# No ramdisk.
+BOARD_USES_FULL_RECOVERY_IMAGE := true
+
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brilloemulator_arm64/fstab.device:root/fstab.device
-
