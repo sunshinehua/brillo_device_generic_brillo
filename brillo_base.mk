@@ -160,9 +160,6 @@ BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 # Define that identifies Brillo targets
 BRILLO := 1
 
-# Generate Breakpad symbols.
-BREAKPAD_GENERATE_SYMBOLS := true
-
 # TODO(jorgelo): Move into main build.
 define generate-initrc-file
   @echo "Generate: $< -> $@"
