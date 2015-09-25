@@ -3,16 +3,13 @@ type webservd, domain;
 type webservd_exec, exec_type, file_type;
 type webservd_data_file, file_type, data_file_type;
 
-init_daemon_domain(webservd)
+init_brillo_domain(webservd)
 net_domain(webservd)
-unix_socket_connect(webservd, dbus_daemon, dbus_daemon)
 
 # Allow to pass file descriptors from webserver over D-Bus.
 allow dbus_daemon webservd:fd use;
 allow dbus_daemon webservd_data_file:file r_file_perms;
 allow dbus_daemon webservd:fifo_file rw_file_perms;
-
-dontaudit webservd kernel:system module_request;
 
 allow webservd self:capability { net_bind_service };
 allow webservd webservd_data_file:dir rw_dir_perms;
