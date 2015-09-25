@@ -3,13 +3,8 @@ type update_engine, domain;
 type update_engine_exec, exec_type, file_type;
 type update_engine_data_file, file_type, data_file_type;
 
-# Allow starting from init, accessing the network and talking to DBus.
-init_daemon_domain(update_engine)
+init_brillo_domain(update_engine)
 net_domain(update_engine)
-unix_socket_connect(update_engine, dbus_daemon, dbus_daemon)
-
-# Don't audit module_request events.
-dontaudit update_engine kernel:system module_request;
 
 # Allow using persistent storage.
 allow update_engine update_engine_data_file:dir { create_dir_perms };

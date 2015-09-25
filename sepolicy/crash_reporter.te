@@ -7,8 +7,7 @@ type crash_reporter_prop, property_type;
 allow crash_reporter crash_reporter_data_file:dir create_dir_perms;
 allow crash_reporter crash_reporter_data_file:file create_file_perms;
 
-# Allow starting from init.
-init_daemon_domain(crash_reporter)
+init_brillo_domain(crash_reporter)
 
 # Allow setting supplementary groups.
 allow crash_reporter crash_reporter:capability { setgid };
@@ -33,7 +32,6 @@ allow crash_reporter crash_reporter_exec:file rx_file_perms;
 # Allow calling dbus-send.
 allow crash_reporter crash_reporter:capability { setuid };
 allow crash_reporter dbus_daemon_exec:file rx_file_perms;
-unix_socket_connect(crash_reporter, dbus_daemon, dbus_daemon)
 
 # Allow crash_sender to call metrics client.
 allow crash_reporter brillo_exec:file rx_file_perms;
@@ -50,5 +48,3 @@ allow crash_reporter toolbox_exec:file rx_file_perms;
 # crash_sender network access policies.
 net_domain(crash_reporter)
 allow crash_reporter self:capability net_raw;
-
-dontaudit crash_reporter kernel:system module_request;
