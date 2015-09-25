@@ -37,16 +37,15 @@ while true ; do
    esac
 done
 
-echo Starting Emulator with ${MEM}MB Memory
+echo Starting emulator with ${MEM}MB memory
 
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a57 \
   -m ${MEM}M \
   -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/kernel \
-  -append "console=ttyAMA0 root=/dev/ram androidboot.hardware=qemu qemu=1 androidboot.selinux=enforcing" \
+  -append "console=ttyAMA0 ro root=/dev/sda androidboot.hardware=qemu qemu=1 rootwait noinitrd init=/init androidboot.selinux=enforcing" \
   -nographic \
-  -initrd ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/ramdisk.img \
   -device virtio-scsi-device,id=scsi \
   -device scsi-hd,drive=system \
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm64/system.img,if=none,id=system,format=raw" \
