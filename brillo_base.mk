@@ -103,11 +103,12 @@ PRODUCT_PACKAGES += \
   apmanager \
   cacerts \
   dhcpcd \
-  dnsmasq \
-  hostapd \
-  wpa_supplicant \
   dhcpcd-6.8.2 \
   dhcpcd-6.8.2.conf \
+  dnsmasq \
+  hostapd \
+  shill \
+  wpa_supplicant \
 
 # Metrics daemon and metrics library
 PRODUCT_PACKAGES += \
