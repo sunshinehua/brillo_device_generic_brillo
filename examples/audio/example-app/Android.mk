@@ -28,7 +28,6 @@ LOCAL_SRC_FILES := \
 
 LOCAL_MODULE := audio_test
 
-LOCAL_CLANG := true
 LOCAL_CFLAGS += -Wall -Wno-unused-parameter -Werror \
 
 LOCAL_SHARED_LIBRARIES := \
