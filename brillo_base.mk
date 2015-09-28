@@ -50,6 +50,8 @@ PRODUCT_PACKAGES = \
   linker \
   logcat \
   logd \
+  nativepowerman \
+  power_example \
   reboot \
   rootdev \
   servicemanager \
