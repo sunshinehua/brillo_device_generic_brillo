@@ -46,7 +46,7 @@ include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := init.connectivity.rc
+LOCAL_MODULE := connectivity.rc
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
 
@@ -72,7 +72,7 @@ LOCAL_REQUIRED_MODULES := \
   connectivity \
   connectivity_test \
   dnsmasq \
-  init.connectivity.rc \
+  connectivity.rc \
   wifi_init \
 
 include $(BUILD_PREBUILT)
