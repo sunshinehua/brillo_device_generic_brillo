@@ -54,6 +54,9 @@ endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-android-
 KERNEL_NAME := Image
+else ifeq ($(TARGET_KERNEL_ARCH), x86)
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
+KERNEL_NAME := bzImage
 else
 $(error kernel arch not supported at present)
 endif
