@@ -1,0 +1,24 @@
+# Domain for apmanager daemon.
+type apmanager, domain;
+type apmanager_exec, exec_type, file_type;
+type apmanager_data_file, file_type, data_file_type;
+
+init_brillo_domain(apmanager)
+net_domain(apmanager)
+
+# Allow to pass file descriptors from apmanager over D-Bus.
+allow dbus_daemon apmanager:fd use;
+allow dbus_daemon apmanager_data_file:file r_file_perms;
+allow dbus_daemon apmanager:fifo_file r_file_perms;
+
+# Following permissions are needed for apmanager.
+allow apmanager apmanager_exec:file execute_no_trans;
+allow apmanager dnsmasq_exec:file { read getattr open execute execute_no_trans };
+allow apmanager hostapd_exec:file { read getattr open execute execute_no_trans };
+allow apmanager self:capability { setuid fsetid kill net_admin net_bind_service net_raw setgid sys_module dac_override };
+allow apmanager self:netlink_route_socket { write getattr nlmsg_write read bind create nlmsg_read };
+allow apmanager self:netlink_socket { write getattr setopt read bind create };
+allow apmanager self:packet_socket { write ioctl setopt read bind create };
+allow apmanager apmanager_data_file:dir { create rw_dir_perms setattr };
+allow apmanager apmanager_data_file:file create_file_perms;
+allow apmanager apmanager_data_file:sock_file { create getattr unlink setattr write };

@@ -99,6 +99,7 @@ PRODUCT_PACKAGES += \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \
+  apmanager \
   cacerts \
   dhcpcd \
   dnsmasq \
