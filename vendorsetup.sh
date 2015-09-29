@@ -46,3 +46,36 @@ scan_for_brillo_devices()
 }
 
 scan_for_brillo_devices
+
+# build/envsetup.sh defines a make() function that wraps the make command and
+# does some extra stats collection to report to users. This function is called
+# by all flavors of make; mm, mma, etc.
+# We want to hook into these to take our own metrics, but not interfere with the
+# functionality, so we re-declare it under a new name, and evoke this original
+# behavior in our override (like one might make a call to "super").
+eval "overridden_$(declare -f make)"
+make() {
+  local start_time=$(date +"%s")
+  overridden_make "$@"
+  local ret=$?
+  local end_time=$(date +"%s")
+  local tdiff=$(($end_time-$start_time))
+
+  # Determine which make function this was called from.
+  local make_type="${FUNCNAME[1]}"
+  if [[ -z "${make_type}" ]]; then
+      make_type="make"
+  fi
+
+  # Send metrics only if:
+  #   * The user has opted in.
+  #   * The build was successful.
+  #   * The build was non-trivial.
+  # TODO(arihc) (b/24410633): Check the configuration file for opt-in instead
+  # of using an environment variable.
+  if [[ "${BRILLO_ANALYTICS_OPT_IN}" -ne 0 && "$ret" -eq 0 && \
+        "$tdiff" -gt 0 ]]; then
+    local data_script="$(gettop)/tools/bdk/analytics/send_build.py"
+    (python "${data_script}" "${make_type}" "$tdiff" & )
+  fi
+}
