@@ -30,6 +30,7 @@
 ** and will allow partial matches.
 */
 static const struct fs_path_config android_device_files[] = {
+    { 00700, AID_SYSTEM, AID_SHELL, CAP_MASK_LONG(CAP_NET_BIND_SERVICE), "system/bin/dnsmasq" },
     { 00700, AID_SYSTEM, AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND),    "system/bin/nativepowerman" },
     { 00700, AID_SYSTEM, AID_SHELL, CAP_MASK_LONG(CAP_SYS_TIME),         "system/bin/tlsdated" },
     { 00700, AID_SYSTEM, AID_SHELL, CAP_MASK_LONG(CAP_NET_BIND_SERVICE), "system/bin/webservd" },

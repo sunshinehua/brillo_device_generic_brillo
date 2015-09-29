@@ -15,6 +15,9 @@
 /system/bin/avahi-daemon   u:object_r:brillo_exec:s0
 /system/bin/firewalld      u:object_r:brillo_exec:s0
 
+/data/misc/apmanager(/.*)? u:object_r:apmanager_data_file:s0
+/system/bin/apmanager      u:object_r:apmanager_exec:s0
+
 /system/bin/webservd       u:object_r:webservd_exec:s0
 /data/misc/webservd(/.*)?  u:object_r:webservd_data_file:s0
 
