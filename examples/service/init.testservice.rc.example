@@ -2,4 +2,3 @@ service testservice /system/bin/testservice
     class main
     user system
     group system
-    seclabel u:r:brillo:s0
