@@ -38,7 +38,7 @@ status_t PlayStagefrightMp3(char* filename, bool wait) {
   FileSource* file_source = new FileSource(filename);
   status_t status = file_source->initCheck();
   if (status != OK) {
-    ALOGE("Could not open the mp3 file source.");
+    LOG(ERROR) << "Could not open the mp3 file source.";
     return status;
   }
 
@@ -46,7 +46,7 @@ status_t PlayStagefrightMp3(char* filename, bool wait) {
   sp<AMessage> message = new AMessage();
 
   sp<MediaExtractor> media_extractor = new MP3Extractor(file_source, message);
-  printf("Num tracks: %i\n", media_extractor->countTracks());
+  LOG(INFO) << "Num tracks: " << media_extractor->countTracks();
   sp<MediaSource> media_source = media_extractor->getTrack(0);
 
   // Decode mp3.
@@ -59,7 +59,7 @@ status_t PlayStagefrightMp3(char* filename, bool wait) {
   player->setSource(decoded_source);
   status = player->start();
   if (status != OK) {
-    ALOGE("Could not start playing audio.");
+    LOG(ERROR) << "Could not start playing audio.";
     return status;
   }
   if (wait) {
