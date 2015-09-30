@@ -5,3 +5,6 @@ type nativepowerman_exec, exec_type, file_type;
 init_brillo_domain(nativepowerman)
 allow nativepowerman power_service:service_manager add;
 wakelock_use(nativepowerman)
+
+# Permit setting the sys.powerctl system property to reboot or shut down.
+set_prop(nativepowerman, powerctl_prop)
