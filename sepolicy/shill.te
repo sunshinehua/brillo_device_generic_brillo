@@ -1,0 +1,39 @@
+# Domain for shill daemon.
+type shill, domain;
+type shill_exec, exec_type, file_type;
+type shill_data_file, file_type, data_file_type;
+type shill_sysfs_entry, fs_type, sysfs_type;
+
+init_daemon_domain(shill)
+net_domain(shill)
+
+unix_socket_connect(shill, dbus_daemon, dbus_daemon)
+file_type_auto_trans(shill, system_data_file, shill_data_file)
+
+# Following permissions are needed for shill.
+allow shill kernel:system module_request;
+allow shill dbus_daemon:unix_stream_socket connectto;
+allow shill self:netlink_socket { write setopt read bind create };
+allow shill system_data_file:dir { add_name create write };
+allow shill self:netlink_route_socket { setopt nlmsg_write };
+allow shill proc_net:file write;
+allow shill metrics_data_file:dir { add_name search write };
+allow shill metrics_data_file:file { append create lock open setattr };
+allow shill self:capability { setuid fsetid kill net_admin net_bind_service net_raw setgid sys_module dac_override fowner };
+allow shill self:packet_socket { create_socket_perms };
+allow shill sysfs:file write;
+allow shill self:capability2 block_suspend;
+allow shill connectivity_sysfs_entry:file { read write getattr open };
+
+# Permissions for dhcpcd-6.8.2, which shill spawns using minijail.
+allow shill dhcp_exec:file { read open execute execute_no_trans };
+# TODO(samueltan, jorgelo): remove these when dhcpcd-6.8.2 can be spawned with
+# in the dhcp domain.
+allow shill dhcp_data_file:dir create_dir_perms;
+allow shill dhcp_data_file:file create_file_perms;
+
+# Permissions for WiFi driver initialization.
+allow shill connectivity_device:chr_file { read write open };
+
+# Permissions for dnsmasq.
+allow shill dnsmasq_exec:file { read getattr open execute execute_no_trans };
