@@ -173,7 +173,7 @@ PRODUCT_COPY_FILES += \
 
 # TODO(samueltan): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
-  device/generic/brillo/wpa_supplicant.conf:system/etc/wpa_supplicant.conf \
+  device/generic/brillo/wpa_supplicant.conf:/system/lib/shill/shims/wpa_supplicant.conf \
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 
