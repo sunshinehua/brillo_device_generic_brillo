@@ -1,43 +1,6 @@
-# Temporary domain for Brillo daemons.
+# Domain for Brillo daemons.
 type brillo, domain;
 type brillo_exec, exec_type, file_type;
 
 init_brillo_domain(brillo)
 net_domain(brillo)
-
-unix_socket_connect(brillo, connectivity, connectivity)
-
-# Rules for firewalld.
-allow brillo self:capability { net_admin net_raw };
-allow brillo self:rawip_socket create;
-allow brillo self:rawip_socket getopt;
-allow brillo self:rawip_socket setopt;
-allow brillo self:udp_socket create;
-allow brillo system_file:file execute_no_trans;
-
-# Rules for the metrics daemon.
-type metrics_data_file, file_type, data_file_type;
-allow brillo metrics_data_file:dir rw_dir_perms;
-allow brillo metrics_data_file:file create_file_perms;
-allow brillo block_device:blk_file getattr;
-allow brillo block_device:dir search;
-
-# Rules for avahi-daemon.
-allow brillo self:netlink_route_socket { write setopt read bind create nlmsg_read };
-allow brillo system_data_file:dir open;
-allow brillo system_data_file:file open;
-
-# Rules for weaved.
-type weaved_data_file, file_type, data_file_type;
-allow brillo weaved_data_file:dir { w_dir_perms };
-allow brillo weaved_data_file:file { create_file_perms };
-allow brillo webservd:fd use;
-allow brillo webservd:fifo_file rw_file_perms;
-allow brillo webservd_data_file:file r_file_perms;
-
-# Rules for tlsdated and helpers.
-type tlsdated_data_file, file_type, data_file_type;
-allow brillo brillo_exec:file execute_no_trans;
-allow brillo self:capability { sys_time setuid setgid };
-allow brillo tlsdated_data_file:dir { w_dir_perms };
-allow brillo tlsdated_data_file:file { create_file_perms };

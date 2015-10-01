@@ -9,11 +9,9 @@
 /system/bin/periodic_scheduler   u:object_r:crash_reporter_exec:s0
 /data/misc/crash_reporter(/.*)?  u:object_r:crash_reporter_data_file:s0
 
-# Some Brillo system service binaries are still 'brillo_exec' objects, but
-# introducing more-specific domains to avoid granting unneeded permissions is
-# preferred.
-/system/bin/avahi-daemon   u:object_r:brillo_exec:s0
-/system/bin/firewalld      u:object_r:brillo_exec:s0
+/system/bin/avahi-daemon   u:object_r:avahi_exec:s0
+
+/system/bin/firewalld      u:object_r:firewalld_exec:s0
 
 /data/misc/apmanager(/.*)? u:object_r:apmanager_data_file:s0
 /system/bin/apmanager      u:object_r:apmanager_exec:s0
@@ -26,16 +24,16 @@
 /system/bin/connectivity   u:object_r:connectivity_exec:s0
 
 /data/misc/metrics(/.*)?   u:object_r:metrics_data_file:s0
-/system/bin/metrics_daemon u:object_r:brillo_exec:s0
-/system/bin/metrics_client u:object_r:brillo_exec:s0
+/system/bin/metrics_daemon u:object_r:metrics_exec:s0
+/system/bin/metrics_client u:object_r:metrics_exec:s0
 
 /data/misc/weaved(/.*)?    u:object_r:weaved_data_file:s0
-/system/bin/weaved         u:object_r:brillo_exec:s0
+/system/bin/weaved         u:object_r:weaved_exec:s0
 
 /data/misc/tlsdated(/.*)?  u:object_r:tlsdated_data_file:s0
-/system/bin/tlsdated       u:object_r:brillo_exec:s0
-/system/bin/tlsdate-helper u:object_r:brillo_exec:s0
-/system/bin/tlsdate        u:object_r:brillo_exec:s0
+/system/bin/tlsdated       u:object_r:tlsdated_exec:s0
+/system/bin/tlsdate-helper u:object_r:tlsdated_exec:s0
+/system/bin/tlsdate        u:object_r:tlsdated_exec:s0
 
 /system/bin/nativepowerman u:object_r:nativepowerman_exec:s0
 

@@ -1,0 +1,13 @@
+# metrics.
+type metrics, domain;
+type metrics_exec, exec_type, file_type;
+type metrics_data_file, file_type, data_file_type;
+
+init_brillo_domain(metrics)
+net_domain(metrics)
+
+# Rules for the metrics daemon.
+allow metrics metrics_data_file:dir rw_dir_perms;
+allow metrics metrics_data_file:file create_file_perms;
+allow metrics block_device:blk_file getattr;
+allow metrics block_device:dir search;
