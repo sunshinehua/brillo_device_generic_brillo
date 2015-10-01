@@ -37,8 +37,9 @@ service dbus /system/bin/dbus-daemon --system --nofork
     group dbus
 
 service wpa_supplicant /system/bin/wpa_supplicant \
-    -Dnl80211 -c/system/etc/wpa_supplicant.conf -u
+    -Dnl80211 -c/system/lib/shill/shims/wpa_supplicant.conf -u
     class main
+    socket wpa dgram 0660 system system
     user system
-    group system dbus
+    group system dbus inet
     disabled
