@@ -1,0 +1,9 @@
+This folder contains the files for libsensor, which is the library that
+implements NDK sensors interface (defined in frameworks/native/include/android).
+The files "looper.cpp" and "sensor.cpp" are copied from
+frameworks/base/native/android (a0bda386b03d3b403a6614f13f3093f633ee2607). We
+made this fork in order to provide Brillo developers the NDK interface to
+access sensors without pulling in large dependencies like libandroid. This
+folder will be deleted once the cleanups for libandroid and its dependencies
+are done so that we can have the NDK sensors interface without increasing
+Brillo image sizes tremendously.
