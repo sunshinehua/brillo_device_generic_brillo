@@ -67,12 +67,14 @@ void LibmediaRecord::PlayCallback(int event, void* user, void* info) {
 status_t LibmediaRecord::Record() {
     uint32_t kSampleRateHz = 8000;
     size_t min_frame_count;
+    audio_format_t audio_format = AUDIO_FORMAT_PCM_16_BIT;
+    audio_channel_mask_t channel_in_mask = AUDIO_CHANNEL_IN_MONO;
     status_t status = AudioRecord::getMinFrameCount(&min_frame_count,
                                                     kSampleRateHz,
-                                                    AUDIO_FORMAT_PCM_16_BIT,
-                                                    AUDIO_CHANNEL_IN_MONO);
+                                                    audio_format,
+                                                    channel_in_mask);
     if (status != OK) {
-      ALOGE("Could not get the min frame count.");
+      LOG(ERROR) << "Could not get the min frame count.";
       return status;
     }
 
@@ -88,20 +90,23 @@ status_t LibmediaRecord::Record() {
       buf_count++;
     }
 
+    audio_source_t audio_source = AUDIO_SOURCE_MIC;
+    String16 package_name = String16();
+    void* user = NULL;
     sp<AudioRecord> record = new AudioRecord(
-        AUDIO_SOURCE_MIC, kSampleRateHz, AUDIO_FORMAT_PCM_16_BIT,
-        AUDIO_CHANNEL_IN_MONO, String16(), (size_t) (buf_count * frame_count),
-        LibmediaRecord::RecordCallback, NULL, frame_count);
+        audio_source, kSampleRateHz, audio_format, channel_in_mask,
+        package_name, (size_t) (buf_count * frame_count),
+        LibmediaRecord::RecordCallback, user, frame_count);
     status = record->initCheck();
     if (status != OK) {
-      ALOGE("Could not initialize audio record.");
+      LOG(ERROR) << "Could not initialize audio record.";
       return status;
     }
 
     printf("Starting recording. Please make noise into microphone.\n");
     status = record->start();
     if (status != OK) {
-      ALOGE("Could not start recording.");
+      LOG(ERROR) << "Could not start recording.";
       return status;
     }
     // Record for 10 seconds before playback starts.
@@ -111,17 +116,17 @@ status_t LibmediaRecord::Record() {
 
     printf("Starting playback.\n");
     AudioTrack* playback = new AudioTrack(
-        AUDIO_STREAM_MUSIC, kSampleRateHz, AUDIO_FORMAT_PCM_16_BIT,
+        AUDIO_STREAM_MUSIC, kSampleRateHz, audio_format,
         AUDIO_CHANNEL_OUT_MONO, 0, AUDIO_OUTPUT_FLAG_NONE,
         LibmediaRecord::PlayCallback);
     status = playback->initCheck();
     if (status != OK) {
-      ALOGE("Could not initialize audio playback.");
+      LOG(ERROR) << "Could not initialize audio playback.";
       return status;
     }
     status = playback->start();
     if (status != OK) {
-      ALOGE("Could not start playback.");
+      LOG(ERROR) << "Could not start playback.";
       return status;
     }
     sleep(duration_secs);

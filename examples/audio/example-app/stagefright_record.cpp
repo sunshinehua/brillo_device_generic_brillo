@@ -31,12 +31,12 @@ status_t LibstagefrightRecordAudio() {
                                               kSampleRateHz, 1);
   status_t status = audio_source->initCheck();
   if (status != OK) {
-    ALOGE("Could not initialize audio source correctly.");
+    LOG(ERROR) << "Could not initialize audio source correctly.";
     return status;
   }
   status = audio_source->start();
   if (status != OK) {
-    ALOGE("Could not start recording audio.");
+    LOG(ERROR) << "Could not start recording audio.";
     return status;
   }
   int duration_secs = 5;
@@ -47,7 +47,7 @@ status_t LibstagefrightRecordAudio() {
   player->setSource(audio_source);
   status = player->start(true);
   if (status != OK) {
-    ALOGE("Could not audio playback.");
+    LOG(ERROR) << "Could not audio playback.";
     return status;
   }
   sleep(duration_secs);
