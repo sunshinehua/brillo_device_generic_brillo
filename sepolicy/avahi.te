@@ -6,5 +6,3 @@ init_brillo_domain(avahi)
 net_domain(avahi)
 
 allow avahi self:netlink_route_socket { write setopt read bind create nlmsg_read };
-allow avahi system_data_file:dir open;
-allow avahi system_data_file:file open;
