@@ -60,6 +60,7 @@ $(LOCAL_BUILT_MODULE): $(INITRC_TEMPLATE)
 		    -e 's?%ARGS%??g' \
 		    -e 's?user.*?user root?g' $< > $@
 	$(hide) echo "    socket connectivity stream 0666 root inet" >> $@
+	$(hide) echo "    disabled" >> $@
 	cat $@
 
 include $(CLEAR_VARS)
