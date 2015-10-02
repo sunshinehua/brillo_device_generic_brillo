@@ -159,6 +159,9 @@ BOARD_HOSTAPD_DRIVER := NL80211
 CONFIG_CTRL_IFACE_DBUS=y
 CONFIG_CTRL_IFACE_DBUS_NEW=y
 
+# Enable disable_vht option in WPA supplicant.
+CONFIG_VHT_OVERRIDES=y
+
 # Settings for dhcpcd-6.8.2.
 DHCPCD_USE_IPV6=yes
 DHCPCD_USE_DBUS=yes
