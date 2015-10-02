@@ -143,6 +143,13 @@ PRODUCT_PACKAGES += \
 # Brillo targets use the A/B updater.
 AB_OTA_UPDATER := true
 
+# This is the list of partitions the A/B updater will update. These need to have
+# two partitions each in the partition table, with the right suffix used by the
+# bootloader, for example "system_a" and "system_b".
+UPDATE_AB_PARTITIONS := \
+  boot \
+  system
+
 # We must select a wpa_supplicant version, or the AOSP version won't be built.
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
