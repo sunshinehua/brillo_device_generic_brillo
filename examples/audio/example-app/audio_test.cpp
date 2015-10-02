@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <base/logging.h>
 
 #include "libmedia_playback.h"
 #include "libmedia_record.h"
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
       case kPlayMultiple:
         status = android::PlayStagefrightMp3(argv[2], false);
         if (status != android::OK) {
-          ALOGE("Could not audio mp3 using stagefright.");
+          LOG(ERROR) << "Could not play mp3 using stagefright.";
           return -1;
         }
         sleep(10);
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     if (status != android::OK) {
-      ALOGE("Could not play audio correctly.");
+      LOG(ERROR) << "Could not play audio correctly.";
       return -1;
     }
   }

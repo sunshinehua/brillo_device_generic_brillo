@@ -62,14 +62,17 @@ void LibmediaPlayback::AudioCallback(int event, void* user, void* info) {
 status_t LibmediaPlayback::Play() {
   int kSampleRateHz = 8000;
   audio_stream_type_t stream_type = AUDIO_STREAM_MUSIC;
+  audio_format_t audio_format = AUDIO_FORMAT_PCM_16_BIT;
   audio_channel_mask_t audio_mask = AUDIO_CHANNEL_OUT_ALL;
+  size_t frame_count = 0; // Use default value for frame count.
+  audio_output_flags_t audio_output_flags = AUDIO_OUTPUT_FLAG_NONE;
 
   AudioTrack* track = new AudioTrack(
-      stream_type, kSampleRateHz, AUDIO_FORMAT_PCM_16_BIT, audio_mask, 0,
-      AUDIO_OUTPUT_FLAG_NONE, LibmediaPlayback::AudioCallback);
+      stream_type, kSampleRateHz, audio_format, audio_mask, frame_count,
+      audio_output_flags, LibmediaPlayback::AudioCallback);
   status_t status = track->initCheck();
   if (status != OK) {
-    ALOGE("Audio track initialization failed.");
+    LOG(ERROR) << "Audio track initialization failed.";
     return status;
   }
 
@@ -77,7 +80,7 @@ status_t LibmediaPlayback::Play() {
   track->setVolume(volume);
   status = track->start();
   if (status != OK) {
-    ALOGE("Audio track failed to start.");
+    LOG(ERROR) << "Audio track failed to start.";
     return status;
   }
 
@@ -94,6 +97,8 @@ status_t LibmediaPlayback::Play() {
 
   sleep(10);
   track->stop();
+  // Free memory.
+  sine_data_buffer->release();
   return status;
 }
 
