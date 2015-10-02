@@ -42,4 +42,3 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     socket wpa dgram 0660 system system
     user system
     group system dbus inet
-    disabled
