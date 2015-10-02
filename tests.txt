@@ -1,0 +1,2 @@
+libchrome_test
+libchromeos_test

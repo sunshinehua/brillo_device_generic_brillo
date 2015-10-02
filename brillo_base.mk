@@ -211,6 +211,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dhcpcd-6.8.2.conf:/system/etc/dhcpcd-6.8.2/dhcpcd.conf \
 
+# TODO(arihc): Move this whitelist file to a saner place.
+PRODUCT_COPY_FILES += \
+  device/generic/brillo/tests.txt:data/nativetest/tests.txt
+
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 
 # Define that identifies Brillo targets
