@@ -1,0 +1,15 @@
+# weaved.
+type weaved, domain;
+type weaved_exec, exec_type, file_type;
+
+init_brillo_domain(weaved)
+net_domain(weaved)
+
+unix_socket_connect(weaved, connectivity, connectivity)
+
+type weaved_data_file, file_type, data_file_type;
+allow weaved weaved_data_file:dir { w_dir_perms };
+allow weaved weaved_data_file:file { create_file_perms };
+allow weaved webservd:fd use;
+allow weaved webservd:fifo_file rw_file_perms;
+allow weaved webservd_data_file:file r_file_perms;

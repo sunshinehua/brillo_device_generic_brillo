@@ -1,0 +1,13 @@
+# firewalld.
+type firewalld, domain;
+type firewalld_exec, exec_type, file_type;
+
+init_brillo_domain(firewalld)
+net_domain(firewalld)
+
+allow firewalld self:capability { net_admin net_raw };
+allow firewalld self:rawip_socket create;
+allow firewalld self:rawip_socket getopt;
+allow firewalld self:rawip_socket setopt;
+allow firewalld self:udp_socket create;
+allow firewalld system_file:file execute_no_trans;
