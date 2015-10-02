@@ -64,6 +64,12 @@ PRODUCT_PACKAGES = \
   weaved \
   webservd \
 
+# Android build adds libstdc++ dependencies to some modules. Normally Android
+# devices inherit embedded.mk which brings in libstdc++, but we don't, so we
+# need to explicitly add it. See http://b/24499744.
+PRODUCT_PACKAGES += \
+  libstdc++ \
+
 # TODO(deymo): Remove the example postinst once payload v2 is used.
 PRODUCT_PACKAGES += \
   postinst_example \
