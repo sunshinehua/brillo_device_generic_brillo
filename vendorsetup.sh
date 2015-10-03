@@ -54,6 +54,7 @@ scan_for_brillo_devices
 # functionality, so we re-declare it under a new name, and evoke this original
 # behavior in our override (like one might make a call to "super").
 eval "overridden_$(declare -f make)"
+# TODO(arihc): move all this functionality into brunch build.
 make() {
   local start_time=$(date +"%s")
   overridden_make "$@"
@@ -75,7 +76,7 @@ make() {
   # of using an environment variable.
   if [[ "${BRILLO_ANALYTICS_OPT_IN}" -ne 0 && "$ret" -eq 0 && \
         "$tdiff" -gt 0 ]]; then
-    local data_script="$(gettop)/tools/bdk/analytics/send_build.py"
+    local data_script="$(gettop)/tools/bdk/brunch/lib/metrics/send_build.py"
     (python "${data_script}" "${make_type}" "$tdiff" & )
   fi
 }
