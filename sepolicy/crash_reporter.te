@@ -12,6 +12,9 @@ init_brillo_domain(crash_reporter)
 # Allow setting supplementary groups.
 allow crash_reporter crash_reporter:capability { setgid };
 
+# Allow calling `metrics_client -c`.
+allow crash_reporter metrics_exec:file rx_file_perms;
+
 # Allow using metrics_lib.
 allow crash_reporter metrics_data_file:dir ra_dir_perms;
 allow crash_reporter metrics_data_file:file create_file_perms;
