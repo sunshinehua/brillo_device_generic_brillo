@@ -37,7 +37,6 @@ INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 PRODUCT_PACKAGES = \
   adbd \
   bootctl \
-  brillo-update-payload-key \
   firewalld \
   init \
   init.environ.rc \
@@ -69,6 +68,13 @@ PRODUCT_PACKAGES = \
 # need to explicitly add it. See http://b/24499744.
 PRODUCT_PACKAGES += \
   libstdc++ \
+
+ifneq ($(TARGET_BUILD_VARIANT),eng)
+# eng builds don't include the official payload key so developers can test
+# providing their own testing key.
+PRODUCT_PACKAGES += \
+  brillo-update-payload-key
+endif
 
 # TODO(deymo): Remove the example postinst once payload v2 is used.
 PRODUCT_PACKAGES += \
