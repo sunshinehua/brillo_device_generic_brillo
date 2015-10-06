@@ -1248,8 +1248,8 @@ void change_syscall(struct __test_metadata *_metadata,
 	ret = ptrace(PTRACE_GETREGSET, tracee, NT_PRSTATUS, &iov);
 	EXPECT_EQ(0, ret);
 
-#if defined(__x86_64__) || defined(__i386__) || defined(__aarch64__) || \
-    defined(__powerpc__) || defined(__s390__)
+#if defined(__x86_64__) || defined(__i386__) || defined(__powerpc__) || \
+    defined(__s390__)
 	{
 		regs.SYSCALL_NUM = syscall;
 	}
@@ -1263,6 +1263,18 @@ void change_syscall(struct __test_metadata *_metadata,
 		EXPECT_EQ(0, ret);
 	}
 
+#elif defined(__aarch64__)
+# ifndef NT_ARM_SYSTEM_CALL
+#  define NT_ARM_SYSTEM_CALL 0x404
+# endif
+	{
+		iov.iov_base = &syscall;
+		iov.iov_len = sizeof(syscall);
+		ret = ptrace(PTRACE_SETREGSET, tracee, NT_ARM_SYSTEM_CALL,
+			     &iov);
+		EXPECT_EQ(0, ret);
+	}
+
 #else
 	ASSERT_EQ(1, 0) {
 		TH_LOG("How is the syscall changed on this architecture?");
@@ -1273,6 +1285,8 @@ void change_syscall(struct __test_metadata *_metadata,
 	if (syscall == -1)
 		regs.SYSCALL_RET = 1;
 
+	iov.iov_base = &regs;
+	iov.iov_len = sizeof(regs);
 	ret = ptrace(PTRACE_SETREGSET, tracee, NT_PRSTATUS, &iov);
 	EXPECT_EQ(0, ret);
 }
