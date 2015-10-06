@@ -11,3 +11,11 @@ unix_socket_connect($1, dbus_daemon, dbus_daemon)
 # Cut down on spam.
 dontaudit $1 kernel:system module_request;
 ')
+
+#####################################
+# allow_crash_reporter(domain)
+# Allow crash_reporter to access crashes for a domain.
+define(`allow_crash_reporter', `
+r_dir_file(crash_reporter, $1)
+allow crash_reporter $1_exec:file r_file_perms;
+')
