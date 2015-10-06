@@ -1,6 +1,7 @@
 # Domain for nativepowerman daemon.
 type nativepowerman, domain;
 type nativepowerman_exec, exec_type, file_type;
+type sysfs_power_state, fs_type, sysfs_type;
 
 init_brillo_domain(nativepowerman)
 allow nativepowerman power_service:service_manager add;
@@ -11,3 +12,9 @@ allow_crash_reporter(nativepowerman)
 
 # Permit setting the sys.powerctl system property to reboot or shut down.
 set_prop(nativepowerman, powerctl_prop)
+
+# Permit writing to /sys/power/state to suspend the system.
+# TODO(derat|jorgelo): Remove the larger sysfs permission once we figure out why
+# just granting /sys/power/state isn't sufficient.
+allow nativepowerman sysfs:file write;
+allow nativepowerman sysfs_power_state:file rw_file_perms;
