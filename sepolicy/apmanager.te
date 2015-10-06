@@ -6,6 +6,9 @@ type apmanager_data_file, file_type, data_file_type;
 init_brillo_domain(apmanager)
 net_domain(apmanager)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(apmanager)
+
 # Allow to pass file descriptors from apmanager over D-Bus.
 allow dbus_daemon apmanager:fd use;
 allow dbus_daemon apmanager_data_file:file r_file_perms;

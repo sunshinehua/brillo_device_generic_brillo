@@ -8,6 +8,9 @@ type shill_sysfs_entry, fs_type, sysfs_type;
 init_daemon_domain(shill)
 net_domain(shill)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(shill)
+
 unix_socket_connect(shill, dbus_daemon, dbus_daemon)
 file_type_auto_trans(shill, system_data_file, shill_data_file)
 

@@ -22,9 +22,6 @@ allow crash_reporter metrics_data_file:file create_file_perms;
 # Allow setting crash reporter properties.
 set_prop(crash_reporter, crash_reporter_prop)
 
-# Allow access to brillo core dump files.
-r_dir_file(crash_reporter, brillo)
-allow crash_reporter brillo_exec:file r_file_perms;
 
 # Permissions for calling dbus-send and signaling metrics.
 allow crash_reporter kernel:fifo_file r_file_perms;

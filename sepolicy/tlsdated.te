@@ -6,6 +6,9 @@ type tlsdated_data_file, file_type, data_file_type;
 init_brillo_domain(tlsdated)
 net_domain(tlsdated)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(tlsdated)
+
 allow tlsdated tlsdated_exec:file execute_no_trans;
 allow tlsdated self:capability { sys_time setuid setgid };
 allow tlsdated tlsdated_data_file:dir { w_dir_perms };
