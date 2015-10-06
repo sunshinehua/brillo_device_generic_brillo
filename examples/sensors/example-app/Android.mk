@@ -21,8 +21,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := sensors-hal-example-app
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := hal-example-app.cpp
+LOCAL_CFLAGS := -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := \
-  libc \
   libhardware \
 
 include $(BUILD_EXECUTABLE)
