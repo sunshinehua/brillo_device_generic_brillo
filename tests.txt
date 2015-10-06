@@ -1,2 +1,3 @@
+bluetoothtbd_test
 libchrome_test
 libchromeos_test
