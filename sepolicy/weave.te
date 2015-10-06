@@ -5,6 +5,9 @@ type weaved_exec, exec_type, file_type;
 init_brillo_domain(weaved)
 net_domain(weaved)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(weaved)
+
 unix_socket_connect(weaved, connectivity, connectivity)
 
 type weaved_data_file, file_type, data_file_type;

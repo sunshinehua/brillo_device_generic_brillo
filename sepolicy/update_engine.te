@@ -6,6 +6,9 @@ type update_engine_data_file, file_type, data_file_type;
 init_brillo_domain(update_engine)
 net_domain(update_engine)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(update_engine)
+
 # Allow using persistent storage.
 allow update_engine update_engine_data_file:dir { create_dir_perms };
 allow update_engine update_engine_data_file:file { create_file_perms };

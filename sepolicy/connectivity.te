@@ -8,6 +8,9 @@ type connectivity_sysfs_entry, fs_type, sysfs_type;
 init_daemon_domain(connectivity)
 net_domain(connectivity)
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(connectivity)
+
 # Following permissions are needed for connectivity.
 allow connectivity connectivity_device:chr_file { read write open };
 allow connectivity connectivity_exec:file execute_no_trans;
