@@ -1,0 +1,13 @@
+type sensorservice, domain;
+type sensorservice_exec, exec_type, file_type;
+
+init_brillo_domain(sensorservice)
+
+# Allow sensorservice to be discovered by servicemanager and use binder.
+allow sensorservice sensorservice_service:service_manager add;
+allow sensorservice servicemanager:binder { transfer call };
+
+# Allow servicemanager to access sensorservice.
+allow servicemanager sensorservice:dir search;
+allow servicemanager sensorservice:file { read open };
+allow servicemanager sensorservice:process getattr;

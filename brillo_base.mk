@@ -20,6 +20,7 @@
 # Common Brillo init script
 PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo.rc:system/etc/init/brillo.rc \
+  device/generic/brillo/sensorservice.rc:system/etc/init/sensorservice.rc \
   device/generic/brillo/init.firewall-setup.sh:system/etc/init.firewall-setup.sh \
 
 # Directory for init files.
@@ -109,6 +110,10 @@ PRODUCT_PACKAGES += \
   libaudioroute \
   mediaserver \
   local_time.default \
+
+# Sensor package.
+PRODUCT_PACKAGES += \
+  sensorservice \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \
