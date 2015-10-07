@@ -1,18 +1,15 @@
-# Domain for update_engine daemon.
-type update_engine, domain;
-type update_engine_exec, exec_type, file_type;
-type update_engine_data_file, file_type, data_file_type;
+# This file contains Brillo-specific SELinux policy for
+# update_engine. For the main update_engine policy, see
+# external/sepolicy/update_engine.te
 
-init_brillo_domain(update_engine)
-net_domain(update_engine)
-
-# Allow crash_reporter access to core dump files.
-allow_crash_reporter(update_engine)
-
-# Allow using persistent storage.
-allow update_engine update_engine_data_file:dir { create_dir_perms };
-allow update_engine update_engine_data_file:file { create_file_perms };
+# Allow update_engine to use D-Bus.
+unix_socket_connect(update_engine, dbus_daemon, dbus_daemon)
 
 # Allow using metrics_lib.
 allow update_engine metrics_data_file:dir ra_dir_perms;
 allow update_engine metrics_data_file:file create_file_perms;
+
+# Allow read/write on misc partition. This can be removed when we're no
+# longer using the boot_control_copy implementation of the boot_control
+# HAL.
+allow update_engine misc_block_device:blk_file rw_file_perms;
