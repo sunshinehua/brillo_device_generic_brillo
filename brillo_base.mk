@@ -221,10 +221,6 @@ PRODUCT_PACKAGES += \
   ping \
   wpa_cli \
 
-# Stop-gap connectivity solution.
-PRODUCT_PACKAGES += \
-  wifi_connect \
-
 # Bluetooth.
 PRODUCT_PACKAGES += \
   bluetoothtbd \
