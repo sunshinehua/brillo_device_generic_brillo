@@ -72,11 +72,18 @@ make() {
   #   * The user has opted in.
   #   * The build was successful.
   #   * The build was non-trivial.
-  # TODO(arihc) (b/24410633): Check the configuration file for opt-in instead
-  # of using an environment variable.
+  local T="$(gettop)"
+  local BRUNCH_LIB_DIR="${T}/tools/bdk/brunch/lib"
+  # TODO(arihc) (b/24410633): Check the configuration file in the brunch dir
+  # for opt-in instead of using an environment variable.
   if [[ "${BRILLO_ANALYTICS_OPT_IN}" -ne 0 && "$ret" -eq 0 && \
         "$tdiff" -gt 0 ]]; then
-    local data_script="$(gettop)/tools/bdk/brunch/lib/metrics/send_build.py"
+    if [ -z "$PYTHONPATH" ]; then
+      export PYTHONPATH=${BRUNCH_LIB_DIR}
+    else
+      export PYTHONPATH=${BRUNCH_LIB_DIR}:${PYTHONPATH}
+    fi
+    local data_script="${BRUNCH_LIB_DIR}/metrics/send_build.py"
     (python "${data_script}" "${make_type}" "$tdiff" & )
   fi
 }
