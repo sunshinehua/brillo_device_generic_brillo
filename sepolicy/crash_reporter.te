@@ -22,6 +22,13 @@ allow crash_reporter metrics_data_file:file create_file_perms;
 # Allow setting crash reporter properties.
 set_prop(crash_reporter, crash_reporter_prop)
 
+# crash_reporter gets called by the kernel as the root uid and gid.  It needs
+# to then switch to the user and gid of the crashing process to access files in
+# /proc/<pid> and copy them to temporary space, then switches back to root to
+# generate the minidump for crash_sender to access.  It thus needs the chown
+# capability to allow root to access the files put in temporary space that were
+# generated while running as the crashed user.
+allow crash_reporter self:capability { chown };
 
 # Permissions for calling dbus-send and signaling metrics.
 allow crash_reporter kernel:fifo_file r_file_perms;
