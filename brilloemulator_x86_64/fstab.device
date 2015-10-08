@@ -1,0 +1,2 @@
+/dev/block/vda   /                   ext4      ro                                                    wait
+/dev/block/vdb   /data               ext4      noatime,nosuid,nodev,nomblk_io_submit,errors=panic    wait,check
