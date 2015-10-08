@@ -1,3 +1,5 @@
 bluetoothtbd_test
 libchrome_test
 libchromeos_test
+libnativepower_tests
+nativepowerman_tests
