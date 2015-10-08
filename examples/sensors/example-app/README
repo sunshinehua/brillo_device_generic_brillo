@@ -1,5 +1,6 @@
 This folder contains example code for writing native apps that use Brillo
-sensors.
+sensors. The sensors HAL implementation must exist on the device for the apps
+in this folder to run successfully.
 
 Example files:
   hal-example-app.cpp:
