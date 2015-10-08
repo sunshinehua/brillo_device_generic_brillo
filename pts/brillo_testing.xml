@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This manifest can be placed in your .repo/local_manifests/
+     folder in order to pull extra repos required for Brillo Tier1
+     automated testing. -->
+<manifest>
+  <remote fetch="https://chromium.googlesource.com"
+          name="cros"
+          review="https://chromium-review.googlesource.com"
+          revision="refs/heads/master" />
+
+  <project name="chromiumos/platform/crosutils"
+           path="external/chromiumos/src/scripts"
+           remote="cros"
+           groups="bdk" />
+  <project name="chromiumos/third_party/autotest"
+           path="external/chromiumos/src/third_party/autotest/files"
+           remote="cros"
+           groups="bdk" />
+</manifest>
