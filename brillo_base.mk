@@ -26,6 +26,13 @@ PRODUCT_COPY_FILES += \
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_SYSTEM)/etc/init
 
+# Directory for brillo build time properties.
+OSRELEASED_DIRECTORY := os-release.d
+
+# Install the BDK version.
+PRODUCT_COPY_FILES += \
+  tools/bdk/VERSION:system/etc/$(OSRELEASED_DIRECTORY)/bdk_version
+
 # Skip API checks.
 WITHOUT_CHECK_API := true
 # Don't try to build and run all tests by defaults. Several tests have
@@ -90,6 +97,11 @@ PRODUCT_PACKAGES += \
   mac_permissions.xml \
   selinux_version \
   service_contexts \
+
+# Build time parameters
+PRODUCT_PACKAGES += \
+  product_version \
+  product_id \
 
 # D-Bus daemon, utilities, and example programs.
 PRODUCT_PACKAGES += \
