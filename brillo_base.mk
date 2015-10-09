@@ -251,6 +251,12 @@ define generate-initrc-file
   $(hide) sed -i -e 's?%GROUPS%?$(3)?g' $@
 endef
 
+# Called from the product makefile, it sets any derived defaults.
+define set-product-defaults
+  $(eval PRODUCT_NAME := $$(basename $$(notdir \
+    $$(filter $$(LOCAL_PATH)/%.mk,$$(MAKEFILE_LIST)))))
+endef
+
 HARDWARE_BSP_PREFIX := hardware/bsp
 HARDWARE_BSP_PREBUILTS_PREFIX := vendor/bsp
 # New BSP helpers - move to /build once stable.
