@@ -8,3 +8,9 @@ Example files:
     hardware/libhardware/include/sensors.h) directly. In the app, the list of
     sensors found on the device is printed. And if an accelerometer exists, the
     app will read the data and print it out.
+
+  ndk-example-app.cpp:
+    An example app that uses the NDK sensors interface. In the app, the list of
+    sensors found on the device is printed. And then the app tries to read data
+    from accelerometer, proximity sensor, and significant motion sensor, which
+    has continuous, on-change, and one-shot reporting modes respectively.
