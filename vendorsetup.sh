@@ -86,4 +86,5 @@ make() {
     local data_script="${BRUNCH_LIB_DIR}/metrics/send_build.py"
     (python "${data_script}" "${make_type}" "$tdiff" & )
   fi
+  return $ret
 }
