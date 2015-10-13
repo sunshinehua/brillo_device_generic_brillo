@@ -133,7 +133,6 @@ PRODUCT_PACKAGES += \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \
-  apmanager \
   cacerts \
   dhcpcd \
   dhcpcd-6.8.2 \
@@ -141,6 +140,21 @@ PRODUCT_PACKAGES += \
   hostapd \
   shill \
   wpa_supplicant \
+
+# Check for targets that do not support WiFi.
+WIFI_SUPPORTED := true
+ifeq ($(TARGET_PRODUCT),brilloemulator_arm64)
+WIFI_SUPPORTED := false
+endif
+ifeq ($(TARGET_PRODUCT),brilloemulator_arm)
+WIFI_SUPPORTED := false
+endif
+
+ifeq ($(WIFI_SUPPORTED),true)
+# It only makes sense to include apmanager if WiFi is supported.
+PRODUCT_PACKAGES += apmanager
+SHILL_USE_WIFI := true
+endif
 
 # Metrics daemon and metrics library.
 PRODUCT_PACKAGES += \
