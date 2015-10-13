@@ -2,6 +2,8 @@
 type bluetoothtbd, domain;
 type bluetoothtbd_exec, exec_type, file_type;
 type bluetoothtbd_device, dev_type;
+type sysfs_bluetoothtbd_readable, fs_type, sysfs_type;
+type sysfs_bluetoothtbd_writable, fs_type, sysfs_type;
 
 init_brillo_domain(bluetoothtbd)
 
@@ -15,4 +17,9 @@ allow bluetoothtbd bluetooth_data_file:notdevfile_class_set create_file_perms;
 
 type_transition bluetoothtbd bluetooth_data_file:sock_file bluetooth_socket;
 
-allow bluetoothtbd bluetoothtbd_device:chr_file { read write open };
+allow bluetoothtbd bluetoothtbd_device:chr_file rw_file_perms;
+
+# sysfs access.
+allow bluetoothtbd sysfs_bluetoothtbd_readable:file r_file_perms;
+allow bluetoothtbd sysfs_bluetoothtbd_writable:file rw_file_perms;
+allow bluetoothtbd self:capability net_admin;
