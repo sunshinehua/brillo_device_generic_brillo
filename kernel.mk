@@ -39,6 +39,11 @@ ifeq ($(TARGET_KERNEL_ARCH),)
 $(error TARGET_KERNEL_ARCH not defined)
 endif
 
+# Manually adjust x86 to mean "i386" for Edison.
+ifeq ($(TARGET_KERNEL_ARCH),x86)
+TARGET_KERNEL_ARCH := i386
+endif
+
 # Check target arch.
 KERNEL_TOOLCHAIN_ABS := $(realpath $(TARGET_TOOLCHAIN_ROOT)/bin)
 TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
@@ -46,6 +51,7 @@ KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
 
 ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
+KERNEL_SRC_ARCH := arm
 ifdef TARGET_KERNEL_DTB
 KERNEL_NAME := zImage
 else
@@ -53,9 +59,15 @@ KERNEL_NAME := zImage-dtb
 endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-android-
+KERNEL_SRC_ARCH := arm64
 KERNEL_NAME := Image
-else ifeq ($(TARGET_KERNEL_ARCH), x86)
+else ifeq ($(TARGET_KERNEL_ARCH), i386)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
+KERNEL_SRC_ARCH := x86
+KERNEL_NAME := bzImage
+else ifeq ($(TARGET_KERNEL_ARCH), x86_64)
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
+KERNEL_SRC_ARCH := x86
 KERNEL_NAME := bzImage
 else
 $(error kernel arch not supported at present)
@@ -76,13 +88,24 @@ endif
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
 
 KERNEL_CONFIG := $(KERNEL_OUT)/.config
+KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
 
-KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/$(KERNEL_NAME)
+KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
+
+# Figure out which kernel version is being built (disregard -stable version).
+KERNEL_VERSION := $(shell $(MAKE) -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
+
+KERNEL_CONFIGS_DIR := device/generic/brillo/kconfig
+KERNEL_CONFIGS_COMMON := $(KERNEL_CONFIGS_DIR)/common.config
+KERNEL_CONFIGS_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_ARCH).config
+KERNEL_CONFIGS_VER := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/common.config
+KERNEL_CONFIGS_VER_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/$(KERNEL_ARCH).config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 
+
 ifdef TARGET_KERNEL_DTB
-KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
+KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
 $(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) | $(ACP)
 	$(ACP) -fp $(KERNEL_DTB) $@
 endif
@@ -90,12 +113,34 @@ endif
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 
-# Build the kernel config
-$(KERNEL_CONFIG): $(KERNEL_OUT)
-	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) $(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) arch/$(KERNEL_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) $(TARGET_KERNEL_CONFIGS)
+# Merge the required kernel config elements.
+$(KERNEL_CONFIG_REQUIRED): $(KERNEL_OUT) \
+			   $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
+			   $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH)
+	$(hide) if [ ! -f $(KERNEL_CONFIGS_ARCH) ] ; then \
+		echo "Missing common kernel configs for $(KERNEL_ARCH)"; \
+		echo "$(KERNEL_CONFIGS_ARCH)"; \
+		exit 1; \
+	fi
+	$(hide) if [ ! -f $(KERNEL_CONFIGS_VER) ] ; then \
+		echo "Missing common $(KERNEL_VERSION) kernel configs"; \
+		echo "$(KERNEL_CONFIGS_VER)"; \
+		exit 1; \
+	fi
+	$(hide) if [ ! -f $(KERNEL_CONFIGS_VER_ARCH) ] ; then \
+		echo "Missing $(KERNEL_VERSION) kernel configs for $(KERNEL_ARCH)"; \
+		echo "$(KERNEL_CONFIGS_VER_ARCH)"; \
+		exit 1; \
+	fi
+	$(hide) cat $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
+		    $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH) > $@
+
+# Merge the final target kernel config.
+$(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
+	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) $(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) $(TARGET_KERNEL_CONFIGS) $(realpath $(KERNEL_CONFIG_REQUIRED))
 
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
-	$(hide) echo "Building kernel..."
+	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) $(KERNEL_CFLAGS)
 	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) headers_install;
