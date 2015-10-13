@@ -63,6 +63,7 @@ PRODUCT_PACKAGES = \
   reboot \
   rootdev \
   servicemanager \
+  softkeymaster \
   sh \
   toolbox \
   toybox \
