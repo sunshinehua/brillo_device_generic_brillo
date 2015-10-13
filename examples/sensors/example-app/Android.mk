@@ -17,12 +17,17 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-
 LOCAL_MODULE := sensors-hal-example-app
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := hal-example-app.cpp
 LOCAL_CFLAGS := -Wno-unused-parameter
-LOCAL_SHARED_LIBRARIES := \
-  libhardware \
+LOCAL_SHARED_LIBRARIES := libhardware
+include $(BUILD_EXECUTABLE)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := sensors-ndk-example-app
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := ndk-example-app.cpp
+LOCAL_CFLAGS := -Wno-unused-parameter
+LOCAL_SHARED_LIBRARIES := libsensor
 include $(BUILD_EXECUTABLE)
