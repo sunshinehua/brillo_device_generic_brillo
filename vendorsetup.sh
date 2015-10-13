@@ -56,6 +56,22 @@ scan_for_brillo_devices
 eval "overridden_$(declare -f make)"
 # TODO(arihc): move all this functionality into brunch build.
 make() {
+  # TODO(arihc): This first part should be part of BDK install.
+  local T="$(gettop)"
+  local BRUNCH_LIB_DIR="${T}/tools/bdk/brunch/lib"
+  if [ -z "$PYTHONPATH" ]; then
+    export PYTHONPATH=${BRUNCH_LIB_DIR}
+  else
+    export PYTHONPATH=${BRUNCH_LIB_DIR}:${PYTHONPATH}
+  fi
+  # For now, assume that if the config file exists,
+  # the user has had a chance to opt in/out. Otherwise
+  # prompt them.
+  if [[ ! -e "${T}/.user_config.db" ]]; then
+      python "${BRUNCH_LIB_DIR}/tools/setup.py"
+  fi
+
+  # Actually perform the build (and time it)
   local start_time=$(date +"%s")
   overridden_make "$@"
   local ret=$?
@@ -72,19 +88,15 @@ make() {
   #   * The user has opted in.
   #   * The build was successful.
   #   * The build was non-trivial.
-  local T="$(gettop)"
-  local BRUNCH_LIB_DIR="${T}/tools/bdk/brunch/lib"
-  # TODO(arihc) (b/24410633): Check the configuration file in the brunch dir
-  # for opt-in instead of using an environment variable.
-  if [[ "${BRILLO_ANALYTICS_OPT_IN}" -ne 0 && "$ret" -eq 0 && \
-        "$tdiff" -gt 0 ]]; then
-    if [ -z "$PYTHONPATH" ]; then
-      export PYTHONPATH=${BRUNCH_LIB_DIR}
-    else
-      export PYTHONPATH=${BRUNCH_LIB_DIR}:${PYTHONPATH}
-    fi
-    local data_script="${BRUNCH_LIB_DIR}/metrics/send_build.py"
-    (python "${data_script}" "${make_type}" "$tdiff" & )
-  fi
+  # TODO(arihc): Should be part of brunch build command.
+  (local check_opt_in_script="${BRUNCH_LIB_DIR}/metrics/check_opt_in.py"
+   python "${check_opt_in_script}"
+   local opt_in=$?
+   if [[ "${opt_in}" -eq 1 && "$ret" -eq 0 && \
+       "$tdiff" -gt 0 ]]; then
+       local data_script="${BRUNCH_LIB_DIR}/metrics/send_build.py"
+       python "${data_script}" "${make_type}" "$tdiff"
+   fi & )
+
   return $ret
 }
