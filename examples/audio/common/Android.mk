@@ -17,32 +17,11 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := \
-  audio_test.cpp \
-  libmedia_record.cpp \
-  libmedia_playback.cpp \
-  stagefright_record.cpp \
-  stagefright_playback.cpp \
-
-LOCAL_MODULE := audio_test
-
-LOCAL_CFLAGS += -Wall -Wno-unused-parameter -Werror \
-
+LOCAL_SRC_FILES := SineSource.cpp
+LOCAL_MODULE := libsinesource
+LOCAL_CFLAGS += -Wall -Werror
 LOCAL_SHARED_LIBRARIES := \
-  libbase \
-  libbinder \
-  libc \
   liblog \
-  libmedia \
-  libsinesource \
   libstagefright \
-  libstagefright_foundation \
-  libutils \
-
-LOCAL_C_INCLUDES := \
-  $(TOP)/frameworks/av/media/libstagefright \
-  $(TOP)/frameworks/native/include/media/openmax \
-  $(TOP)/device/generic/brillo/examples/audio/common \
-
-include $(BUILD_EXECUTABLE)
+  libutils
+include $(BUILD_SHARED_LIBRARY)
