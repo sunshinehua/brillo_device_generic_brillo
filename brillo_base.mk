@@ -17,7 +17,7 @@
 # This is a build configuration for the base of a Brillo system.
 # It contains the mandatory targets required to boot a Brillo device.
 
-# Common Brillo init script
+# Common Brillo init scripts.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo.rc:system/etc/init/brillo.rc \
   device/generic/brillo/sensorservice.rc:system/etc/init/sensorservice.rc \
@@ -26,7 +26,7 @@ PRODUCT_COPY_FILES += \
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_SYSTEM)/etc/init
 
-# Directory for brillo build time properties.
+# Directory for Brillo build time properties.
 OSRELEASED_DIRECTORY := os-release.d
 
 # Install the BDK version.
@@ -35,7 +35,7 @@ PRODUCT_COPY_FILES += \
 
 # Skip API checks.
 WITHOUT_CHECK_API := true
-# Don't try to build and run all tests by defaults. Several tests have
+# Don't try to build and run all tests by default. Several tests have
 # dependencies on the framework.
 ANDROID_NO_TEST_CHECK := true
 
@@ -88,7 +88,7 @@ endif
 PRODUCT_PACKAGES += \
   postinst_example \
 
-# SELinux packages
+# SELinux packages.
 PRODUCT_PACKAGES += \
   sepolicy \
   file_contexts.bin \
@@ -98,7 +98,7 @@ PRODUCT_PACKAGES += \
   selinux_version \
   service_contexts \
 
-# Build time parameters
+# Build time parameters.
 PRODUCT_PACKAGES += \
   product_version \
   product_id \
@@ -141,7 +141,7 @@ PRODUCT_PACKAGES += \
   shill \
   wpa_supplicant \
 
-# Metrics daemon and metrics library
+# Metrics daemon and metrics library.
 PRODUCT_PACKAGES += \
   libmetrics \
   metrics_client \
@@ -247,7 +247,7 @@ PRODUCT_COPY_FILES += \
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 
-# Define that identifies Brillo targets
+# Define that identifies Brillo targets.
 BRILLO := 1
 
 # Generate Breakpad symbols.
