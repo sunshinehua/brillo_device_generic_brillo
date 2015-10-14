@@ -39,11 +39,6 @@ ifeq ($(TARGET_KERNEL_ARCH),)
 $(error TARGET_KERNEL_ARCH not defined)
 endif
 
-# Manually adjust x86 to mean "i386" for Edison.
-ifeq ($(TARGET_KERNEL_ARCH),x86)
-TARGET_KERNEL_ARCH := i386
-endif
-
 # Check target arch.
 KERNEL_TOOLCHAIN_ABS := $(realpath $(TARGET_TOOLCHAIN_ROOT)/bin)
 TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
@@ -137,9 +132,7 @@ $(KERNEL_CONFIG_REQUIRED): $(KERNEL_OUT) \
 
 # Merge the final target kernel config.
 $(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
-	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) $(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) $(TARGET_KERNEL_CONFIGS)
-# Disable adding required configs...
-#$(realpath $(KERNEL_CONFIG_REQUIRED))
+	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) $(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) $(TARGET_KERNEL_CONFIGS) $(realpath $(KERNEL_CONFIG_REQUIRED))
 
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
