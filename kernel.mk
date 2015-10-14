@@ -88,12 +88,12 @@ endif
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
 
 KERNEL_CONFIG := $(KERNEL_OUT)/.config
-KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config-required
+KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
 
 # Figure out which kernel version is being built (disregard -stable version).
-KERNEL_VERSION := $(shell $(MAKE) -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
+KERNEL_VERSION := $(shell $(MAKE) --no-print-directory -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
 
 KERNEL_CONFIGS_DIR := device/generic/brillo/kconfig
 KERNEL_CONFIGS_COMMON := $(KERNEL_CONFIGS_DIR)/common.config
