@@ -16,6 +16,18 @@
 
 LOCAL_PATH := $(call my-dir)
 
+# Example Sensors HAL implementation.
+include $(CLEAR_VARS)
+LOCAL_MODULE := sensors.example
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_MODULE_TAGS := optional
+LOCAL_CFLAGS := -Wno-unused-parameter
+LOCAL_SRC_FILES := \
+  example_sensors.cpp \
+  sensors_hal.cpp
+include $(BUILD_SHARED_LIBRARY)
+
+# Example app that uses sensors HAL.
 include $(CLEAR_VARS)
 LOCAL_MODULE := sensors-hal-example-app
 LOCAL_MODULE_TAGS := optional
@@ -24,6 +36,7 @@ LOCAL_CFLAGS := -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libhardware
 include $(BUILD_EXECUTABLE)
 
+# Example app that uses NDK sensors API.
 include $(CLEAR_VARS)
 LOCAL_MODULE := sensors-ndk-example-app
 LOCAL_MODULE_TAGS := optional

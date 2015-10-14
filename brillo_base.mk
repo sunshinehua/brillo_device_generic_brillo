@@ -123,9 +123,12 @@ PRODUCT_PACKAGES += \
   mediaserver \
   local_time.default \
 
-# Sensor package.
+# Sensor packages and example programs.
 PRODUCT_PACKAGES += \
+  libsensor \
   sensorservice \
+  sensors-hal-example-app \
+  sensors-ndk-example-app \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \

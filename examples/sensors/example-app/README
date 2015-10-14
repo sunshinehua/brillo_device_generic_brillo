@@ -14,3 +14,9 @@ Example files:
     sensors found on the device is printed. And then the app tries to read data
     from accelerometer, proximity sensor, and significant motion sensor, which
     has continuous, on-change, and one-shot reporting modes respectively.
+
+  sensors_hal.cpp
+    An example implementation of a sensors HAL. It implements a fake
+    accelerometer and custom sensor (defined in example_sensors.{h|cpp}). The
+    accelerometer always returns random data. The custom sensor returns the hour
+    for the local time.
