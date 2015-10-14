@@ -287,3 +287,7 @@ define add_peripheral
     $(if $(wildcard $(peripheral_prebuilts_make_file)),$(eval include $(peripheral_prebuilts_make_file)), \
       $(error Can't find peripheral definition. Vendor: $(peripheral_vendor) peripheral: $(peripheral_name))))
 endef
+
+define add_device_packages
+  $(eval CUSTOM_MODULES += $(DEVICE_PACKAGES))
+endef
