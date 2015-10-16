@@ -43,3 +43,4 @@ allow shill dnsmasq_exec:file rx_file_perms;
 # Don't spam the logs when trying to kill dhcpcd.
 # TODO(samueltan): remove this once b/24944751 is fixed.
 dontaudit shill domain:dir search;
+dontaudit shill domain:{file lnk_file} r_file_perms;
