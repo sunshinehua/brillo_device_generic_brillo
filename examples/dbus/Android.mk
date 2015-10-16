@@ -17,7 +17,8 @@
 LOCAL_PATH := $(call my-dir)
 
 dbus_exampleCommonCppExtension := .cc
-dbus_exampleCommonCFlags := -Wall -Werror -Wno-sign-promo
+dbus_exampleCommonCFlags := -Wall -Werror -Wno-sign-promo \
+  -Wno-unused-parameter
 dbus_exampleCommonSharedLibraries := \
   libchrome \
   libchrome-dbus \
