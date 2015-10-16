@@ -64,12 +64,9 @@ make() {
   else
     export PYTHONPATH=${BRUNCH_LIB_DIR}:${PYTHONPATH}
   fi
-  # For now, assume that if the config file exists,
-  # the user has had a chance to opt in/out. Otherwise
-  # prompt them.
-  if [[ ! -e "${T}/.user_config.db" ]]; then
-      python "${BRUNCH_LIB_DIR}/tools/setup.py"
-  fi
+  
+  # check and prompt user for opt in
+  python "${BRUNCH_LIB_DIR}/tools/setup.py"
 
   # Actually perform the build (and time it)
   local start_time=$(date +"%s")
