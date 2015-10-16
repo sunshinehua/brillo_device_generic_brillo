@@ -20,3 +20,7 @@ Example files:
     accelerometer and custom sensor (defined in example_sensors.{h|cpp}). The
     accelerometer always returns random data. The custom sensor returns the hour
     for the local time.
+
+    To use this HAL implementation, push the binary file sensors.example into
+    /system/lib/hw/ folder and rename it to sensors.default (make sure there is
+    no other sensors.* file under that folder).
