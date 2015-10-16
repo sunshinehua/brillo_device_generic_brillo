@@ -19,3 +19,11 @@ define(`allow_crash_reporter', `
 r_dir_file(crash_reporter, $1)
 allow crash_reporter $1_exec:file r_file_perms;
 ')
+
+#####################################
+# allow_power_management(domain)
+# Allow a domain to control power management.
+define(`allow_power_management', `
+allow $1 power_service:service_manager find;
+binder_call($1, nativepowerman)
+')
