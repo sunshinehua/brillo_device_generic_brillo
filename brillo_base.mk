@@ -263,8 +263,13 @@ PRODUCT_COPY_FILES += \
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 
-# Define that identifies Brillo targets.
+# Define a make variable and a C define that identify Brillo targets. __BRILLO__
+# should only be used to differentiate between Brillo and non-Brillo-but-Android
+# environments. Use __ANDROID__ instead to test if something is being built in
+# an Android-derived environment (including Brillo) as opposed to an
+# entirely different environment (e.g. Chrome OS).
 BRILLO := 1
+COMMON_GLOBAL_CFLAGS += -D__BRILLO__
 
 # Generate Breakpad symbols.
 BREAKPAD_GENERATE_SYMBOLS := true
