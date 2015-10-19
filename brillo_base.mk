@@ -310,3 +310,7 @@ endef
 define add_device_packages
   $(eval CUSTOM_MODULES += $(DEVICE_PACKAGES))
 endef
+
+define add_kernel_configs
+  $(eval TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(1))
+endef
