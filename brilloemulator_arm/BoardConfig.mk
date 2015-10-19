@@ -15,7 +15,7 @@
 #
 
 # Standard devices would usally define an SoC. As the emulator
-# has no SoC defnition we pull in a local qemu BSP.
+# has no SoC definition we pull in a local QEMU BSP.
 include device/generic/brillo/brilloemulator_arm/bsp/qemu_arm.mk
 
 
@@ -31,6 +31,9 @@ TARGET_RECOVERY_FSTAB = device/generic/brillo/brilloemulator_arm/fstab.device
 
 # This is an emulator build.
 TARGET_SKIP_OTA_PACKAGE := true
+
+# Use clang.
+USE_CLANG_PLATFORM_BUILD := true
 
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brilloemulator_arm/fstab.device:root/fstab.device
