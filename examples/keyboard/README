@@ -1,0 +1,14 @@
+This folder contains example code for writing native apps that use keyboard
+inputs.
+
+Example file:
+  keyboard_example.cpp:
+    Demos listing devices and querying their metadata, polling for keyboard
+    events and detecting different events (pressed, released, hold) for a given
+    key.
+
+    This uses the evdev kernel mechanism to handle input events. It does not use
+    the input HAL.
+    See https://www.kernel.org/doc/Documentation/input/input.txt and
+    https://www.kernel.org/doc/Documentation/input/event-codes.txt for more
+    information.
