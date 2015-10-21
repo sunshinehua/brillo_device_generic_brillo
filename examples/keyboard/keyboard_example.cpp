@@ -120,6 +120,8 @@ int main(int argc, char** argv) {
 
   // Number of repeated events + 1.
   int count = 1;
+  // Events accumulated for each device.
+  vector<input_event> events[poll_fds.size()];
 
   const char instructions[] = "Press B to start the game and release B to go "
       "back to the main menu.";
@@ -137,31 +139,43 @@ int main(int argc, char** argv) {
           return 1;
         }
 
-        if (event.type != EV_KEY || event.code != KEY_B) {
-          continue;
+        // When receiving a key event for B, add it to the list of events.
+        // Don't process it yet as there might be other events in that report.
+        if (event.type == EV_KEY && event.code == KEY_B) {
+          events[i].push_back(event);
         }
 
-        switch (event.value) {
-          case 0: {
-            // A value of 0 indicates a "key released" event.
-            double percent = 1. - 1./count;
-            printf("%.02f%% loaded.\n", percent * 100);
-            printf("B released, returning to the main menu.\n\n");
-            printf("%s\n", instructions);
-            break;
+        // A SYN_REPORT event signals the end of a report, process all the
+        // previously accumulated events.
+        // At that point we only have events for B in the event vector.
+        if (event.type == EV_SYN && event.code == SYN_REPORT) {
+          for (vector<input_event>::iterator it = events[i].begin();
+               it != events[i].end(); it++) {
+            switch (it->value) {
+              case 0: {
+                // A value of 0 indicates a "key released" event.
+                double percent = 1. - 1./count;
+                printf("%.02f%% loaded.\n", percent * 100);
+                printf("B released, returning to the main menu.\n\n");
+                printf("%s\n", instructions);
+                break;
+              }
+              case 1: {
+                // A value of 1 indicates a "key pressed" event.
+                printf("B pressed, starting the game...\n");
+                count = 1;
+                break;
+              }
+              case 2: {
+                // A value of 2 indicates a "key repeat" event.
+                count++;
+                break;
+              }
+              default: {}
+            }
           }
-          case 1: {
-            // A value of 1 indicates a "key pressed" event.
-            printf("B pressed, starting the game...\n");
-            count = 1;
-            break;
-          }
-          case 2: {
-            // A value of 2 indicates a "key repeat" event.
-            count++;
-            break;
-          }
-          default: {}
+          // Discard all processed events.
+          events[i].clear();
         }
       }
     }
