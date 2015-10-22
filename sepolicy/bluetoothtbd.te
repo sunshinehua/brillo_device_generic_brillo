@@ -9,6 +9,7 @@ init_brillo_domain(bluetoothtbd)
 
 set_prop(bluetoothtbd, bluetooth_prop)
 set_prop(bluetoothtbd, debug_prop)
+wakelock_use(bluetoothtbd)
 
 allow bluetoothtbd bluetooth_service:service_manager add;
 
@@ -22,4 +23,6 @@ allow bluetoothtbd bluetoothtbd_device:chr_file rw_file_perms;
 # sysfs access.
 allow bluetoothtbd sysfs_bluetoothtbd_readable:file r_file_perms;
 allow bluetoothtbd sysfs_bluetoothtbd_writable:file rw_file_perms;
+
 allow bluetoothtbd self:capability net_admin;
+allow bluetoothtbd self:capability2 wake_alarm;

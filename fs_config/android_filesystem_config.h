@@ -39,4 +39,6 @@ static const struct fs_path_config android_device_files[] = {
                                     CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/dhcpcd-6.8.2" },
     { 00700, AID_SYSTEM, AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
                                     CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/wpa_supplicant" },
+    { 00700, AID_BLUETOOTH, AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND) |
+                                       CAP_MASK_LONG(CAP_WAKE_ALARM),    "system/bin/bluetoothtbd" },
 };
