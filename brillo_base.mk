@@ -116,6 +116,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
   audio_test \
   audio_hal_playback_test \
+  audio_hal_record_test \
 
 # Audio example program dependencies.
 PRODUCT_PACKAGES += \
