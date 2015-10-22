@@ -17,5 +17,5 @@
 
 service sensorservice /system/bin/sensorservice
     class main
-    user system
+    user root
     group system
