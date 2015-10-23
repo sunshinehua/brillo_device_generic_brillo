@@ -144,6 +144,7 @@ PRODUCT_PACKAGES += \
   dnsmasq \
   hostapd \
   shill \
+  wifi_init \
   wpa_supplicant \
 
 # Check for targets that do not support WiFi.
