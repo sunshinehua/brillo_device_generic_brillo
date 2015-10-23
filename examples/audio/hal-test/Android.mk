@@ -16,8 +16,9 @@
 
 LOCAL_PATH := $(call my-dir)
 
+# audio_hal_playback_test
+# ==============================================================================
 include $(CLEAR_VARS)
-
 LOCAL_SRC_FILES := audio_hal_playback_test.cpp
 LOCAL_MODULE := audio_hal_playback_test
 LOCAL_CFLAGS += -Wall -Werror
@@ -33,4 +34,19 @@ LOCAL_C_INCLUDES := \
   $(TOP)/system/core/base/include \
   $(TOP)/frameworks/av/media/libstagefright \
   $(TOP)/device/generic/brillo/examples/audio/common
+include $(BUILD_EXECUTABLE)
+
+# audio_hal_record_test
+# ==============================================================================
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := audio_hal_record_test.cpp
+LOCAL_MODULE := audio_hal_record_test
+LOCAL_CFLAGS += -Wall -Werror -Wno-sign-compare
+LOCAL_SHARED_LIBRARIES := \
+  libbase \
+  libhardware \
+  liblog \
+  libutils
+LOCAL_C_INCLUDES := \
+  $(TOP)/system/core/base/include
 include $(BUILD_EXECUTABLE)
