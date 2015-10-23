@@ -196,7 +196,7 @@ TARGET_SKIP_OTA_PACKAGE := true
 # This is the list of partitions the A/B updater will update. These need to have
 # two partitions each in the partition table, with the right suffix used by the
 # bootloader, for example "system_a" and "system_b".
-UPDATE_AB_PARTITIONS := \
+AB_OTA_PARTITIONS := \
   boot \
   system
 
