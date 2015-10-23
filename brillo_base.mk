@@ -115,6 +115,9 @@ PRODUCT_PACKAGES += \
 # Audio example program.
 PRODUCT_PACKAGES += \
   audio_test \
+
+# Audio HAL tests.
+PRODUCT_PACKAGES += \
   audio_hal_playback_test \
   audio_hal_record_test \
 
