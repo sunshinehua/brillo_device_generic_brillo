@@ -1,0 +1,5 @@
+service wifi_init /system/bin/wifi_init client
+    class core
+    user root
+    group root
+    oneshot
