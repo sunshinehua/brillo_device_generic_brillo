@@ -121,13 +121,34 @@ PRODUCT_PACKAGES += \
   audio_hal_playback_test \
   audio_hal_record_test \
 
-# Audio example program dependencies.
+# Audio ndk tests.
 PRODUCT_PACKAGES += \
-  libtinycompress \
-  libtinyalsa \
+  slesTest_playFdPath \
+  slesTest_recBuffQueue \
+  slesTest_sawtoothBufferQueue \
+
+# Audio dependencies.
+PRODUCT_PACKAGES += \
   libaudioroute \
-  mediaserver \
+  libtinyalsa \
+  libtinycompress \
   local_time.default \
+  mediaserver \
+
+# OpenMAX Audio Codecs.
+PRODUCT_PACKAGES += \
+  libstagefright_soft_aacdec \
+  libstagefright_soft_aacenc \
+  libstagefright_soft_amrdec \
+  libstagefright_soft_amrnbenc \
+  libstagefright_soft_amrwbenc \
+  libstagefright_soft_flacenc \
+  libstagefright_soft_g711dec \
+  libstagefright_soft_gsmdec \
+  libstagefright_soft_mp3dec \
+  libstagefright_soft_opusdec \
+  libstagefright_soft_rawdec \
+  libstagefright_soft_vorbisdec \
 
 # Sensor packages and example programs.
 PRODUCT_PACKAGES += \
