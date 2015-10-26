@@ -44,13 +44,24 @@ int main() {
       flashOffMS: 0,
       brightnessMode: 0,
   };
+  struct light_state_t state_flash = {
+      color: 1,
+      flashMode: LIGHT_FLASH_TIMED,
+      flashOnMS: 50,
+      flashOffMS: 50,
+      brightnessMode: 0,
+  };
 
+  // On for three seconds.
   light_device->set_light(light_device, &state);
-
   sleep(3);
 
-  state.color = 0;
+  // Flash for three seconds.
+  light_device->set_light(light_device, &state_flash);
+  sleep(3);
 
+  // Off.
+  state.color = 0;
   light_device->set_light(light_device, &state);
 
   light_device->common.close(
