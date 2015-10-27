@@ -1,4 +1,4 @@
-This folder contains examples for doing audio on Brillo.
+This folder contains tests for libmedia and stagefright on Brillo.
 
 Example files:
   libmedia_playback.cpp:

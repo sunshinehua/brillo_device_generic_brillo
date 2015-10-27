@@ -35,7 +35,7 @@ enum TestMode {
 };
 
 void usage() {
-  fprintf(stderr, "Usage: ./audio_test [option].\n"
+  fprintf(stderr, "Usage: ./brillo_audio_test [option].\n"
          "play_libmedia - play raw audio stream using libmedia \n"
          "play_stagefright filename - play mp3 using libstagefright \n"
          "play_multiple filename - play multiple audio stream using both"

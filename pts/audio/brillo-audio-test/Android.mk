@@ -16,37 +16,27 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# audio_hal_playback_test
-# ==============================================================================
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := audio_hal_playback_test.cpp
-LOCAL_MODULE := audio_hal_playback_test
-LOCAL_CFLAGS += -Wall -Werror
+LOCAL_SRC_FILES := \
+  brillo_audio_test.cpp \
+  libmedia_record.cpp \
+  libmedia_playback.cpp \
+  stagefright_record.cpp \
+  stagefright_playback.cpp
+LOCAL_MODULE := brillo_audio_test
+LOCAL_CFLAGS += -Wall -Wno-unused-parameter -Werror
 LOCAL_SHARED_LIBRARIES := \
   libbase \
-  libhardware \
+  libbinder \
+  libc \
   liblog \
+  libmedia \
   libsinesource \
   libstagefright \
   libstagefright_foundation \
   libutils
 LOCAL_C_INCLUDES := \
-  $(TOP)/system/core/base/include \
   $(TOP)/frameworks/av/media/libstagefright \
-  $(TOP)/device/generic/brillo/examples/audio/common
-include $(BUILD_EXECUTABLE)
-
-# audio_hal_record_test
-# ==============================================================================
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := audio_hal_record_test.cpp
-LOCAL_MODULE := audio_hal_record_test
-LOCAL_CFLAGS += -Wall -Werror -Wno-sign-compare
-LOCAL_SHARED_LIBRARIES := \
-  libbase \
-  libhardware \
-  liblog \
-  libutils
-LOCAL_C_INCLUDES := \
-  $(TOP)/system/core/base/include
+  $(TOP)/frameworks/native/include/media/openmax \
+  $(TOP)/device/generic/brillo/pts/audio/common
 include $(BUILD_EXECUTABLE)
