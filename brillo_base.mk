@@ -112,9 +112,9 @@ PRODUCT_PACKAGES += \
   dbus-monitor \
   dbus-send \
 
-# Audio example program.
+# Brillo audio tests for libmedia and libstagefright.
 PRODUCT_PACKAGES += \
-  audio_test \
+  brillo_audio_test \
 
 # Audio HAL tests.
 PRODUCT_PACKAGES += \
