@@ -135,6 +135,13 @@ PRODUCT_PACKAGES += \
   local_time.default \
   mediaserver \
 
+# Audio libraries.
+PRODUCT_PACKAGES += \
+  libmedia \
+  libstagefright \
+  libOpenSLES \
+  libOpenMAXAL \
+
 # OpenMAX Audio Codecs.
 PRODUCT_PACKAGES += \
   libstagefright_soft_aacdec \
