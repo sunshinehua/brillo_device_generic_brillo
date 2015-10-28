@@ -17,7 +17,6 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := wifi_init
-LOCAL_INIT_RC := wifi_init.rc
 LOCAL_CPPFLAGS := -std=c++11 -Wall -Werror
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := libcutils libhardware

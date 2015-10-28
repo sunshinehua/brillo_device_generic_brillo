@@ -30,6 +30,11 @@ service firewall-setup /system/etc/init.firewall-setup.sh
     group root net_admin net_raw
     oneshot
 
+service wifi-setup /system/etc/init.wifi-setup.sh
+    class core
+    user root
+    oneshot
+
 service dbus /system/bin/dbus-daemon --system --nofork
     class core
     socket dbus stream 0660 dbus dbus

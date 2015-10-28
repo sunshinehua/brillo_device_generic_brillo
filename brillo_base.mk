@@ -22,6 +22,7 @@ PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo.rc:system/etc/init/brillo.rc \
   device/generic/brillo/sensorservice.rc:system/etc/init/sensorservice.rc \
   device/generic/brillo/init.firewall-setup.sh:system/etc/init.firewall-setup.sh \
+  device/generic/brillo/init.wifi-setup.sh:system/etc/init.wifi-setup.sh \
 
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_SYSTEM)/etc/init

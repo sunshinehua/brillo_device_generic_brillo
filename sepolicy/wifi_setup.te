@@ -1,0 +1,24 @@
+# wifi_setup.
+type wifi_setup, domain;
+type wifi_setup_exec, exec_type, file_type;
+type wifi_setup_prop, property_type;
+type wifi_device, dev_type;
+type wifi_sysfs_entry, fs_type, sysfs_type;
+
+init_brillo_domain(wifi_setup)
+
+# Inherit open file to shell (interpreter) for script.
+allow wifi_setup shell_exec:file read;
+allow wifi_setup system_file:file execute_no_trans;
+allow wifi_setup toolbox_exec:file { rx_file_perms };
+
+# Set properties for init.
+set_prop(wifi_setup, wifi_setup_prop);
+
+# Permissions for WiFi driver initialization.
+allow wifi_setup self:capability { net_admin net_raw };
+allow wifi_setup self:udp_socket create_socket_perms;
+allow wifi_setup sysfs:file w_file_perms;
+allow wifi_setup wifi_device:chr_file rw_file_perms;
+allow wifi_setup wifi_sysfs_entry:file rw_file_perms;
+dontaudit wifi_setup wifi_device:chr_file { getattr ioctl };
