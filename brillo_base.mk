@@ -33,6 +33,9 @@ OSRELEASED_DIRECTORY := os-release.d
 PRODUCT_COPY_FILES += \
   tools/bdk/VERSION:system/etc/$(OSRELEASED_DIRECTORY)/bdk_version
 
+# Include the cfgtree helpers for loading config values from disk.
+include device/generic/brillo/cfgtree.mk
+
 # Skip API checks.
 WITHOUT_CHECK_API := true
 # Don't try to build and run all tests by default. Several tests have
@@ -317,9 +320,15 @@ define generate-initrc-file
 endef
 
 # Called from the product makefile, it sets any derived defaults.
+# DEPRECATED
 define set-product-defaults
   $(eval PRODUCT_NAME := $$(basename $$(notdir \
     $$(filter $$(LOCAL_PATH)/%.mk,$$(MAKEFILE_LIST)))))
+endef
+# Returns the product name as guessed from the calling file.
+define get_product_name_from_file
+$(firstword $(basename $(notdir \
+  $(filter $(LOCAL_PATH)/%.mk,$(MAKEFILE_LIST)))))
 endef
 
 HARDWARE_BSP_PREFIX := hardware/bsp
