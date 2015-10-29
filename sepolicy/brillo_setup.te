@@ -17,9 +17,7 @@ allow brillo_setup self:rawip_socket setopt;
 allow brillo_setup system_file:file execute_no_trans;
 
 # Set properties for init.
-allow brillo_setup brillo_setup_prop:property_service set;
-allow brillo_setup init:unix_stream_socket connectto;
-allow brillo_setup property_socket:sock_file write;
+set_prop(brillo_setup, brillo_setup_prop)
 
 allow brillo_setup toolbox_exec:file { rx_file_perms };
 
