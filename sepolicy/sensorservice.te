@@ -11,3 +11,6 @@ allow sensorservice servicemanager:binder { transfer call };
 allow servicemanager sensorservice:dir search;
 allow servicemanager sensorservice:file { read open };
 allow servicemanager sensorservice:process getattr;
+
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(sensorservice)

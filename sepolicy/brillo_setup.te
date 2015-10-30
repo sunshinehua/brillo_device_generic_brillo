@@ -21,5 +21,8 @@ set_prop(brillo_setup, brillo_setup_prop)
 
 allow brillo_setup toolbox_exec:file { rx_file_perms };
 
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(brillo_setup)
+
 # Quiet logging.
 dontaudit brillo_setup kernel:system module_request;

@@ -13,3 +13,6 @@ allow update_engine metrics_data_file:file create_file_perms;
 # longer using the boot_control_copy implementation of the boot_control
 # HAL.
 allow update_engine misc_block_device:blk_file rw_file_perms;
+
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(update_engine)

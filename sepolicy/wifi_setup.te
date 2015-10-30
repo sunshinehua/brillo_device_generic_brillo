@@ -22,3 +22,6 @@ allow wifi_setup sysfs:file w_file_perms;
 allow wifi_setup wifi_device:chr_file rw_file_perms;
 allow wifi_setup wifi_sysfs_entry:file rw_file_perms;
 dontaudit wifi_setup wifi_device:chr_file { getattr ioctl };
+
+# Allow crash_reporter access to core dump files.
+allow_crash_reporter(wifi_setup)
