@@ -23,7 +23,7 @@ PRODUCT_DEVICE := brilloemulator_arm64
 
 # Install emulator-specific config file for weaved.
 PRODUCT_COPY_FILES += \
-  device/generic/brillo/brilloemulator_arm/base_product/weaved.conf:system/etc/weaved/weaved.conf
+  device/generic/brillo/brilloemulator_arm64/base_product/weaved.conf:system/etc/weaved/weaved.conf
 
 PRODUCT_PACKAGES += \
   brilloemulator-arm64
