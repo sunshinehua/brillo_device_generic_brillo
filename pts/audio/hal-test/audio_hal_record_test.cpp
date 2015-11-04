@@ -20,21 +20,21 @@
 #include <time.h>
 #include <vector>
 
+#include <audio_utils/sndfile.h>
 #include <base/logging.h>
 #include <hardware/audio.h>
 #include <hardware/hardware.h>
 
 int main(int argc, char* argv[]) {
   if (argc < 4) {
-    fprintf(stderr, "Usage: ./audio_hal_record_test device sample_rate filename\n"
+    fprintf(stderr, "Usage: ./audio_hal_record_test device sample_rate file\n"
             "If the test passes, the noises made during recording should be "
             "saved to the specified file.\n"
             "device: hex value representing the audio device (see "
             "system/media/audio/include/system/audio.h). Note that the "
             "AUDIO_DEVICE_BIT_IN mask is optional.\n"
             "sample_rate: Sample rate to record audio at.\n"
-            "filename: File to save the raw data to so it can be analyzed on a "
-            "computer.\n");
+            "filename: Wav file to save the recorded data to.\n");
     return -1;
   }
   // Process command line arguments.
@@ -134,20 +134,25 @@ int main(int argc, char* argv[]) {
   audio_hw_device_close(audio_device);
 
   // Save results to a file for offline analysis.
-  FILE* out_file = fopen(output_filename, "w");
-  if (out_file == NULL) {
+  int num_channels = audio_channel_count_from_out_mask(config.channel_mask);
+  SF_INFO info;
+  info.frames = 0;
+  info.samplerate = desired_sample_rate;
+  info.channels = num_channels;
+  info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+
+  SNDFILE* out_file = sf_open(output_filename, SFM_WRITE, &info);
+  if (out_file == nullptr) {
     LOG(ERROR) << "Could not open output file.";
     return -1;
   }
-  fwrite(reinterpret_cast<void*>(recorded_data.data()), sizeof(uint8_t),
-         buffer_offset, out_file);
-  fclose(out_file);
-
-  // TODO(ralphnathan): Allow for file playback using the audio_hal_play_test
-  // instead of having to do adb pull and then play on the host. (b/25183495)
+  size_t frame_size = audio_bytes_per_sample(config.format) * num_channels;
+  sf_count_t frame_count = buffer_offset / frame_size;
+  sf_writef_short(out_file, reinterpret_cast<short int*>(recorded_data.data()),
+                  frame_count);
+  sf_close(out_file);
 
   // Print instructions to access the file.
-  int num_channels = audio_channel_count_from_out_mask(config.channel_mask);
   printf("The audio recording has been saved to %s. Please use adb pull to get "
          "the file and play it using audacity. The audio data has the "
          "following characteristics:\nsample rate: %i\nformat: 16 bit pcm\n"
