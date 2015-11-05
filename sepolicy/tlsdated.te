@@ -3,7 +3,7 @@ type tlsdated, domain;
 type tlsdated_exec, exec_type, file_type;
 type tlsdated_data_file, file_type, data_file_type;
 
-init_brillo_domain(tlsdated)
+brillo_domain(tlsdated)
 net_domain(tlsdated)
 
 # Allow crash_reporter access to core dump files.

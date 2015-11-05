@@ -3,7 +3,7 @@ type webservd, domain;
 type webservd_exec, exec_type, file_type;
 type webservd_data_file, file_type, data_file_type;
 
-init_brillo_domain(webservd)
+brillo_domain(webservd)
 net_domain(webservd)
 
 # Allow crash_reporter access to core dump files.

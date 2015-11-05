@@ -5,7 +5,7 @@ type bluetoothtbd_device, dev_type;
 type sysfs_bluetoothtbd_readable, fs_type, sysfs_type;
 type sysfs_bluetoothtbd_writable, fs_type, sysfs_type;
 
-init_brillo_domain(bluetoothtbd)
+brillo_domain(bluetoothtbd)
 
 set_prop(bluetoothtbd, bluetooth_prop)
 set_prop(bluetoothtbd, debug_prop)

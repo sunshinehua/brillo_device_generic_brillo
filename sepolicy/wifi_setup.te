@@ -5,7 +5,7 @@ type wifi_setup_prop, property_type;
 type wifi_device, dev_type;
 type wifi_sysfs_entry, fs_type, sysfs_type;
 
-init_brillo_domain(wifi_setup)
+brillo_domain(wifi_setup)
 
 # Inherit open file to shell (interpreter) for script.
 allow wifi_setup shell_exec:file read;

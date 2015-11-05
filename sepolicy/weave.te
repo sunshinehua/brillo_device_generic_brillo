@@ -3,7 +3,7 @@ type weaved, domain;
 type weaved_exec, exec_type, file_type;
 type weaved_data_file, file_type, data_file_type;
 
-init_brillo_domain(weaved)
+brillo_domain(weaved)
 net_domain(weaved)
 
 # Allow crash_reporter access to core dump files.

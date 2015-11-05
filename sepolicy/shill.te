@@ -3,7 +3,7 @@ type shill, domain;
 type shill_exec, exec_type, file_type;
 type shill_data_file, file_type, data_file_type;
 
-init_brillo_domain(shill)
+brillo_domain(shill)
 net_domain(shill)
 
 # Allow crash_reporter access to core dump files.
