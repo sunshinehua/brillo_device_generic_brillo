@@ -125,7 +125,7 @@ PRODUCT_PACKAGES += \
   audio_hal_playback_test \
   audio_hal_record_test \
 
-# Audio ndk tests.
+# Audio NDK tests.
 PRODUCT_PACKAGES += \
   slesTest_playFdPath \
   slesTest_recBuffQueue \
@@ -146,7 +146,7 @@ PRODUCT_PACKAGES += \
   libOpenSLES \
   libOpenMAXAL \
 
-# OpenMAX Audio Codecs.
+# OpenMAX audio codecs.
 PRODUCT_PACKAGES += \
   libstagefright_soft_aacdec \
   libstagefright_soft_aacenc \
@@ -280,9 +280,13 @@ PRODUCT_PACKAGES += \
   wpa_cli \
 
 # Bluetooth.
+# Don't compile for targets without WiFi support until b/25083459 is fixed.
+ifeq ($(WIFI_SUPPORTED),true)
 PRODUCT_PACKAGES += \
   bluetoothtbd \
   bluetooth-cli \
+
+endif
 
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
