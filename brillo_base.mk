@@ -187,6 +187,12 @@ endif
 ifeq ($(TARGET_PRODUCT),brilloemulator_arm)
 WIFI_SUPPORTED := false
 endif
+ifeq ($(TARGET_PRODUCT),brilloemulator_x86_64)
+WIFI_SUPPORTED := false
+endif
+ifeq ($(TARGET_PRODUCT),brilloemulator_x86)
+WIFI_SUPPORTED := false
+endif
 
 ifeq ($(WIFI_SUPPORTED),true)
 # It only makes sense to include apmanager if WiFi is supported.
