@@ -3,7 +3,7 @@ type nativepowerman, domain;
 type nativepowerman_exec, exec_type, file_type;
 type sysfs_power_state, fs_type, sysfs_type;
 
-init_brillo_domain(nativepowerman)
+brillo_domain(nativepowerman)
 allow nativepowerman power_service:service_manager add;
 wakelock_use(nativepowerman)
 

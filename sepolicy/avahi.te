@@ -2,7 +2,7 @@
 type avahi, domain;
 type avahi_exec, exec_type, file_type;
 
-init_brillo_domain(avahi)
+brillo_domain(avahi)
 net_domain(avahi)
 
 # Allow crash_reporter access to core dump files.

@@ -2,7 +2,7 @@
 type firewalld, domain;
 type firewalld_exec, exec_type, file_type;
 
-init_brillo_domain(firewalld)
+brillo_domain(firewalld)
 net_domain(firewalld)
 
 # Allow crash_reporter access to core dump files.

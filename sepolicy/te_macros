@@ -1,12 +1,12 @@
 #####################################
-# init_brillo_domain(domain)
+# brillo_domain(domain)
 # Allow a base set of permissions common across Brillo daemons.
-define(`init_brillo_domain', `
+define(`brillo_domain', `
 init_daemon_domain($1)
-# Permit using binder and performing IPC to system services.
+# Allow using binder and performing IPC to system services.
 binder_use($1)
 binder_service($1)
-# Permit connections to dbus_daemon.
+# Allow connections to dbus_daemon.
 unix_socket_connect($1, dbus_daemon, dbus_daemon)
 # Cut down on spam.
 dontaudit $1 kernel:system module_request;
