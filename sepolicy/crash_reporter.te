@@ -55,3 +55,10 @@ allow crash_reporter toolbox_exec:file rx_file_perms;
 # crash_sender network access policies.
 net_domain(crash_reporter)
 allow crash_reporter self:capability net_raw;
+
+allow crash_reporter device:dir getattr;
+allow crash_reporter kernel:fd use;
+allow crash_reporter rootfs:dir getattr;
+allow crash_reporter selinuxfs:filesystem getattr;
+allow crash_reporter system_file:dir getattr;
+allow crash_reporter zoneinfo_data_file:dir search;

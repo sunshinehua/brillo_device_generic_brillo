@@ -11,3 +11,9 @@ allow_crash_reporter(dbus_daemon)
 # sees a connection. Suppress the denials when this happens.
 dontaudit dbus_daemon domain:file r_file_perms;
 dontaudit dbus_daemon domain:dir search;
+# We seem to need this despite the above lines.
+dontaudit dbus_daemon proc:dir search;
+
+# Same for /sys/devices/system/cpu.
+dontaudit dbus_daemon sysfs_devices_system_cpu:dir search;
+dontaudit dbus_daemon sysfs_devices_system_cpu:file r_file_perms;

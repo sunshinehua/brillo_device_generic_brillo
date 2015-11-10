@@ -14,3 +14,6 @@ allow weaved weaved_data_file:file create_file_perms;
 allow weaved webservd:fd use;
 allow weaved webservd:fifo_file rw_file_perms;
 allow weaved webservd_data_file:file r_file_perms;
+
+allow weaved debugfs:dir search;
+allow weaved system_file:dir r_file_perms;

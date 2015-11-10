@@ -25,3 +25,6 @@ dontaudit wifi_setup wifi_device:chr_file { getattr ioctl };
 
 # Allow crash_reporter access to core dump files.
 allow_crash_reporter(wifi_setup)
+
+allow wifi_setup proc:file read;
+allow wifi_setup selinuxfs:filesystem getattr;
