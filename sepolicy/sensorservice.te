@@ -15,6 +15,7 @@ allow servicemanager sensorservice:process getattr;
 # Allow crash_reporter access to core dump files.
 allow_crash_reporter(sensorservice)
 
+allow sensorservice cgroup:dir search;
 allow sensorservice cgroup:file w_file_perms;
 allow sensorservice cpuctl_device:dir search;
 allow sensorservice debugfs:dir search;
