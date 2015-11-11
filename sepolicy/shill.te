@@ -21,7 +21,7 @@ allow shill metrics_data_file:dir rw_dir_perms;
 allow shill metrics_data_file:file create_file_perms;
 allow shill sysfs:file w_file_perms;
 allow shill wifi_sysfs_entry:file rw_file_perms;
-allow shill self:capability { setuid fsetid kill net_admin net_bind_service net_raw setgid sys_module dac_override fowner };
+allow shill self:capability { setuid setgid fsetid kill net_admin net_bind_service net_raw sys_module dac_override fowner };
 allow shill self:capability2 block_suspend;
 
 # Permissions for dhcpcd-6.8.2, which shill spawns using minijail.
@@ -59,3 +59,5 @@ allow shill zoneinfo_data_file:dir search;
 # TODO(samueltan): remove this once b/24944751 is fixed.
 dontaudit shill domain:dir search;
 dontaudit shill domain:{file lnk_file} r_file_perms;
+
+dontaudit shill self:capability sys_ptrace;
