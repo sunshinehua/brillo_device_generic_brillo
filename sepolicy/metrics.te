@@ -20,7 +20,6 @@ allow metrics proc:dir search;
 allow metrics proc:file read;
 allow metrics sysfs:dir read;
 allow metrics sysfs_devices_system_cpu:dir search;
-allow metrics system_file:dir { read open };
 allow metrics zoneinfo_data_file:dir search;
 
 allow metrics proc:file r_file_perms;
@@ -33,3 +32,6 @@ allow metrics sysfs:lnk_file read;
 r_dir_file(metrics, sysfs_devices_system_cpu)
 
 allow metrics system_file:dir getattr;
+
+# Allow reading os-release.d properties.
+r_dir_file(metrics, os_release_file);
