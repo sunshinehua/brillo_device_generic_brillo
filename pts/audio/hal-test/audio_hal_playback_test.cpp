@@ -92,8 +92,12 @@ int main(int argc, char* argv[]) {
   // Load audio HAL.
   rc = hw_get_module_by_class(AUDIO_HARDWARE_MODULE_ID, "primary", &module);
   if (rc) {
-    LOG(ERROR) << "Could not get hw module. (" << strerror(rc) << ")";
-    return -1;
+    LOG(WARNING) << "Could not get primary hw module, trying usb. (" << strerror(rc) << ")";
+    rc = hw_get_module_by_class(AUDIO_HARDWARE_MODULE_ID, "usb", &module);
+    if (rc) {
+      LOG(ERROR) << "Could not get hw module. (" << strerror(rc) << ")";
+      return -1;
+    }
   }
 
   // Load audio device.
