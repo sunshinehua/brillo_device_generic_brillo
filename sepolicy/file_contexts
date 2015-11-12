@@ -38,7 +38,6 @@
 # Defining the contexts for shill.
 /system/bin/shill                              u:object_r:shill_exec:s0
 /data/misc/shill(/.*)?                         u:object_r:shill_data_file:s0
-/system/lib/shill/shims/wpa_supplicant\.conf   u:object_r:wifi_data_file:s0
 
 # Defining the contexts for bluetoothtbd.
 /system/bin/bluetoothtbd   u:object_r:bluetoothtbd_exec:s0
