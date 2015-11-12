@@ -47,6 +47,7 @@ KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
 ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
 KERNEL_SRC_ARCH := arm
+KERNEL_CFLAGS :=
 ifdef TARGET_KERNEL_DTB
 KERNEL_NAME := zImage
 else
@@ -55,14 +56,17 @@ endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-android-
 KERNEL_SRC_ARCH := arm64
+KERNEL_CFLAGS :=
 KERNEL_NAME := Image
 else ifeq ($(TARGET_KERNEL_ARCH), i386)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
 KERNEL_SRC_ARCH := x86
+KERNEL_CFLAGS := -mstack-protector-guard=tls
 KERNEL_NAME := bzImage
 else ifeq ($(TARGET_KERNEL_ARCH), x86_64)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
 KERNEL_SRC_ARCH := x86
+KERNEL_CFLAGS := -mstack-protector-guard=tls
 KERNEL_NAME := bzImage
 else
 $(error kernel arch not supported at present)
@@ -76,7 +80,7 @@ endif
 
 KERNEL_GCC_NOANDROID_CHK := $(shell (echo "int main() {return 0;}" | $(KERNEL_CROSS_COMPILE)gcc -E -mno-android - > /dev/null 2>&1 ; echo $$?))
 ifeq ($(strip $(KERNEL_GCC_NOANDROID_CHK)),0)
-KERNEL_CFLAGS := KCFLAGS=-mno-android
+KERNEL_CFLAGS += -mno-android
 endif
 
 # Set the output for the kernel build products.
@@ -137,7 +141,7 @@ $(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
-	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) $(KERNEL_CFLAGS)
+	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) KCFLAGS="$(KERNEL_CFLAGS)"
 	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) headers_install;
 
 ifdef TARGET_KERNEL_DTB
