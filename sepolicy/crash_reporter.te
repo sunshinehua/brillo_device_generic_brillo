@@ -30,6 +30,10 @@ set_prop(crash_reporter, crash_reporter_prop)
 # generated while running as the crashed user.
 allow crash_reporter self:capability { chown };
 
+# Allow reading from /proc.
+r_dir_file(crash_reporter, proc)
+allow crash_reporter proc_cpuinfo:file r_file_perms;
+
 # Permissions for calling dbus-send and signaling metrics.
 allow crash_reporter kernel:fifo_file r_file_perms;
 
