@@ -203,11 +203,11 @@ PRODUCT_PACKAGES += apmanager
 SHILL_USE_WIFI := true
 endif
 
-# Metrics daemon and metrics library.
+# Metrics daemons and metrics library.
 PRODUCT_PACKAGES += \
   libmetrics \
   metrics_client \
-  metrics_daemon \
+  metricsd \
 
 # Crash reporter package.
 PRODUCT_PACKAGES += \
