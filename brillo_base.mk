@@ -37,6 +37,9 @@ PRODUCT_COPY_FILES += \
 # Include the cfgtree helpers for loading config values from disk.
 include device/generic/brillo/cfgtree.mk
 
+# Global Brillo USE flags
+BRILLO_USE_DBUS := 1
+
 # Skip API checks.
 WITHOUT_CHECK_API := true
 # Don't try to build and run all tests by default. Several tests have
