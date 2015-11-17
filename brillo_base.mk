@@ -174,6 +174,7 @@ PRODUCT_PACKAGES += \
 # Connectivity packages.
 PRODUCT_PACKAGES += \
   cacerts \
+  cacerts_google \
   dhcpcd \
   dhcpcd-6.8.2 \
   dnsmasq \
