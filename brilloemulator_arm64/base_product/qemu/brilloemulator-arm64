@@ -38,7 +38,7 @@ while true ; do
 done
 
 echo Starting emulator with ${MEM}MB memory
-
+exec \
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a57 \

@@ -37,7 +37,8 @@ while true ; do
    esac
 done
 
-echo Starting Emulator with ${MEM}MB Memory
+echo Starting emulator with ${MEM}MB memory
+exec \
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-x86_64 \
   -m ${MEM}M \
   -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86_64/kernel \
