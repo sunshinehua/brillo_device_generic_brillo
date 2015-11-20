@@ -9,9 +9,6 @@ binder_service($1)
 # Allow connections to dbus_daemon.
 unix_socket_connect($1, dbus_daemon, dbus_daemon)
 
-# Allow /proc.
-allow $1 proc:dir search;
-
 # Cut down on spam.
 dontaudit $1 kernel:system module_request;
 dontaudit $1 sysfs_devices_system_cpu:dir search;
