@@ -35,4 +35,5 @@ TARGET_SKIP_OTA_PACKAGE := true
 USE_CLANG_PLATFORM_BUILD := false
 
 PRODUCT_COPY_FILES += \
-    device/generic/brillo/brilloemulator_x86_64/fstab.device:root/fstab.device
+    device/generic/brillo/brilloemulator_x86_64/fstab.device:root/fstab.device \
+    device/generic/brillo/brilloemulator_x86_64/fstab.device:root/fstab.qemu
