@@ -21,6 +21,7 @@ allow weaved webservd_data_file:file r_file_perms;
 
 allow weaved debugfs:dir search;
 allow weaved system_file:dir r_file_perms;
+allow weaved zoneinfo_data_file:dir search;
 
 # Allow reading os-release.d properties.
 r_dir_file(weaved, os_release_file);
