@@ -51,4 +51,5 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -device scsi-hd,drive=userdata \
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/userdata.img,if=none,id=userdata,format=raw" \
   -redir tcp:5555::5555 \
-  -dtb ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/kernel-dtb
+  -dtb ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_arm/kernel-dtb \
+  "$@"

@@ -54,3 +54,4 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -redir tcp:5555::5555 \
   -netdev user,id=net0 \
   -device virtio-net-device,netdev=net0 \
+  "$@"
