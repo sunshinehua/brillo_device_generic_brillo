@@ -21,6 +21,9 @@ allow metricsd metricsd_data_file:file create_file_perms;
 allow metricsd metrics_data_file:dir rw_dir_perms;
 allow metricsd metrics_data_file:file create_file_perms;
 
+# Allow adding the service.
+allow metricsd metricsd_service:service_manager { add find };
+
 allow metricsd zoneinfo_data_file:dir search;
 allow metricsd system_file:dir getattr;
 
