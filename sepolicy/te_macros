@@ -30,3 +30,11 @@ define(`allow_power_management', `
 allow $1 power_service:service_manager find;
 binder_call($1, nativepowerman)
 ')
+
+#####################################
+# allow_metrics_reporting(domain)
+# Allow a domain to log metrics using libmetrics.
+define(`allow_metrics_reporting', `
+allow $1 metrics_data_file:dir rw_dir_perms;
+allow $1 metrics_data_file:file create_file_perms;
+')
