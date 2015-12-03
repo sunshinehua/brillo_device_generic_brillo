@@ -1,4 +1,0 @@
-service testservice /system/bin/testservice
-    class main
-    user system
-    group system
