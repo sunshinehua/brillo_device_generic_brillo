@@ -1,8 +1,0 @@
-This folder contains example code for writing native apps that use Brillo LED
-lights.
-
-Example files:
-  hal-example-app.cpp:
-    An example app that uses the lights HAL (defined in
-    hardware/libhardware/include/lights.h) directly. The app turns on the LED
-    light used for notifications, and turns it off 3 seconds later.
