@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
   // Number of repeated events + 1.
   int count = 1;
   // Events accumulated for each device.
-  vector<input_event> events[poll_fds.size()];
+  vector<vector<input_event>> events(poll_fds.size());
 
   const char instructions[] = "Press B to start the game and release B to go "
       "back to the main menu.";
