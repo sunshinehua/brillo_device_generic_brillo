@@ -37,6 +37,12 @@ while true ; do
    esac
 done
 
+opts=()
+if [[ -c /dev/kvm ]]; then
+  # KVM is available on the host
+  opts+=( -enable-kvm )
+fi
+
 echo Starting emulator with ${MEM}MB memory
 exec \
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-i386 \
@@ -48,7 +54,9 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/system.img,if=none,id=system,format=raw" \
   -device virtio-blk-pci,drive=userdata \
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/userdata.img,if=none,id=userdata,format=raw" \
-  -netdev user,id=mynet -device virtio-net-pci,netdev=mynet \
+  -netdev user,id=mynet \
+  -device virtio-net-pci,netdev=mynet \
   -vga none \
   -L ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/lib/pc-bios \
+  "${opts[@]}" \
   "$@"
