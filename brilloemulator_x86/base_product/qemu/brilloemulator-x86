@@ -37,7 +37,8 @@ while true ; do
    esac
 done
 
-echo Starting Emulator with ${MEM}MB Memory
+echo Starting emulator with ${MEM}MB memory
+exec \
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-i386 \
   -m ${MEM}M \
   -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/kernel \
@@ -49,4 +50,5 @@ ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/q
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/userdata.img,if=none,id=userdata,format=raw" \
   -netdev user,id=mynet -device virtio-net-pci,netdev=mynet \
   -vga none \
-  -L ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/lib/pc-bios
+  -L ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/lib/pc-bios \
+  "$@"
