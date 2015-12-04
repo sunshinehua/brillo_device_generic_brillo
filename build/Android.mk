@@ -19,6 +19,9 @@
 
 ifdef BRILLO_VENDOR_PARTITIONS
 
+# The staging directory to store vendor partitions.
+intermediates := $(call intermediates-dir-for, PACKAGING, vendor-partitions)
+
 ifneq "" "$(filter eng.%,$(BUILD_NUMBER))"
   # BUILD_NUMBER has a timestamp in it, which means that
   # it will change every time.  Pick a stable value.
@@ -31,18 +34,25 @@ name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
 endif
-name := $(name)-vendor_partitions-$(FILE_NAME_TAG)
 
-BRILLO_VENDOR_PARTITIONS_TARGET := $(PRODUCT_OUT)/$(name).zip
+vendor_partition_zip := $(intermediates)/$(name)-vendor_partitions-$(FILE_NAME_TAG).zip
 
-$(BRILLO_VENDOR_PARTITIONS_TARGET) : \
-  $(BRILLO_VENDOR_PARTITIONS) \
-  $(PRODUCT_OUT)/provision-device
+# Set up rules to copy all the files to staging directory, and gather the paths of the dest files.
+# BRILLO_VENDOR_PARTITIONS contains a list of strings in the format of parent_directory:file_path.
+# Each vendor partition's full path is parent_directory/file_path. The directory structure in
+# file_path will be preserved.
+vendor_partition_copied_files := \
+	$(foreach f, $(BRILLO_VENDOR_PARTITIONS) $(PRODUCT_OUT):provision-device, \
+		$(eval pair := $(subst :,$(space),$(f))) \
+		$(eval src := $(word 1, $(pair))/$(word 2, $(pair))) \
+		$(eval dest := $(intermediates)/$(word 2, $(pair))) \
+		$(eval $(call copy-one-file, $(src), $(dest))) \
+		$(dest))
+
+$(vendor_partition_zip) : $(vendor_partition_copied_files)
 	@echo "Package vendor partitions: $@"
-	$(hide) rm -rf $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) zip -qj $@ $^
+	$(hide) cd $(dir $@) && zip -qr $(notdir $@) *
 
-$(call dist-for-goals, dist_files, $(BRILLO_VENDOR_PARTITIONS_TARGET))
+$(call dist-for-goals, dist_files, $(vendor_partition_zip))
 
 endif
