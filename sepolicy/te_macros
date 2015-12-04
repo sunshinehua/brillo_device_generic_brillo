@@ -35,6 +35,8 @@ binder_call($1, nativepowerman)
 # allow_metrics_reporting(domain)
 # Allow a domain to log metrics using libmetrics.
 define(`allow_metrics_reporting', `
-allow $1 metrics_data_file:dir rw_dir_perms;
-allow $1 metrics_data_file:file create_file_perms;
+allow $1 metricsd_service:service_manager find;
+binder_call($1, metricsd)
+allow $1 metrics_data_file:dir r_dir_perms;
+allow $1 metrics_data_file:file r_file_perms;
 ')
