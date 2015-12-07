@@ -85,6 +85,12 @@ PRODUCT_PACKAGES = \
 PRODUCT_PACKAGES += \
   libstdc++ \
 
+ifneq (,$(filter $(TARGET_BUILD_VARIANT),eng userdebug))
+# Packages included only for eng or userdebug builds.
+PRODUCT_PACKAGES += \
+  dumpsys
+endif
+
 ifneq ($(TARGET_BUILD_VARIANT),eng)
 # eng builds don't include the official payload key so developers can test
 # providing their own testing key.
