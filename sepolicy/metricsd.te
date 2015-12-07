@@ -29,3 +29,7 @@ allow metricsd system_file:dir getattr;
 
 # Allow reading os-release.d properties.
 r_dir_file(metricsd, os_release_file);
+
+# Reduce logging.
+dontaudit metricsd cgroup:dir search;
+dontaudit metricsd debugfs:dir search;
