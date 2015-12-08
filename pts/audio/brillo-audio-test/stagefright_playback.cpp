@@ -16,7 +16,7 @@
 
 #include "stagefright_playback.h"
 
-#include <base/logging.h>
+#include <android-base/logging.h>
 #include <media/stagefright/AudioPlayer.h>
 #include <media/stagefright/DataSource.h>
 #include <media/stagefright/FileSource.h>

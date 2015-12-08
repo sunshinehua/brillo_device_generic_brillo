@@ -16,7 +16,7 @@
 
 #include "libmedia_playback.h"
 
-#include <base/logging.h>
+#include <android-base/logging.h>
 #include <media/AudioTrack.h>
 #include <media/stagefright/MediaSource.h>
 

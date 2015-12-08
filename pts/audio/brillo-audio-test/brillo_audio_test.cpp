@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <base/logging.h>
+#include <android-base/logging.h>
 
 #include "libmedia_playback.h"
 #include "libmedia_record.h"

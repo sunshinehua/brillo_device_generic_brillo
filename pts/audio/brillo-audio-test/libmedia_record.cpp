@@ -16,7 +16,7 @@
 
 #include "libmedia_record.h"
 
-#include <base/logging.h>
+#include <android-base/logging.h>
 #include <media/AudioRecord.h>
 #include <media/AudioTrack.h>
 
