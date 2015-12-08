@@ -16,7 +16,7 @@
 
 // Test app to play audio at the HAL layer.
 
-#include <base/logging.h>
+#include <android-base/logging.h>
 #include <hardware/audio.h>
 #include <hardware/hardware.h>
 #include <media/AudioTrack.h>
