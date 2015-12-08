@@ -38,3 +38,11 @@ binder_call($1, metricsd)
 allow $1 metrics_data_file:dir r_dir_perms;
 allow $1 metrics_data_file:file r_file_perms;
 ')
+
+#####################################
+# allow_metricscollectorservice_events(domain)
+# Allow a domain to report events using libmetricscollectorservice.
+define(`allow_metricscollectorservice_events', `
+allow $1 metricscollectorservice:service_manager find;
+binder_call($1, metrics_collector)
+')
