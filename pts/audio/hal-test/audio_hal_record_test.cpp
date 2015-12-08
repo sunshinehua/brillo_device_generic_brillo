@@ -21,7 +21,7 @@
 #include <vector>
 
 #include <audio_utils/sndfile.h>
-#include <base/logging.h>
+#include <android-base/logging.h>
 #include <hardware/audio.h>
 #include <hardware/hardware.h>
 
