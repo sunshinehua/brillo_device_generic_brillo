@@ -14,14 +14,16 @@
 # limitations under the License.
 #
 
-include device/generic/brillo/brilloemulator/base.mk
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 786432000
+# No ramdisk.
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 
-PRODUCT_NAME := brilloemulator_x86_64
-PRODUCT_DEVICE := brilloemulator_x86_64
+# No ramdisk.
+BOARD_USES_FULL_RECOVERY_IMAGE := true
 
-# Install emulator-specific config file for weaved.
-PRODUCT_COPY_FILES += \
-  device/generic/brillo/brilloemulator_x86_64/base_product/weaved.conf:system/etc/weaved/weaved.conf
+# This is an emulator build.
+TARGET_SKIP_OTA_PACKAGE := true
 
-PRODUCT_PACKAGES += \
-  brilloemulator-x86_64
+# Use clang.
+USE_CLANG_PLATFORM_BUILD := true

@@ -1,5 +1,5 @@
 #
-# Copyright 2015 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,14 +14,6 @@
 # limitations under the License.
 #
 
-include device/generic/brillo/brilloemulator/base.mk
+$(call inherit-product, device/generic/brillo/brillo_base.mk)
 
-PRODUCT_NAME := brilloemulator_x86_64
-PRODUCT_DEVICE := brilloemulator_x86_64
-
-# Install emulator-specific config file for weaved.
-PRODUCT_COPY_FILES += \
-  device/generic/brillo/brilloemulator_x86_64/base_product/weaved.conf:system/etc/weaved/weaved.conf
-
-PRODUCT_PACKAGES += \
-  brilloemulator-x86_64
+PRODUCT_BRAND := Brillo

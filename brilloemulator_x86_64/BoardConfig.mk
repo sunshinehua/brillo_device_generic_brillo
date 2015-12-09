@@ -14,24 +14,17 @@
 # limitations under the License.
 #
 
-# Standard devices would usally define an SoC. As the emulator
-# has no SoC defnition we pull in a local qemu BSP.
+# Include common emulator settings.
+include device/generic/brillo/brilloemulator/CommonBoardConfig.mk
+
+# Standard devices would usually define an SoC. As the emulator
+# has no SoC definition we pull in a local QEMU BSP.
 include device/generic/brillo/brilloemulator_x86_64/bsp/qemu_x86_64.mk
-
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 786432000
-# No ramdisk.
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
-
-# No ramdisk.
-BOARD_USES_FULL_RECOVERY_IMAGE := true
 
 TARGET_RECOVERY_FSTAB = device/generic/brillo/brilloemulator_x86_64/fstab.device
 
-# This is an emulator build.
-TARGET_SKIP_OTA_PACKAGE := true
-
 # Use clang.
+# TODO: This should be deleted and converted to clang.
 USE_CLANG_PLATFORM_BUILD := false
 
 PRODUCT_COPY_FILES += \

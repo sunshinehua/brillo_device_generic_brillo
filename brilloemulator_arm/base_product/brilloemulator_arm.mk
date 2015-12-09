@@ -14,11 +14,9 @@
 # limitations under the License.
 #
 
-$(call inherit-product, device/generic/brillo/brillo_base.mk)
+include device/generic/brillo/brilloemulator/base.mk
 
 PRODUCT_NAME := brilloemulator_arm
-PRODUCT_BRAND := Brillo
-
 PRODUCT_DEVICE := brilloemulator_arm
 
 # Install emulator-specific config file for weaved.
