@@ -35,7 +35,7 @@ PRODUCT_COPY_FILES += \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \
 
 # Set up the local kernel.
-TARGET_KERNEL_SRC := hardware/bsp/kernel/common/android-3.18
+TARGET_KERNEL_SRC := hardware/bsp/kernel/common/v4.1
 TARGET_KERNEL_DEFCONFIG := i386_defconfig
 TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/brillo.kconf)
 
