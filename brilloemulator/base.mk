@@ -17,3 +17,5 @@
 $(call inherit-product, device/generic/brillo/brillo_base.mk)
 
 PRODUCT_BRAND := Brillo
+
+BOARD_SEPOLICY_DIRS += device/generic/brillo/brilloemulator/sepolicy
