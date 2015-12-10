@@ -316,6 +316,13 @@ PRODUCT_COPY_FILES += \
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 
+# Ensure that this property is always defined so that bionic_systrace.cpp
+# can rely on it being initially set by init.
+# On Android this is defined in embedded.mk, see
+# https://android-review.googlesource.com/#/c/106470.
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    debug.atrace.tags.enableflags=0
+
 # Define a make variable and a C define that identify Brillo targets. __BRILLO__
 # should only be used to differentiate between Brillo and non-Brillo-but-Android
 # environments. Use __ANDROID__ instead to test if something is being built in
