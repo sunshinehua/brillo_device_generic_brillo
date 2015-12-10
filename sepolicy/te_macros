@@ -11,8 +11,6 @@ unix_socket_connect($1, dbus_daemon, dbus_daemon)
 
 # Cut down on spam.
 dontaudit $1 kernel:system module_request;
-dontaudit $1 sysfs_devices_system_cpu:dir search;
-dontaudit $1 sysfs_devices_system_cpu:file r_file_perms;
 ')
 
 #####################################
