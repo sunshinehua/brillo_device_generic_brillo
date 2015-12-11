@@ -15,7 +15,3 @@ allow dbus_daemon proc:dir search;
 # sees a connection. Suppress the denials when this happens.
 dontaudit dbus_daemon domain:file r_file_perms;
 dontaudit dbus_daemon domain:dir search;
-
-# Same for /sys/devices/system/cpu.
-dontaudit dbus_daemon sysfs_devices_system_cpu:dir search;
-dontaudit dbus_daemon sysfs_devices_system_cpu:file r_file_perms;
