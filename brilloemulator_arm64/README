@@ -1,0 +1,8 @@
+The main android emulator uses the goldfish/ranchu board, but that arm target
+isn't in upstream, nor in the kernel we currently utilize.  Instead, we use
+the Versatile Express board as our target in the kernel and qemu.  Hopefully
+one day the goldfish/ranchu targets will get upstreamed.
+
+This has some ramifications for us.  Namely, we do not have access to the qemu
+helpers like the goldfish pipe.  That in turn means we access adb over a local
+TCP forwarded port.
