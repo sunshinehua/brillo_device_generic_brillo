@@ -14,22 +14,5 @@
 # limitations under the License.
 #
 
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 786432000
-# No ramdisk.
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
-
-# No ramdisk.
-BOARD_USES_FULL_RECOVERY_IMAGE := true
-
-# This is an emulator build.
-TARGET_SKIP_OTA_PACKAGE := true
-
-# Use clang.
-USE_CLANG_PLATFORM_BUILD := true
-
-PRODUCT_COPY_FILES += \
-    device/generic/brillo/brilloemulator/ueventd.rc:root/ueventd.qemu.rc \
-
-# Set up common kernel settings.
-$(call add_kernel_configs,$(realpath device/generic/brillo/brilloemulator/brillo.kconf))
+# Kernel settings that we want to enable for all emulators on all arches
+# are stored here.
