@@ -14,10 +14,5 @@
 # limitations under the License.
 #
 
-CONFIG_GOLDFISH=y
-CONFIG_GOLDFISH_PIPE=y
-CONFIG_NET_9P=y
-CONFIG_NET_9P_VIRTIO=y
-CONFIG_VIRTIO_BLK=y
-CONFIG_VIRTIO_NET=y
-CONFIG_VIRTIO_PCI=y
+# Kernel settings that are specific to this target.  Common emulator settings
+# should live in brilloemulator/brillo.kconf.

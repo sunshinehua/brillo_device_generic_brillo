@@ -16,3 +16,21 @@
 
 # Kernel settings that we want to enable for all emulators on all arches
 # are stored here.
+
+# Having timestamps in the emu is nice, especially wrt logging.
+CONFIG_PRINTK_TIME=y
+
+# The pipe driver the Android QEMU fork provides for fast access.
+# See external/qemu/docs/ANDROID-QEMU-PIPE.TXT for more details.
+CONFIG_GOLDFISH=y
+CONFIG_GOLDFISH_PIPE=y
+
+# Misc virtual drivers we leverage.
+CONFIG_NET_9P=y
+CONFIG_NET_9P_VIRTIO=y
+CONFIG_SCSI=y
+CONFIG_SCSI_LOWLEVEL=y
+CONFIG_SCSI_VIRTIO=y
+CONFIG_VIRTIO_BLK=y
+CONFIG_VIRTIO_NET=y
+CONFIG_VIRTIO_PCI=y

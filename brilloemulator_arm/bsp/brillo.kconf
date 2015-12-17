@@ -13,3 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Kernel settings that are specific to this target.  Common emulator settings
+# should live in brilloemulator/brillo.kconf.
