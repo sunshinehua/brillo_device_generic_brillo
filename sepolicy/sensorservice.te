@@ -28,7 +28,3 @@ allow sensorservice sysfs:file r_file_perms;
 allow sensorservice sysfs:lnk_file read;
 
 allow sensorservice self:capability { net_admin sys_nice };
-
-# Don't spam the logs.
-dontaudit sensorservice debugfs:dir search;
-dontaudit sensorservice debugfs:file w_file_perms;
