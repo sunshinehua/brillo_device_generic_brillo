@@ -37,6 +37,6 @@ PRODUCT_COPY_FILES += \
 # Set up the local kernel.
 TARGET_KERNEL_SRC := hardware/bsp/kernel/common/v4.1
 TARGET_KERNEL_DEFCONFIG := i386_defconfig
-TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/brillo.kconf)
+$(call add_kernel_configs,$(realpath $(LOCAL_PATH)/brillo.kconf))
 
 BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) $(LOCAL_PATH)/sepolicy
