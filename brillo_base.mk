@@ -39,6 +39,7 @@ include device/generic/brillo/cfgtree.mk
 
 # Global Brillo USE flags
 BRILLO_USE_DBUS := 1
+BRILLO_USE_WEAVE := 1
 
 # Skip API checks.
 WITHOUT_CHECK_API := true
