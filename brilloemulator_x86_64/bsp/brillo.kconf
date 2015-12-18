@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-CONFIG_DEBUG_INFO=y
 CONFIG_GOLDFISH=y
 CONFIG_GOLDFISH_PIPE=y
 CONFIG_NET_9P=y
