@@ -9,7 +9,7 @@ allow sensorservice servicemanager:binder { transfer call };
 
 # Allow servicemanager to access sensorservice.
 allow servicemanager sensorservice:dir search;
-allow servicemanager sensorservice:file { read open };
+allow servicemanager sensorservice:file r_file_perms;
 allow servicemanager sensorservice:process getattr;
 
 # Allow crash_reporter access to core dump files.
@@ -20,9 +20,6 @@ allow sensorservice cgroup:file w_file_perms;
 
 allow sensorservice cpuctl_device:dir search;
 
-allow sensorservice debugfs:dir search;
-allow sensorservice debugfs:file w_file_perms;
-
 allow sensorservice proc_net:dir search;
 allow sensorservice proc_net:file r_file_perms;
 
@@ -31,3 +28,7 @@ allow sensorservice sysfs:file r_file_perms;
 allow sensorservice sysfs:lnk_file read;
 
 allow sensorservice self:capability { net_admin sys_nice };
+
+# Don't spam the logs.
+dontaudit sensorservice debugfs:dir search;
+dontaudit sensorservice debugfs:file w_file_perms;
