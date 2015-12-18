@@ -328,7 +328,8 @@ BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 # On Android this is defined in embedded.mk, see
 # https://android-review.googlesource.com/#/c/106470.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    debug.atrace.tags.enableflags=0
+    debug.atrace.tags.enableflags=0 \
+    ro.build.shutdown_timeout=5 \
 
 # Define a make variable that identifies Brillo targets.
 BRILLO := 1
