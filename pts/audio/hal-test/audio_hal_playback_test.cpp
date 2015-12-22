@@ -53,9 +53,9 @@ uint8_t* GenerateData(int sample_rate, int num_channels,
     source->read(&buffer, &options);
     CHECK(buffer != nullptr);
 
-    if (buffer->size() > total_bytes_required - num_bytes_copied) {
-      // If the amount of bytes left to write is greater than the size of the
-      // buffer, write the amount of bytes left and then exit.
+    if (buffer->size() >= total_bytes_required - num_bytes_copied) {
+      // If the amount of bytes left to write is greater than or equal to the
+      // size of the buffer, write the amount of bytes left and then exit.
       memcpy(static_cast<void*>(data + num_bytes_copied), buffer->data(),
              total_bytes_required - num_bytes_copied);
       break;
@@ -64,6 +64,7 @@ uint8_t* GenerateData(int sample_rate, int num_channels,
       // buffer, write all bytes in the buffer and update num_bytes_copied.
       memcpy(static_cast<void*>(data+num_bytes_copied), buffer->data(),
              buffer->size());
+      num_bytes_copied += buffer->size();
     }
   }
   CHECK(buffer != nullptr);
