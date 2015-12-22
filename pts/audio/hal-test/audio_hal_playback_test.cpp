@@ -17,6 +17,7 @@
 // Test app to play audio at the HAL layer.
 
 #include <android-base/logging.h>
+#include <audio_utils/sndfile.h>
 #include <hardware/audio.h>
 #include <hardware/hardware.h>
 #include <media/AudioTrack.h>
@@ -25,26 +26,32 @@
 
 #include "SineSource.h"
 
-// Returns an array containing sine wave data depending on the inputs.
+// This test only supports audio playback with 16-bit PCM.
+const audio_format_t kAudioPlaybackFormat = AUDIO_FORMAT_PCM_16_BIT;
+
+// Generate a sinusoidal wave.
+//
 // Parameters:
 //   sample_rate: Rate to sample the sine wave at.
 //   num_channels: Number of channels required. For stereo it should be 2 and
 //                 for mono should be 1.
 //   total_bytes_required: Size of the buffer.
+//
+// Returns: A pointer to the buffer containing the data.
 uint8_t* GenerateData(int sample_rate, int num_channels,
                       size_t total_bytes_required) {
   uint8_t* data = new uint8_t[total_bytes_required];
   android::sp<android::SineSource> source = new android::SineSource(
       sample_rate, num_channels);
-  source->start(NULL); // Initialize without any params.
+  source->start(nullptr); // Initialize without any params.
 
   // Read sine data.
   size_t num_bytes_copied = 0;
-  android::MediaBuffer* buffer = NULL;
+  android::MediaBuffer* buffer = nullptr;
   while (num_bytes_copied < total_bytes_required) {
     android::MediaSource::ReadOptions options;
     source->read(&buffer, &options);
-    CHECK(buffer != NULL);
+    CHECK(buffer != nullptr);
 
     if (buffer->size() > total_bytes_required - num_bytes_copied) {
       // If the amount of bytes left to write is greater than the size of the
@@ -59,19 +66,77 @@ uint8_t* GenerateData(int sample_rate, int num_channels,
              buffer->size());
     }
   }
-  CHECK(buffer != NULL);
+  CHECK(buffer != nullptr);
   buffer->release();
   return data;
 }
 
+// Play a sine wave.
+//
+// Parameters:
+//   out_stream: A pointer to the output audio stream.
+//   config: A pointer to struct that contains audio configuration data.
+//
+//   Returns: An int which has a non-negative number on success.
+int PlaySineWave(audio_stream_out_t* out_stream, audio_config_t* config) {
+  // Get buffer size and generate data.
+  size_t buffer_size = out_stream->common.get_buffer_size(&out_stream->common);
+  int num_channels = audio_channel_count_from_out_mask(config->channel_mask);
+  uint8_t* data = GenerateData(config->sample_rate, num_channels, buffer_size);
+
+  const size_t kNumBuffersToWrite = 1000;
+  int rc = 0;
+  // Write kNumBuffersToWrite buffers to the audio hal.
+  for (size_t i = 0; i < kNumBuffersToWrite; i++) {
+    size_t bytes_wanted =
+        out_stream->common.get_buffer_size(&out_stream->common);
+    rc = out_stream->write(
+        out_stream, data,
+        bytes_wanted <= buffer_size ? bytes_wanted : buffer_size);
+    if (rc < 0) {
+      LOG(ERROR) << "Writing data to hal failed. (" << strerror(rc) << ")";
+      break;
+    }
+  }
+  return rc;
+}
+
+// Play audio from a WAV file.
+//
+// Parameters:
+//   out_stream: A pointer to the output audio stream.
+//   in_file: A pointer to a SNDFILE object.
+//
+// Returns: An int which has a non-negative number on success.
+int PlayFile(audio_stream_out_t* out_stream, SNDFILE* in_file) {
+  size_t buffer_size = out_stream->common.get_buffer_size(&out_stream->common);
+  size_t kFrameSize = audio_bytes_per_sample(kAudioPlaybackFormat);
+  short* data = new short[buffer_size / kFrameSize];
+  int rc = 0;
+  sf_count_t frames_read = 1;
+  while (frames_read != 0) {
+    size_t bytes_wanted =
+        out_stream->common.get_buffer_size(&out_stream->common);
+    frames_read = sf_readf_short(in_file, data, bytes_wanted / kFrameSize);
+    rc = out_stream->write(out_stream, data, frames_read * kFrameSize);
+    if (rc < 0) {
+      LOG(ERROR) << "Writing data to hal failed. (" << strerror(rc) << ")";
+      break;
+    }
+  }
+  return rc;
+}
+
 // Prints usage information if input arguments are missing.
 void Usage() {
-  fprintf(stderr, "Usage: ./audio_hal_playback_test device sample_rate\n"
-          "If the test passes, you should hear a beep for a few seconds played "
-          "at the specified sample rate.\n"
+  fprintf(stderr, "Usage: ./audio_hal_playback_test device sample_rate/file\n"
+          "If the test passes, you should hear either a beep for a few seconds played "
+          "at the specified sample rate or the specified file.\n"
           "device: hex value representing the audio device (see "
-          "system/media/audio/include/audio.h)\n"
-          "sample_rate: Sample rate to play a sine wave.\n");
+          "system/media/audio/include/system/audio.h)\n"
+          "Either the sample rate or a file must be passed as an argument.\n"
+          "sample_rate: Sample rate to play a sine wave.\n"
+          "file: 16-bit PCM wav file to play.\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -82,12 +147,18 @@ int main(int argc, char* argv[]) {
   // Process command line arguments.
   const int kAudioDeviceBase = 16;
   uint32_t desired_output_device = strtol(
-      argv[1], NULL /* look at full string*/, kAudioDeviceBase);
-  uint32_t desired_sample_rate = atoi(argv[2]);
+      argv[1], nullptr /* look at full string*/, kAudioDeviceBase);
+  const int kSampleRateBase = 10;
+  uint32_t desired_sample_rate = strtol(
+      argv[2], nullptr /* look at full string*/, kSampleRateBase);
+  char* filename = nullptr;
+  if (desired_sample_rate == 0) {
+    filename = argv[2];
+  }
 
   LOG(INFO) << "Starting audio hal tests.";
   int rc = 0;
-  const hw_module_t* module = NULL;
+  const hw_module_t* module = nullptr;
 
   // Load audio HAL.
   rc = hw_get_module_by_class(AUDIO_HARDWARE_MODULE_ID, "primary", &module);
@@ -100,9 +171,9 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  // Load audio device.
-  CHECK(module != NULL);
-  audio_hw_device_t* audio_device = NULL;
+  // Open audio device.
+  CHECK(module != nullptr);
+  audio_hw_device_t* audio_device = nullptr;
   rc = audio_hw_device_open(module, &audio_device);
   if (rc) {
     LOG(ERROR) << "Could not open hw device. (" << strerror(rc) << ")";
@@ -116,16 +187,30 @@ int main(int argc, char* argv[]) {
       static_cast<audio_devices_t>(desired_output_device);
   audio_output_flags_t flags = AUDIO_OUTPUT_FLAG_NONE;
   audio_config_t config;
-  config.channel_mask = AUDIO_CHANNEL_OUT_STEREO;
-  config.format = AUDIO_FORMAT_PCM_16_BIT;
-  config.sample_rate = desired_sample_rate;
+  SF_INFO file_info;
+  SNDFILE* in_file = nullptr;
+  if (filename) {
+    in_file = sf_open(filename, SFM_READ, &file_info);
+    CHECK(in_file != nullptr);
+    config.channel_mask = file_info.channels;
+    if (!(file_info.format & SF_FORMAT_PCM_16)) {
+      LOG(ERROR) << "File must be of format 16-bit PCM.";
+      return -1;
+    }
+    config.format = kAudioPlaybackFormat;
+    config.sample_rate = file_info.samplerate;
+  } else {
+    config.channel_mask = AUDIO_CHANNEL_OUT_STEREO;
+    config.format = kAudioPlaybackFormat;
+    config.sample_rate = desired_sample_rate;
+  }
   LOG(INFO) << "Now playing to " << output_device << " at sample rate "
             << config.sample_rate;
   const char* stream_name = "output_stream";
 
   // Open audio output stream.
-  audio_stream_out_t* out_stream = NULL;
-  CHECK(audio_device != NULL);
+  audio_stream_out_t* out_stream = nullptr;
+  CHECK(audio_device != nullptr);
   rc = audio_device->open_output_stream(audio_device, handle, output_device,
                                         flags, &config, &out_stream,
                                         stream_name);
@@ -137,29 +222,17 @@ int main(int argc, char* argv[]) {
   // Set volume.
   const float kLeftVolume = 0.75;
   const float kRightVolume = 0.75;
-  CHECK(out_stream != NULL);
+  CHECK(out_stream != nullptr);
   rc = out_stream->set_volume(out_stream, kLeftVolume, kRightVolume);
   if (rc) {
     LOG(ERROR) << "Could not set volume correctly. (" << strerror(rc) << ")";
   }
 
-  // Get buffer size and generate data.
-  size_t buffer_size = out_stream->common.get_buffer_size(&out_stream->common);
-  int num_channels = audio_channel_count_from_out_mask(config.channel_mask);
-  uint8_t* data = GenerateData(config.sample_rate, num_channels, buffer_size);
 
-  const size_t kNumBuffersToWrite = 100;
-  // Write kNumBuffersToWrite buffers to the audio hal.
-  for (size_t i = 0; i < kNumBuffersToWrite; i++) {
-    size_t bytes_wanted =
-        out_stream->common.get_buffer_size(&out_stream->common);
-    rc = out_stream->write(
-        out_stream, data,
-        bytes_wanted <= buffer_size ? bytes_wanted : buffer_size);
-    if (rc < 0) {
-      LOG(ERROR) << "Writing data to hal failed. (" << strerror(rc) << ")";
-      break;
-    }
+  if (filename) {
+    PlayFile(out_stream, in_file);
+  } else {
+    PlaySineWave(out_stream, &config);
   }
 
   // Close output stream and device.

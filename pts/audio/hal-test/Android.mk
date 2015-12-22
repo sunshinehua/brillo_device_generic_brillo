@@ -23,6 +23,7 @@ LOCAL_SRC_FILES := audio_hal_playback_test.cpp
 LOCAL_MODULE := audio_hal_playback_test
 LOCAL_CFLAGS += -Wall -Werror
 LOCAL_SHARED_LIBRARIES := \
+  libaudioutils \
   libbase \
   libhardware \
   liblog \
@@ -30,9 +31,10 @@ LOCAL_SHARED_LIBRARIES := \
   libstagefright \
   libstagefright_foundation \
   libutils
+LOCAL_STATIC_LIBRARIES := libsndfile
 LOCAL_C_INCLUDES := \
   $(TOP)/device/generic/brillo/pts/audio/common \
-  $(TOP)/system/core/base/include
+  $(TOP)/system/media/audio_utils/include
 include $(BUILD_EXECUTABLE)
 
 # audio_hal_record_test
@@ -49,6 +51,5 @@ LOCAL_SHARED_LIBRARIES := \
   libutils
 LOCAL_STATIC_LIBRARIES := libsndfile
 LOCAL_C_INCLUDES := \
-  $(TOP)/system/core/base/include \
   $(TOP)/system/media/audio_utils/include
 include $(BUILD_EXECUTABLE)
