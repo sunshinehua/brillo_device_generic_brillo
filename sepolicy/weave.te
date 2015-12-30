@@ -13,6 +13,8 @@ allow_crash_reporter(weaved)
 # Allow setting weave properties.
 set_prop(weaved, weave_prop)
 
+allow weaved weave_service:service_manager { add find };
+
 allow weaved weaved_data_file:dir w_dir_perms;
 allow weaved weaved_data_file:file create_file_perms;
 
