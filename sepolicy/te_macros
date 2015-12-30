@@ -9,6 +9,10 @@ binder_service($1)
 # Allow connections to dbus_daemon.
 unix_socket_connect($1, dbus_daemon, dbus_daemon)
 
+# Allow access to cgroups mount point at /acct.
+allow $1 cgroup:dir search;
+allow $1 cgroup:file w_file_perms;
+
 # Cut down on spam.
 dontaudit $1 kernel:system module_request;
 ')

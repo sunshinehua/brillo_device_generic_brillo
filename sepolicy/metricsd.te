@@ -31,6 +31,4 @@ allow metricsd system_file:dir getattr;
 r_dir_file(metricsd, os_release_file);
 
 # Reduce logging.
-dontaudit metricsd cgroup:dir search;
-dontaudit metricsd cgroup:file w_file_perms;
 dontaudit metricsd debugfs:dir search;
