@@ -105,8 +105,10 @@ KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 
 ifdef TARGET_KERNEL_DTB
 KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
-$(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) | $(ACP)
+$(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN) | $(ACP)
 	$(ACP) -fp $(KERNEL_DTB) $@
+$(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
+	$(hide) cat $^ > $@
 endif
 
 $(KERNEL_OUT):
@@ -161,8 +163,13 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 endif
 
 ifdef TARGET_KERNEL_DTB
-$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel-dtb $(KERNEL_BIN).vdso | $(ACP)
+ifdef TARGET_KERNEL_DTB_APPEND
+$(PRODUCT_OUT)/kernel: $(PRODUCT_OUT)/kernel-dtb $(KERNEL_BIN).vdso | $(ACP)
 	$(ACP) -fp $< $@
+else
+$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb $(KERNEL_BIN).vdso | $(ACP)
+	$(ACP) -fp $< $@
+endif
 else
 $(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(KERNEL_BIN).vdso | $(ACP)
 	$(ACP) -fp $< $@
