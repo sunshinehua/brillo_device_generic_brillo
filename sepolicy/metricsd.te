@@ -17,9 +17,9 @@ allow_crash_reporter(metricsd)
 allow metricsd metricsd_data_file:dir rw_dir_perms;
 allow metricsd metricsd_data_file:file create_file_perms;
 
-# Rules for accessing the shared files.
-allow metricsd metrics_data_file:dir rw_dir_perms;
-allow metricsd metrics_data_file:file create_file_perms;
+# Rules for reading the shared files.
+allow metricsd metrics_data_file:dir r_dir_perms;
+allow metricsd metrics_data_file:file r_file_perms;
 
 # Allow adding the service.
 allow metricsd metricsd_service:service_manager { add find };
@@ -29,6 +29,3 @@ allow metricsd system_file:dir getattr;
 
 # Allow reading os-release.d properties.
 r_dir_file(metricsd, os_release_file);
-
-# Reduce logging.
-dontaudit metricsd debugfs:dir search;
