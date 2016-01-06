@@ -51,3 +51,12 @@ define(`allow_metricscollectorservice_events', `
 allow $1 metricscollectorservice:service_manager find;
 binder_call($1, metrics_collector)
 ')
+
+#####################################
+# webservd_use(domain)
+# Allow a domain to talk to webservd.
+define(`webservd_use', `
+allow $1 webservd:fd use;
+allow $1 webservd:fifo_file rw_file_perms;
+allow $1 webservd_data_file:file r_file_perms;
+')
