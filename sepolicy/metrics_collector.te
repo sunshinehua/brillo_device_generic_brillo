@@ -43,9 +43,6 @@ allow metrics_collector system_file:dir getattr;
 # Allow reading os-release.d properties.
 r_dir_file(metrics_collector, os_release_file);
 
-# Reduce logging.
-dontaudit metrics_collector debugfs:dir search;
-
 ################################
 # metrics_client
 type metrics_client_exec, exec_type, file_type;

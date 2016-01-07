@@ -24,7 +24,6 @@ allow metricsd metrics_data_file:file r_file_perms;
 # Allow adding the service.
 allow metricsd metricsd_service:service_manager { add find };
 
-allow metricsd zoneinfo_data_file:dir search;
 allow metricsd system_file:dir getattr;
 
 # Allow reading os-release.d properties.

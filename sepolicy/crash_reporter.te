@@ -66,4 +66,3 @@ allow crash_reporter kernel:fd use;
 allow crash_reporter rootfs:dir getattr;
 allow crash_reporter selinuxfs:filesystem getattr;
 allow crash_reporter system_file:dir getattr;
-allow crash_reporter zoneinfo_data_file:dir search;
