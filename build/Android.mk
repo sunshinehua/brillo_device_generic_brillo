@@ -15,8 +15,12 @@
 #
 
 # -----------------------------------------------------------------
-# The vendor partition package for brillo device.
 
+# Include the peripheral HALs
+$(foreach f,$(HAL_MAKEFILES), \
+    $(if $(wildcard $(f)),$(eval include $(f))))
+
+# The vendor partition package for brillo device.
 ifdef BRILLO_VENDOR_PARTITIONS
 
 # The staging directory to store vendor partitions.
