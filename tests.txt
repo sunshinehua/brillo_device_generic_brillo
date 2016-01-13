@@ -1,11 +1,18 @@
-apmanager_test
-bluetoothtbd_test
-libbrillo_test
-libchrome_test
-libminijail_unittest
-libnativepower_tests
-libweave_test
-nativepowerman_tests
-shill_test
-syscall_filter_unittest
-weaved_test
+# List of whitelisted unit tests to run for Brillo.
+# The format is two column CSV with:
+# * first column is the binary name (the binary path is
+#   /data/nativetest/<name>/<name>
+# * second column is "yes" or "no" whether we want to run the test as root or
+#   not.
+# Everything after a # is ignored.
+apmanager_test, no
+bluetoothtbd_test, no
+libbrillo_test, no
+libchrome_test, yes
+libminijail_unittest, no
+libnativepower_tests, no
+libweave_test, no
+nativepowerman_tests, no
+shill_test, no
+syscall_filter_unittest, no
+weaved_test, no
