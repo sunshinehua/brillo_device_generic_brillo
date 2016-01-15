@@ -12,8 +12,4 @@
            path="external/chromiumos/src/scripts"
            remote="cros"
            groups="bdk" />
-  <project name="chromiumos/third_party/autotest"
-           path="external/chromiumos/src/third_party/autotest/files"
-           remote="cros"
-           groups="bdk" />
 </manifest>
