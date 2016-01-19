@@ -68,6 +68,11 @@ KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
 KERNEL_SRC_ARCH := x86
 KERNEL_CFLAGS := -mstack-protector-guard=tls
 KERNEL_NAME := bzImage
+else ifeq ($(TARGET_KERNEL_ARCH), mips)
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/mips64el-linux-android-
+KERNEL_SRC_ARCH := mips
+KERNEL_CFLAGS :=
+KERNEL_NAME := compressed/vmlinux.bin
 else
 $(error kernel arch not supported at present)
 endif
