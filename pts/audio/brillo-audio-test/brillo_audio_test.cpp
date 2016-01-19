@@ -27,7 +27,8 @@
 
 enum TestMode {
   kPlayLibmedia,
-  kPlayStagefright,
+  kPlayStagefrightSine,
+  kPlayStagefrightMp3,
   kPlayMultiple,
   kRecordLibmedia,
   kRecordStageFright,
@@ -36,10 +37,11 @@ enum TestMode {
 
 void usage() {
   fprintf(stderr, "Usage: ./brillo_audio_test [option].\n"
-         "play_libmedia - play raw audio stream using libmedia \n"
-         "play_stagefright filename - play mp3 using libstagefright \n"
+         "play_libmedia - play raw audio stream using libmedia\n"
+         "play_stagefright_sine - play raw audio stream using stagefright\n"
+         "play_stagefright_mp3 filename - play mp3 using libstagefright\n"
          "play_multiple filename - play multiple audio stream using both"
-         " libmedia and libstagefright \n"
+         " libmedia and libstagefright\n"
          "record_libmedia - record using libmedia\n"
          "record_stagefright - record audio using stagefright\n"
          );
@@ -48,8 +50,10 @@ void usage() {
 TestMode parseMode(char* arg) {
   if (!strcmp(arg, "play_libmedia"))
     return kPlayLibmedia;
-  if (!strcmp(arg, "play_stagefright"))
-    return kPlayStagefright;
+  if (!strcmp(arg, "play_stagefright_sine"))
+    return kPlayStagefrightSine;
+  if (!strcmp(arg, "play_stagefright_mp3"))
+    return kPlayStagefrightMp3;
   if (!strcmp(arg, "play_multiple"))
     return kPlayMultiple;
   if (!strcmp(arg, "record_stagefright"))
@@ -73,7 +77,10 @@ int main(int argc, char* argv[]) {
         l_play.Init();
         status = l_play.Play();
         break;
-      case kPlayStagefright:
+      case kPlayStagefrightSine:
+        status = android::PlayStagefrightSine(true);
+        break;
+      case kPlayStagefrightMp3:
         status = android::PlayStagefrightMp3(argv[2], true);
         break;
       case kPlayMultiple:

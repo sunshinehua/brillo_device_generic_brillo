@@ -29,6 +29,11 @@ namespace android {
 //              true, the function waits for 10 seconds before returning.
 status_t PlayStagefrightMp3(char* filename, bool wait);
 
+// Plays audio using stagefright. This function plays a sine wave for 10 secs.
+// Parameters:
+//   wait:      Bool to indicate whether this function should sleep or not. If
+//              true, the function waits for 5 seconds before returning.
+status_t PlayStagefrightSine(bool wait);
 }  // namespace android
 
 #endif  // EXAMPLE_APP_STAGEFRIGHT_PLAYBACK_H_

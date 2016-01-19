@@ -28,6 +28,8 @@
 
 #include "include/MP3Extractor.h"
 
+#include "SineSource.h"
+
 namespace android {
 
 status_t PlayStagefrightMp3(char* filename, bool wait) {
@@ -65,6 +67,24 @@ status_t PlayStagefrightMp3(char* filename, bool wait) {
   if (wait) {
     sleep(10);
   }
+  return status;
+}
+
+status_t PlayStagefrightSine(bool wait) {
+  AudioPlayer* player = new AudioPlayer(NULL);  // Initialize without a source.
+  int kSampleRateHz = 8000;
+  int kNumChannels = 2;
+  SineSource* sine_source = new SineSource(kSampleRateHz, kNumChannels);
+  player->setSource(sine_source);
+  status_t status  = player->start();
+  if (status != OK) {
+    LOG(ERROR) << "Could not start playing audio.";
+    return status;
+  }
+  if (wait) {
+    sleep(5);
+  }
+  player->pause();
   return status;
 }
 
