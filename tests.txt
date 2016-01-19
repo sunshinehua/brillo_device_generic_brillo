@@ -12,6 +12,8 @@ libchrome_test, yes
 libminijail_unittest, no
 libnativepower_tests, no
 libweave_test, no
+metrics_collector_tests, no
+metricsd_tests, no
 nativepowerman_tests, no
 shill_test, no
 syscall_filter_unittest, no
