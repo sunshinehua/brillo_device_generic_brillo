@@ -21,8 +21,8 @@
 
 namespace android {
 
-// Record audio using stagefright.
-status_t LibstagefrightRecordAudio();
+// Record audio using stagefright and save it to a file.
+status_t LibstagefrightRecordAudio(const char* filename);
 
 }  // namespace android
 

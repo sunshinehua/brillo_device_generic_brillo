@@ -17,13 +17,13 @@
 #include "libmedia_record.h"
 
 #include <android-base/logging.h>
+#include <audio_utils/sndfile.h>
 #include <media/AudioRecord.h>
 #include <media/AudioTrack.h>
 
 namespace android {
 
 std::vector<int8_t> LibmediaRecord::audio_data;
-size_t LibmediaRecord::bytes_transferred_so_far = 0;
 
 // Callback for recording audio.
 void LibmediaRecord::RecordCallback(int event, void* user, void* info) {
@@ -46,26 +46,8 @@ void LibmediaRecord::RecordCallback(int event, void* user, void* info) {
   }
 }
 
-// Callback for playing recorded audio.
-void LibmediaRecord::PlayCallback(int event, void* user, void* info) {
-  switch (event) {
-    case AudioTrack::EVENT_MORE_DATA: {
-      AudioTrack::Buffer* buffer = (AudioTrack::Buffer*) info;
-      for (size_t i = 0; i < buffer->size; i++) {
-        buffer->i8[i] = audio_data[bytes_transferred_so_far];
-        bytes_transferred_so_far++;
-      }
-      break;
-    }
-    default: {
-      fprintf(stderr, "Unexpected play callback event\n");
-      break;
-    }
-  }
-}
-
-status_t LibmediaRecord::Record() {
-    uint32_t kSampleRateHz = 8000;
+status_t LibmediaRecord::Record(const char* filename) {
+    uint32_t kSampleRateHz = 48000;
     size_t min_frame_count;
     audio_format_t audio_format = AUDIO_FORMAT_PCM_16_BIT;
     audio_channel_mask_t channel_in_mask = AUDIO_CHANNEL_IN_MONO;
@@ -109,28 +91,29 @@ status_t LibmediaRecord::Record() {
       LOG(ERROR) << "Could not start recording.";
       return status;
     }
-    // Record for 10 seconds before playback starts.
+    // Record for 10 seconds.
     uint32_t duration_secs = 10;
     sleep(duration_secs);
     record->stop();
 
-    printf("Starting playback.\n");
-    AudioTrack* playback = new AudioTrack(
-        AUDIO_STREAM_MUSIC, kSampleRateHz, audio_format,
-        AUDIO_CHANNEL_OUT_MONO, 0, AUDIO_OUTPUT_FLAG_NONE,
-        LibmediaRecord::PlayCallback);
-    status = playback->initCheck();
-    if (status != OK) {
-      LOG(ERROR) << "Could not initialize audio playback.";
-      return status;
+    printf("Done recording. Writing data to file.\n");
+    SF_INFO info;
+    info.frames = 0;
+    info.samplerate = kSampleRateHz;
+    info.channels = audio_channel_count_from_out_mask(channel_in_mask);
+    info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+
+    SNDFILE* out_file = sf_open(filename, SFM_WRITE, &info);
+    if (out_file == nullptr) {
+      LOG(ERROR) << "Could not open file for writing.";
+      return INVALID_OPERATION;
     }
-    status = playback->start();
-    if (status != OK) {
-      LOG(ERROR) << "Could not start playback.";
-      return status;
-    }
-    sleep(duration_secs);
-    playback->stop();
+    size_t frame_size = audio_bytes_per_sample(audio_format) * info.channels;
+    sf_count_t file_frame_count = audio_data.size() / frame_size;
+    sf_writef_short(out_file,
+                    reinterpret_cast<short int*>(audio_data.data()),
+                    file_frame_count);
+    sf_close(out_file);
     return status;
 }
 

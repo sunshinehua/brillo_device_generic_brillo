@@ -23,9 +23,9 @@
 namespace android {
 
 // Records audio using libmedia. After recording the audio for a few seconds,
-// the captured audio is replayed. Sample usage:
+// the captured audio is saved to a file. Sample usage:
 //   LibmediaRecord l_record;
-//   l_record.Record();
+//   l_record.Record(filename);
 class LibmediaRecord {
  public:
   // Callback function called when audio is being recorded. This function copies
@@ -38,15 +38,12 @@ class LibmediaRecord {
   // frameworks/include/av/media/AudioRecord.h for more information.
   static void PlayCallback(int event, void* user, void* info);
 
-  // Records audio for a few seconds and then plays it back.
-  status_t Record();
+  // Records audio for a few seconds and stores it to a file.
+  status_t Record(const char* filename);
 
  private:
   // A buffer used to store the captured audio.
   static std::vector<int8_t> audio_data;
-
-  // Counts the number of bytes transferred played.
-  static size_t bytes_transferred_so_far;
 };
 
 }  // namespace android

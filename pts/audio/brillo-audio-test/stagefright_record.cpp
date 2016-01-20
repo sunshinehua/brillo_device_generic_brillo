@@ -17,18 +17,20 @@
 #include "stagefright_record.h"
 
 #include <android-base/logging.h>
+#include <audio_utils/sndfile.h>
 #include <binder/ProcessState.h>
 #include <media/stagefright/AudioPlayer.h>
 #include <media/stagefright/AudioSource.h>
 
 namespace android {
 
-status_t LibstagefrightRecordAudio() {
+status_t LibstagefrightRecordAudio(const char* filename) {
   android::ProcessState::self()->startThreadPool();
 
-  uint32_t kSampleRateHz = 8000;
-  AudioSource* audio_source = new AudioSource(AUDIO_SOURCE_MIC, String16(),
-                                              kSampleRateHz, 1);
+  uint32_t kSampleRateHz = 48000;
+  uint32_t kNumChannels = 1;
+  AudioSource* audio_source = new AudioSource(AUDIO_SOURCE_DEFAULT, String16(),
+                                              kSampleRateHz, kNumChannels);
   status_t status = audio_source->initCheck();
   if (status != OK) {
     LOG(ERROR) << "Could not initialize audio source correctly.";
@@ -39,19 +41,46 @@ status_t LibstagefrightRecordAudio() {
     LOG(ERROR) << "Could not start recording audio.";
     return status;
   }
-  int duration_secs = 5;
+  int duration_secs = 10;
   sleep(duration_secs);
 
-  printf("Done recording. Re-playing audio\n");
-  AudioPlayer* player = new AudioPlayer(NULL); // Initialize without a source.
-  player->setSource(audio_source);
-  status = player->start(true);
-  if (status != OK) {
-    LOG(ERROR) << "Could not audio playback.";
-    return status;
+  printf("Recorded 10 secs of audio. Saving audio to file\n");
+
+  SF_INFO info;
+  info.frames = 0;
+  info.samplerate = kSampleRateHz;
+  info.channels = kNumChannels;
+  info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+
+  SNDFILE* out_file = sf_open(filename, SFM_WRITE, &info);
+  if (out_file == nullptr) {
+    LOG(ERROR) << "Could not open file for writing.";
+    return INVALID_OPERATION;
   }
-  sleep(duration_secs);
-  player->pause();
+  // Under the hood, AudioSource uses AUDIO_FORMAT_PCM_16_BIT.
+  audio_format_t kAudioFormat = AUDIO_FORMAT_PCM_16_BIT;
+  size_t frame_size = audio_bytes_per_sample(kAudioFormat) * kNumChannels;
+  int num_bytes_to_write = (kNumChannels *
+                            audio_bytes_per_sample(kAudioFormat) *
+                            kSampleRateHz *
+                            duration_secs);
+  int num_bytes_written = 0;
+  // We don't have to worry about reading more data than has been recorded since
+  // audio_source is still recording.
+  while (num_bytes_written < num_bytes_to_write) {
+    MediaBuffer* buffer = NULL;
+    audio_source->read(&buffer, NULL /* no read options */);
+    if (buffer == NULL) {
+      break;
+    }
+    sf_count_t frame_count = buffer->size() / frame_size;
+    sf_writef_short(out_file,
+                    reinterpret_cast<short int*>(buffer->data()),
+                    frame_count);
+    num_bytes_written += buffer->size();
+  }
+  sf_close(out_file);
+
   return status;
 }
 

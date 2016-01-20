@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <android-base/logging.h>
 
 #include "libmedia_playback.h"
@@ -40,10 +41,12 @@ void usage() {
          "play_libmedia - play raw audio stream using libmedia\n"
          "play_stagefright_sine - play raw audio stream using stagefright\n"
          "play_stagefright_mp3 filename - play mp3 using libstagefright\n"
-         "play_multiple filename - play multiple audio stream using both"
-         " libmedia and libstagefright\n"
-         "record_libmedia - record using libmedia\n"
-         "record_stagefright - record audio using stagefright\n"
+         "play_multiple filename - play multiple audio stream using both "
+         "libmedia and libstagefright\n"
+         "record_libmedia filename - record using libmedia and save it to a "
+         "wav file\n"
+         "record_stagefright filename - record audio using stagefright and "
+         "save it to a wav file\n"
          );
 }
 
@@ -94,17 +97,17 @@ int main(int argc, char* argv[]) {
         status = l_play.Play();
         break;
       case kRecordLibmedia:
-        status = l_record.Record();
+        status = l_record.Record(argv[2]);
         break;
       case kRecordStageFright:
-        status = android::LibstagefrightRecordAudio();
+        status = android::LibstagefrightRecordAudio(argv[2]);
         break;
       default:
         usage();
         return -1;
     }
     if (status != android::OK) {
-      LOG(ERROR) << "Could not play audio correctly.";
+      LOG(ERROR) << "Could not play/record audio correctly.";
       return -1;
     }
   }

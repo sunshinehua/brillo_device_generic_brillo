@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := \
 LOCAL_MODULE := brillo_audio_test
 LOCAL_CFLAGS += -Wall -Wno-unused-parameter -Werror
 LOCAL_SHARED_LIBRARIES := \
+  libaudioutils \
   libbase \
   libbinder \
   libc \
@@ -35,8 +36,10 @@ LOCAL_SHARED_LIBRARIES := \
   libstagefright \
   libstagefright_foundation \
   libutils
+LOCAL_STATIC_LIBRARIES := libsndfile
 LOCAL_C_INCLUDES := \
+  $(TOP)/device/generic/brillo/pts/audio/common \
   $(TOP)/frameworks/av/media/libstagefright \
   $(TOP)/frameworks/native/include/media/openmax \
-  $(TOP)/device/generic/brillo/pts/audio/common
+  $(TOP)/system/media/audio_utils/include
 include $(BUILD_EXECUTABLE)
