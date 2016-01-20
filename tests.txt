@@ -7,6 +7,7 @@
 # Everything after a # is ignored.
 apmanager_test, no
 bluetoothtbd_test, no
+crash_reporter_tests, yes
 libbrillo_test, no
 libchrome_test, yes
 libminijail_unittest, no
