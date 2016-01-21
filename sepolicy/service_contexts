@@ -1,4 +1,5 @@
 android.brillo.metrics.IMetricsd u:object_r:metricsd_service:s0
 android.brillo.metrics.IMetricsCollectorService u:object_r:metricscollectorservice:s0
+android.os.IPeripheralManager u:object_r:peripheralman_service:s0
 android.brillo.UpdateEngineService u:object_r:update_engine_service:s0
 weave_service u:object_r:weave_service:s0
