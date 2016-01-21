@@ -52,6 +52,8 @@
 # Defining the contexts for bluetoothtbd.
 /system/bin/bluetoothtbd   u:object_r:bluetoothtbd_exec:s0
 
+/system/bin/peripheralman  u:object_r:peripheralman_exec:s0
+
 # This service only runs during tests for webservd's correctness
 /system/bin/webservd_test_client      u:object_r:webservd_test_client_exec:s0
 

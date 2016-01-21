@@ -67,6 +67,7 @@ PRODUCT_PACKAGES = \
   logcat \
   logd \
   nativepowerman \
+  peripheralman \
   power_example \
   reboot \
   rootdev \
