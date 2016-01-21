@@ -71,6 +71,7 @@ PRODUCT_PACKAGES = \
   power_example \
   reboot \
   rootdev \
+  service \
   servicemanager \
   softkeymaster \
   sh \
