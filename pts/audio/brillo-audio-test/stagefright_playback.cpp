@@ -16,7 +16,7 @@
 
 #include "stagefright_playback.h"
 
-#include <android-base/logging.h>
+#include <base/logging.h>
 #include <media/stagefright/AudioPlayer.h>
 #include <media/stagefright/DataSource.h>
 #include <media/stagefright/FileSource.h>
@@ -32,8 +32,8 @@
 
 namespace android {
 
-status_t PlayStagefrightMp3(char* filename, bool wait) {
-  CHECK(filename != NULL);
+status_t PlayStagefrightMp3(const char* filename, int duration_secs) {
+  CHECK(filename);
   OMXClient client;
   CHECK_EQ(client.connect(), (status_t)OK);
 
@@ -53,37 +53,32 @@ status_t PlayStagefrightMp3(char* filename, bool wait) {
 
   // Decode mp3.
   sp<MetaData> meta_data = media_source->getFormat();
-  sp<MediaSource> decoded_source = OMXCodec::Create(
-      client.interface(), meta_data, false, media_source);
+  sp<MediaSource> decoded_source =
+      OMXCodec::Create(client.interface(), meta_data, false, media_source);
 
   // Play mp3.
-  AudioPlayer* player = new AudioPlayer(NULL); // Initialize without a source.
+  AudioPlayer* player = new AudioPlayer(nullptr);  // Initialize without source.
   player->setSource(decoded_source);
   status = player->start();
   if (status != OK) {
     LOG(ERROR) << "Could not start playing audio.";
     return status;
   }
-  if (wait) {
-    sleep(10);
-  }
+  sleep(duration_secs);
   return status;
 }
 
-status_t PlayStagefrightSine(bool wait) {
-  AudioPlayer* player = new AudioPlayer(NULL);  // Initialize without a source.
-  int kSampleRateHz = 8000;
-  int kNumChannels = 2;
-  SineSource* sine_source = new SineSource(kSampleRateHz, kNumChannels);
+status_t PlayStagefrightSine(int sample_rate, int num_channels,
+                             int duration_secs) {
+  AudioPlayer* player = new AudioPlayer(nullptr);  // Initialize without source.
+  SineSource* sine_source = new SineSource(sample_rate, num_channels);
   player->setSource(sine_source);
-  status_t status  = player->start();
+  status_t status = player->start();
   if (status != OK) {
     LOG(ERROR) << "Could not start playing audio.";
     return status;
   }
-  if (wait) {
-    sleep(5);
-  }
+  sleep(duration_secs);
   player->pause();
   return status;
 }

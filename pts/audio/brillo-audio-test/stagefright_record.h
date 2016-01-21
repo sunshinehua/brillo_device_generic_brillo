@@ -14,16 +14,22 @@
 // limitations under the License.
 //
 
-#ifndef EXAMPLE_APP_STAGEFRIGHT_RECORD_H_
-#define EXAMPLE_APP_STAGEFRIGHT_RECORD_H_
+#ifndef PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_RECORD_H_
+#define PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_RECORD_H_
 
 #include <utils/Errors.h>
 
 namespace android {
 
 // Record audio using stagefright and save it to a file.
-status_t LibstagefrightRecordAudio(const char* filename);
+// Parameters:
+//   filename: WAV file to save audio to.
+//   sample_rate: Sample rate in hz.
+//   num_channels: Number of channels to use.
+//   duration_secs: Duration to play audio for in seconds.
+status_t LibstagefrightRecordAudio(const char* filename, int sample_rate,
+                                   int num_channels, int duration_secs);
 
 }  // namespace android
 
-#endif  // EXAMPLE_APP_STAGEFRIGHT_RECORD_H_
+#endif  // PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_RECORD_H_

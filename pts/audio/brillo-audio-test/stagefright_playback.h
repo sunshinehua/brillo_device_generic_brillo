@@ -14,8 +14,8 @@
 // limitations under the License.
 //
 
-#ifndef EXAMPLE_APP_STAGEFRIGHT_PLAYBACK_H_
-#define EXAMPLE_APP_STAGEFRIGHT_PLAYBACK_H_
+#ifndef PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_PLAYBACK_H_
+#define PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_PLAYBACK_H_
 
 #include <utils/Errors.h>
 
@@ -25,15 +25,17 @@ namespace android {
 // decodes it and plays it.
 // Parameters:
 //   filename:  MP3 file to be played.
-//   wait:      Bool to indicate whether this function should sleep or not. If
-//              true, the function waits for 10 seconds before returning.
-status_t PlayStagefrightMp3(char* filename, bool wait);
+//   duration_secs: Duration to play audio for in seconds.
+status_t PlayStagefrightMp3(const char* filename, int duration_secs);
 
 // Plays audio using stagefright. This function plays a sine wave for 10 secs.
 // Parameters:
-//   wait:      Bool to indicate whether this function should sleep or not. If
-//              true, the function waits for 5 seconds before returning.
-status_t PlayStagefrightSine(bool wait);
+//   sample_rate: Sample rate in hz.
+//   num_channels: Number of channels to use.
+//   duration_secs: Duration to play audio for in seconds.
+status_t PlayStagefrightSine(int sample_rate, int num_channels,
+                             int duration_secs);
+
 }  // namespace android
 
-#endif  // EXAMPLE_APP_STAGEFRIGHT_PLAYBACK_H_
+#endif  // PTS_BRILLO_AUDIO_TEST_STAGEFRIGHT_PLAYBACK_H_

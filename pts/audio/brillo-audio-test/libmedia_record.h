@@ -14,18 +14,20 @@
 // limitations under the License.
 //
 
-#ifndef EXAMPLE_APP_LIBMEDIA_RECORD_H_
-#define EXAMPLE_APP_LIBMEDIA_RECORD_H_
+#ifndef PTS_BRILLO_AUDIO_TEST_LIBMEDIA_RECORD_H_
+#define PTS_BRILLO_AUDIO_TEST_LIBMEDIA_RECORD_H_
 
-#include <utils/Errors.h>
 #include <vector>
+
+#include <system/audio.h>
+#include <utils/Errors.h>
 
 namespace android {
 
 // Records audio using libmedia. After recording the audio for a few seconds,
 // the captured audio is saved to a file. Sample usage:
 //   LibmediaRecord l_record;
-//   l_record.Record(filename);
+//   l_record.Record(...);
 class LibmediaRecord {
  public:
   // Callback function called when audio is being recorded. This function copies
@@ -39,7 +41,14 @@ class LibmediaRecord {
   static void PlayCallback(int event, void* user, void* info);
 
   // Records audio for a few seconds and stores it to a file.
-  status_t Record(const char* filename);
+  // Parameters:
+  //   filename: WAV file to save audio to.
+  //   sample_rate: Sample rate in hz.
+  //   num_channels: Number of channels to use.
+  //   audio_format: Audio format to record in.
+  //   duration_secs: Duration in seconds to record for.
+  status_t Record(const char* filename, int sample_rate, int num_channels,
+                  audio_format_t audio_format, int duration_secs);
 
  private:
   // A buffer used to store the captured audio.
@@ -48,4 +57,4 @@ class LibmediaRecord {
 
 }  // namespace android
 
-#endif  // EXAMPLE_APP_LIBMEDIA_RECORD_H_
+#endif  // PTS_BRILLO_AUDIO_TEST_LIBMEDIA_RECORD_H_

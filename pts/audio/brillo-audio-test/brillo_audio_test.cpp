@@ -16,10 +16,12 @@
 
 // Test app to play/record audio using libmedia and libstagefright.
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <android-base/logging.h>
+#include <base/logging.h>
+#include <brillo/flag_helper.h>
+#include <brillo/syslog_logging.h>
 
 #include "libmedia_playback.h"
 #include "libmedia_record.h"
@@ -36,81 +38,116 @@ enum TestMode {
   kInvalid
 };
 
-void usage() {
-  fprintf(stderr, "Usage: ./brillo_audio_test [option].\n"
-         "play_libmedia - play raw audio stream using libmedia\n"
-         "play_stagefright_sine - play raw audio stream using stagefright\n"
-         "play_stagefright_mp3 filename - play mp3 using libstagefright\n"
-         "play_multiple filename - play multiple audio stream using both "
-         "libmedia and libstagefright\n"
-         "record_libmedia filename - record using libmedia and save it to a "
-         "wav file\n"
-         "record_stagefright filename - record audio using stagefright and "
-         "save it to a wav file\n"
-         );
-}
-
-TestMode parseMode(char* arg) {
-  if (!strcmp(arg, "play_libmedia"))
-    return kPlayLibmedia;
-  if (!strcmp(arg, "play_stagefright_sine"))
-    return kPlayStagefrightSine;
-  if (!strcmp(arg, "play_stagefright_mp3"))
-    return kPlayStagefrightMp3;
-  if (!strcmp(arg, "play_multiple"))
-    return kPlayMultiple;
-  if (!strcmp(arg, "record_stagefright"))
-    return kRecordStageFright;
-  if (!strcmp(arg, "record_libmedia"))
-    return kRecordLibmedia;
-  return kInvalid;
+audio_format_t get_format(int sample_size) {
+  switch (sample_size) {
+    case 1:
+      return AUDIO_FORMAT_PCM_8_BIT;
+    case 2:
+      return AUDIO_FORMAT_PCM_16_BIT;
+    case 4:
+      return AUDIO_FORMAT_PCM_32_BIT;
+    default:
+      LOG(ERROR) << "Invalid sample size. Must be 1, 2, or 4.";
+      return AUDIO_FORMAT_INVALID;
+  }
 }
 
 int main(int argc, char* argv[]) {
-  if (argc < 2) {
-    usage();
-    return -1;
+  // Use libmedia or stagefright.
+  DEFINE_bool(libmedia, false, "Use libmedia for playback/recording.");
+  DEFINE_bool(stagefright, false, "Use stagefright for playback/recording.");
+  // Play or record.
+  DEFINE_bool(playback, false, "Play audio.");
+  DEFINE_bool(record, false, "Record audio.");
+  // Play sine wave or a file.
+  DEFINE_bool(sine, false, "Play a sine wave.");
+  DEFINE_string(filename, "", "WAV file to play/write to.");
+  // Other options.
+  DEFINE_int32(duration_secs, 10, "Duration to play/record audio in seconds.");
+  DEFINE_int32(num_channels, 1, "Number of channels");
+  DEFINE_int32(sample_rate, 48000, "Sample rate.");
+  DEFINE_int32(sample_size, 2, "Sample size (in bytes)");
+
+  brillo::FlagHelper::Init(argc, argv, "Brillo Audio Test");
+  brillo::InitLog(brillo::kLogToSyslog | brillo::kLogHeader);
+
+  // Check for invalid combinations of arguments.
+  if (!(FLAGS_libmedia ^ FLAGS_stagefright)) {
+    LOG(ERROR) << "Must select either libmedia or stagefright.";
+    return 1;
+  }
+  if (!(FLAGS_playback ^ FLAGS_record)) {
+    LOG(ERROR) << "Must select either playback or record.";
+    return 1;
+  }
+  if (FLAGS_record && FLAGS_filename == "") {
+    LOG(ERROR) << "Must provide a filename for recording.";
+    return 1;
+  }
+  if (FLAGS_playback && !(FLAGS_sine ^ (FLAGS_filename != ""))) {
+    LOG(ERROR) << "Must provide either a filename or play a sine wave.";
+    return 1;
+  }
+
+  // Parse the arguments.
+  TestMode mode = kInvalid;
+  if (FLAGS_libmedia) {
+    if (FLAGS_playback)
+      mode = kPlayLibmedia;
+    else
+      mode = kRecordLibmedia;
   } else {
-    android::LibmediaPlayback l_play;
-    android::LibmediaRecord l_record;
-    TestMode mode = parseMode(argv[1]);
-    android::status_t status = android::UNKNOWN_ERROR;
-    switch (mode) {
-      case kPlayLibmedia:
-        l_play.Init();
-        status = l_play.Play();
-        break;
-      case kPlayStagefrightSine:
-        status = android::PlayStagefrightSine(true);
-        break;
-      case kPlayStagefrightMp3:
-        status = android::PlayStagefrightMp3(argv[2], true);
-        break;
-      case kPlayMultiple:
-        status = android::PlayStagefrightMp3(argv[2], false);
-        if (status != android::OK) {
-          LOG(ERROR) << "Could not play mp3 using stagefright.";
-          return -1;
-        }
-        sleep(10);
-        l_play.Init();
-        status = l_play.Play();
-        break;
-      case kRecordLibmedia:
-        status = l_record.Record(argv[2]);
-        break;
-      case kRecordStageFright:
-        status = android::LibstagefrightRecordAudio(argv[2]);
-        break;
-      default:
-        usage();
-        return -1;
-    }
-    if (status != android::OK) {
-      LOG(ERROR) << "Could not play/record audio correctly.";
-      return -1;
+    if (FLAGS_playback) {
+      if (FLAGS_sine)
+        mode = kPlayStagefrightSine;
+      else
+        mode = kPlayStagefrightMp3;
+    } else {
+      mode = kRecordStageFright;
     }
   }
-  printf("Done\n");
-  return 0;
+
+  audio_format_t audio_format = get_format(FLAGS_sample_size);
+
+  android::status_t status = android::OK;
+  switch (mode) {
+    case kPlayLibmedia: {
+      android::LibmediaPlayback l_play;
+      l_play.Init(FLAGS_sample_rate, FLAGS_num_channels);
+      status = l_play.Play(audio_format, FLAGS_duration_secs);
+      break;
+    }
+    case kPlayStagefrightMp3: {
+      status = android::PlayStagefrightMp3(FLAGS_filename.c_str(),
+                                           FLAGS_duration_secs);
+      break;
+    }
+    case kPlayStagefrightSine: {
+      status = android::PlayStagefrightSine(
+          FLAGS_sample_rate, FLAGS_num_channels, FLAGS_duration_secs);
+      break;
+    }
+    case kRecordLibmedia: {
+      android::LibmediaRecord l_record;
+      status = l_record.Record(FLAGS_filename.c_str(), FLAGS_sample_rate,
+                               FLAGS_num_channels, audio_format,
+                               FLAGS_duration_secs);
+      break;
+    }
+    case kRecordStageFright: {
+      status = android::LibstagefrightRecordAudio(
+          FLAGS_filename.c_str(), FLAGS_sample_rate, FLAGS_num_channels,
+          FLAGS_duration_secs);
+      break;
+    }
+    default: {
+      LOG(ERROR) << "Invalid test mode.";
+      return 1;
+    }
+  }
+  if (status == android::OK)
+    LOG(INFO) << "brillo_audio_test ran successfully.";
+  else
+    LOG(INFO) << "brillo_audio_test failed.";
+  return status;
 }

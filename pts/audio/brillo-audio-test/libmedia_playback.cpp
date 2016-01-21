@@ -16,29 +16,29 @@
 
 #include "libmedia_playback.h"
 
-#include <android-base/logging.h>
+#include <base/logging.h>
 #include <media/AudioTrack.h>
 #include <media/stagefright/MediaSource.h>
 
 namespace android {
 
-MediaBuffer* LibmediaPlayback::sine_data_buffer = NULL;
+MediaBuffer* LibmediaPlayback::sine_data_buffer_ = nullptr;
 
-void LibmediaPlayback::Init() {
-  int kSampleRateHz = 8000;
-  int num_channels = 1;
-  source = new SineSource(kSampleRateHz, num_channels);
-  source->start(NULL); // Initialize with no parameters.
+void LibmediaPlayback::Init(int sample_rate, int num_channels) {
+  sample_rate_ = sample_rate;
+  num_channels_ = num_channels;
+  source_ = new SineSource(sample_rate_, num_channels_);
+  source_->start(nullptr);  // Initialize with no parameters.
 
   // Read data from source and store it in a buffer.
   MediaSource::ReadOptions options;
-  source->read(&sine_data_buffer, &options);
+  source_->read(&sine_data_buffer_, &options);
 }
 
 size_t LibmediaPlayback::FillBuffer(void* data, size_t size) {
-  CHECK(data != NULL);
-  size = (size < sine_data_buffer->size()) ? size : sine_data_buffer->size();
-  memcpy(data, sine_data_buffer->data(), size);
+  CHECK(data);
+  size = (size < sine_data_buffer_->size()) ? size : sine_data_buffer_->size();
+  memcpy(data, sine_data_buffer_->data(), size);
   return size;
 }
 
@@ -59,16 +59,16 @@ void LibmediaPlayback::AudioCallback(int event, void* user, void* info) {
   }
 }
 
-status_t LibmediaPlayback::Play() {
-  int kSampleRateHz = 8000;
-  audio_stream_type_t stream_type = AUDIO_STREAM_MUSIC;
-  audio_format_t audio_format = AUDIO_FORMAT_PCM_16_BIT;
-  audio_channel_mask_t audio_mask = AUDIO_CHANNEL_OUT_ALL;
-  size_t frame_count = 0; // Use default value for frame count.
+status_t LibmediaPlayback::Play(audio_format_t audio_format,
+                                int duration_secs) {
+  audio_channel_mask_t audio_mask =
+      audio_channel_out_mask_from_count(num_channels_);
+  const audio_stream_type_t kStreamType = AUDIO_STREAM_MUSIC;
+  size_t frame_count = 0;  // Use default value for frame count.
   audio_output_flags_t audio_output_flags = AUDIO_OUTPUT_FLAG_NONE;
 
   AudioTrack* track = new AudioTrack(
-      stream_type, kSampleRateHz, audio_format, audio_mask, frame_count,
+      kStreamType, sample_rate_, audio_format, audio_mask, frame_count,
       audio_output_flags, LibmediaPlayback::AudioCallback);
   status_t status = track->initCheck();
   if (status != OK) {
@@ -76,7 +76,7 @@ status_t LibmediaPlayback::Play() {
     return status;
   }
 
-  float volume = 1;
+  float volume = 0.7;
   track->setVolume(volume);
   status = track->start();
   if (status != OK) {
@@ -84,21 +84,10 @@ status_t LibmediaPlayback::Play() {
     return status;
   }
 
-  // Change volumes.
-  // The volume should decrease steadily and then increase steadily again.
-  for (float volume = 1; volume >= 0; volume -= 0.1) {
-    track->setVolume(volume);
-    sleep(1);
-  }
-  for (float volume = 0; volume <= 1; volume += 0.1) {
-    track->setVolume(volume);
-    sleep(1);
-  }
-
-  sleep(10);
+  sleep(duration_secs);
   track->stop();
   // Free memory.
-  sine_data_buffer->release();
+  sine_data_buffer_->release();
   return status;
 }
 

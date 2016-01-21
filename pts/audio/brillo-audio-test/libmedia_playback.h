@@ -14,10 +14,11 @@
 // limitations under the License.
 //
 
-#ifndef EXAMPLE_APP_LIBMEDIA_PLAYBACK_H_
-#define EXAMPLE_APP_LIBMEDIA_PLAYBACK_H_
+#ifndef PTS_BRILLO_AUDIO_TEST_LIBMEDIA_PLAYBACK_H_
+#define PTS_BRILLO_AUDIO_TEST_LIBMEDIA_PLAYBACK_H_
 
 #include <media/stagefright/MediaBuffer.h>
+#include <system/audio.h>
 
 #include "SineSource.h"
 
@@ -25,12 +26,15 @@ namespace android {
 
 // Plays audio (a sine wave) using libmedia. Sample usage:
 //   LibmediaPlayback l_play;
-//   l_play.Init();
-//   l_play.Play();
+//   l_play.Init(...);
+//   l_play.Play(...);
 class LibmediaPlayback {
  public:
   // Initialize data and place the data in a MediaBuffer.
-  void Init();
+  // Parameters:
+  //   sample_rate: Sample rate in hz.
+  //   num_channels: Number of channels to use.
+  void Init(int sample_rate, int num_channels);
 
   // Callback function for playing audio. See
   // frameworks/include/av/media/AudioTrack.h for more information.
@@ -38,7 +42,10 @@ class LibmediaPlayback {
 
   // Play audio as a music stream. This function waits until the playback is
   // completed.
-  status_t Play();
+  // Parameters:
+  //   audio_format: Audio format to record in.
+  //   duration_secs: Duration in seconds to record for.
+  status_t Play(audio_format_t audio_format, int duration_secs);
 
  private:
   // Helper function used by AudioCallback. Takes size bytes from
@@ -49,12 +56,16 @@ class LibmediaPlayback {
   static size_t FillBuffer(void* data, size_t size);
 
   // Buffer to store the sine data created in Init().
-  static MediaBuffer* sine_data_buffer;
+  static MediaBuffer* sine_data_buffer_;
 
   // Source to create the sine wave.
-  sp<SineSource> source;
+  sp<SineSource> source_;
+  // Sample rate.
+  int sample_rate_;
+  // Number of channels.
+  int num_channels_;
 };
 
 }  // namespace android
 
-#endif  // EXAMPLE_APP_LIBMEDIA_PLAYBACK_H_
+#endif  // PTS_BRILLO_AUDIO_TEST_LIBMEDIA_PLAYBACK_H_

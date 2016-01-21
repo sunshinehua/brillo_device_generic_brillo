@@ -17,20 +17,18 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := brillo_audio_test
 LOCAL_SRC_FILES := \
   brillo_audio_test.cpp \
-  libmedia_record.cpp \
   libmedia_playback.cpp \
-  stagefright_record.cpp \
-  stagefright_playback.cpp
-LOCAL_MODULE := brillo_audio_test
-LOCAL_CFLAGS += -Wall -Wno-unused-parameter -Werror
+  libmedia_record.cpp \
+  stagefright_playback.cpp \
+  stagefright_record.cpp
+LOCAL_CFLAGS += -Wall -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \
-  libbase \
-  libbinder \
-  libc \
-  liblog \
+  libbrillo \
+  libchrome \
   libmedia \
   libsinesource \
   libstagefright \
