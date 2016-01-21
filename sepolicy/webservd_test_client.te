@@ -8,5 +8,5 @@ brillo_domain(webservd_test_client)
 # Allow crash_reporter access to core dump files.
 allow_crash_reporter(webservd_test_client)
 
-# Allow servicing HTTP(s) requests via webservd.
-webservd_use(webservd_test_client)
+# Allow servicing HTTP(S) requests via webservd.
+use_webservd(webservd_test_client)
