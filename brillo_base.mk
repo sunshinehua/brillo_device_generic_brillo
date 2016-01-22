@@ -38,6 +38,7 @@ PRODUCT_COPY_FILES += \
 include device/generic/brillo/cfgtree.mk
 
 # Global Brillo USE flags
+BRILLO_USE_BINDER := 1
 BRILLO_USE_DBUS := 1
 BRILLO_USE_WEAVE := 1
 
