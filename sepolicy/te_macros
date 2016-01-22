@@ -75,6 +75,6 @@ binder_call(weaved, $1)
 # Allow a domain and update_engine to communicate with each other over binder.
 define(`allow_call_update_engine', `
 allow $1 update_engine_service:service_manager find;
-binder_call($1, update_engine_service)
-binder_call(update_engine_service, $1)
+binder_call($1, update_engine)
+binder_call(update_engine, $1)
 ')
