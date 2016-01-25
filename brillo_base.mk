@@ -92,7 +92,8 @@ PRODUCT_PACKAGES += \
 ifneq (,$(filter $(TARGET_BUILD_VARIANT),eng userdebug))
 # Packages included only for eng or userdebug builds.
 PRODUCT_PACKAGES += \
-  dumpsys
+  dumpsys \
+  webservd_test_client
 endif
 
 ifneq ($(TARGET_BUILD_VARIANT),eng)
