@@ -35,7 +35,7 @@ PRODUCT_COPY_FILES += \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \
 
 # Set up the local kernel.
-TARGET_KERNEL_SRC := hardware/bsp/kernel/common/v4.1
+TARGET_KERNEL_SRC := hardware/bsp/kernel/common/v4.4
 TARGET_KERNEL_DEFCONFIG := i386_defconfig
 $(call add_kernel_configs,$(realpath $(LOCAL_PATH)/brillo.kconf))
 
