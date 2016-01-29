@@ -338,6 +338,12 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # Define a make variable that identifies Brillo targets.
 BRILLO := 1
 
+# Java is not used or required for Brillo.
+JAVA_NOT_REQUIRED := true
+
+# Brillo does not use the Android recovery image.
+TARGET_NO_RECOVERY := true
+
 # Generate Breakpad symbols.
 BREAKPAD_GENERATE_SYMBOLS := true
 
