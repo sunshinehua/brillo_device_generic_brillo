@@ -107,11 +107,15 @@ int PlaySineWave(audio_stream_out_t* out_stream, audio_config_t* config) {
 // Parameters:
 //   out_stream: A pointer to the output audio stream.
 //   in_file: A pointer to a SNDFILE object.
+//   config: A pointer to struct that contains audio configuration data.
 //
 // Returns: An int which has a non-negative number on success.
-int PlayFile(audio_stream_out_t* out_stream, SNDFILE* in_file) {
+int PlayFile(audio_stream_out_t* out_stream, SNDFILE* in_file,
+             audio_config_t* config) {
   size_t buffer_size = out_stream->common.get_buffer_size(&out_stream->common);
-  size_t kFrameSize = audio_bytes_per_sample(kAudioPlaybackFormat);
+  size_t kFrameSize =
+      audio_bytes_per_sample(kAudioPlaybackFormat) *
+      audio_channel_count_from_out_mask(config->channel_mask);
   short* data = new short[buffer_size / kFrameSize];
   int rc = 0;
   sf_count_t frames_read = 1;
@@ -193,7 +197,7 @@ int main(int argc, char* argv[]) {
   if (filename) {
     in_file = sf_open(filename, SFM_READ, &file_info);
     CHECK(in_file != nullptr);
-    config.channel_mask = file_info.channels;
+    config.channel_mask = audio_channel_out_mask_from_count(file_info.channels);
     if (!(file_info.format & SF_FORMAT_PCM_16)) {
       LOG(ERROR) << "File must be of format 16-bit PCM.";
       return -1;
@@ -231,7 +235,7 @@ int main(int argc, char* argv[]) {
 
 
   if (filename) {
-    PlayFile(out_stream, in_file);
+    PlayFile(out_stream, in_file, &config);
   } else {
     PlaySineWave(out_stream, &config);
   }
