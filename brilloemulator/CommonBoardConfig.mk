@@ -28,5 +28,11 @@ TARGET_SKIP_OTA_PACKAGE := true
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brilloemulator/ueventd.rc:root/ueventd.qemu.rc \
 
+# Emulator will see two fake cameras with HALv3.
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    qemu.sf.front_camera_hal=3 \
+    qemu.sf.back_camera_hal=3 \
+    qemu.sf.fake_camera=both
+
 # Set up common kernel settings.
 $(call add_kernel_configs,$(realpath device/generic/brillo/brilloemulator/brillo.kconf))

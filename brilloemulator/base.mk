@@ -22,5 +22,21 @@ BOARD_SEPOLICY_DIRS += device/generic/brillo/brilloemulator/sepolicy
 
 BRILLOEMULATOR := true
 
+# This string eventually gets put into the system property ro.board.platform.
+# libhardware uses it to look up HALs that we should load on emulators.
+TARGET_BOARD_PLATFORM := brilloemulator
+
+# Enable fake OpenGL graphics HALs from goldfish.
+BUILD_EMULATOR_OPENGL := true
+USE_CAMERA_STUB := true
+
 # For the TPM simulator.
 PRODUCT_PACKAGES += libtpm2
+
+# Typically, BSPs define the set of HALs included for a board.
+# However, emulators all share this fake camera HAL and there is
+# currently no concept for a hierarchical BSP.
+PRODUCT_PACKAGES += \
+    camera.$(TARGET_BOARD_PLATFORM) \
+    gralloc.$(TARGET_BOARD_PLATFORM) \
+    gralloc.default
