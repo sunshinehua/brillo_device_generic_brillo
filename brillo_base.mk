@@ -238,6 +238,11 @@ PRODUCT_PACKAGES += \
   tlsdate-helper \
   tlsdated \
 
+# Make 3rd party packages available by default.
+PRODUCT_3RD_PARTY_PACKAGES :=
+PRODUCT_PACKAGES += \
+  3rd-party-packages \
+
 # For android_filesystem_config.h
 # This configures filesystem capabilities.
 TARGET_ANDROID_FILESYSTEM_CONFIG_H := \
