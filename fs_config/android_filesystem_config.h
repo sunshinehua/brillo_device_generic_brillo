@@ -47,5 +47,4 @@ static const struct fs_path_config android_device_files[] = {
                                        CAP_MASK_LONG(CAP_WAKE_ALARM),    "system/bin/bluetoothtbd" },
     { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/etc/init.firewall-setup.sh" },
     { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/etc/init.wifi-setup.sh" },
-    { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/usr/bin/python2.7" },
 };
