@@ -35,6 +35,10 @@ allow crash_reporter self:capability { chown };
 r_dir_file(crash_reporter, proc)
 allow crash_reporter proc_cpuinfo:file r_file_perms;
 
+# Allow reading from /sys/fs/pstore for kernel panic logs.
+r_dir_file(crash_reporter, sysfs)
+r_dir_file(crash_reporter, pstorefs)
+
 # Allow FIFO reads.
 allow crash_reporter kernel:fifo_file r_file_perms;
 
