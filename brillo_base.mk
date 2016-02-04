@@ -17,6 +17,9 @@
 # This is a build configuration for the base of a Brillo system.
 # It contains the mandatory targets required to boot a Brillo device.
 
+# Define a make variable that identifies Brillo targets.
+BRILLO := 1
+
 # Common Brillo init scripts.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo.rc:system/etc/init/brillo.rc \
@@ -26,6 +29,9 @@ PRODUCT_COPY_FILES += \
 
 # Directory for init files.
 TARGET_COPY_OUT_INITRCD := $(TARGET_COPY_OUT_SYSTEM)/etc/init
+
+# Template for init files.
+INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 
 # Directory for Brillo build time properties.
 OSRELEASED_DIRECTORY := os-release.d
@@ -37,19 +43,25 @@ PRODUCT_COPY_FILES += \
 # Include the cfgtree helpers for loading config values from disk.
 include device/generic/brillo/cfgtree.mk
 
-# Global Brillo USE flags
+# Global Brillo USE flags.
 BRILLO_USE_BINDER := 1
 BRILLO_USE_DBUS := 1
 BRILLO_USE_WEAVE := 1
+
+# Java is not used or required for Brillo.
+JAVA_NOT_REQUIRED := true
+
+# Brillo does not use the Android recovery image.
+TARGET_NO_RECOVERY := true
+
+# Generate Breakpad symbols.
+BREAKPAD_GENERATE_SYMBOLS := true
 
 # Skip API checks.
 WITHOUT_CHECK_API := true
 # Don't try to build and run all tests by default. Several tests have
 # dependencies on the framework.
 ANDROID_NO_TEST_CHECK := true
-
-# Template for init files.
-INITRC_TEMPLATE := device/generic/brillo/init.template.rc.in
 
 PRODUCT_PACKAGES = \
   adbd \
@@ -103,10 +115,6 @@ PRODUCT_PACKAGES += \
   brillo-update-payload-key
 endif
 
-# TODO(deymo): Remove the example postinst once payload v2 is used.
-PRODUCT_PACKAGES += \
-  postinst_example \
-
 # SELinux packages.
 PRODUCT_PACKAGES += \
   sepolicy \
@@ -123,12 +131,14 @@ PRODUCT_PACKAGES += \
   product_id \
 
 # D-Bus daemon, utilities, and example programs.
+ifeq ($(BRILLO_USE_DBUS),1)
 PRODUCT_PACKAGES += \
   dbus-daemon \
   dbus-example-client \
   dbus-example-daemon \
   dbus-monitor \
-  dbus-send \
+  dbus-send
+endif
 
 # Brillo audio tests for libmedia and libstagefright.
 PRODUCT_PACKAGES += \
@@ -263,40 +273,7 @@ AB_OTA_PARTITIONS := \
   boot \
   system
 
-# We must select a wpa_supplicant version, or the AOSP version won't be built.
-WPA_SUPPLICANT_VERSION := VER_0_8_X
-BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-BOARD_HOSTAPD_DRIVER := NL80211
-
-# Enable WPA CLI support.
-CONFIG_CTRL_IFACE=y
-# Enable WPA supplicant D-Bus support.
-CONFIG_CTRL_IFACE_DBUS=y
-CONFIG_CTRL_IFACE_DBUS_NEW=y
-
-# Enable disable_vht option in WPA supplicant.
-CONFIG_VHT_OVERRIDES=y
-
-# WPA supplicant basic authentication methods.
-CONFIG_DYNAMIC_EAP_METHODS=y
-CONFIG_IEEE8021X_EAPOL=y
-CONFIG_EAP_MD5=y
-CONFIG_EAP_MSCHAPV2=y
-CONFIG_EAP_TLS=y
-CONFIG_EAP_PEAP=y
-CONFIG_EAP_TTLS=y
-CONFIG_EAP_GTC=y
-CONFIG_EAP_OTP=y
-CONFIG_EAP_LEAP=y
-CONFIG_PKCS12=y
-CONFIG_PEERKEY=y
-CONFIG_BGSCAN_SIMPLE=y
-CONFIG_BGSCAN_LEARN=y
-CONFIG_IEEE80211W=y
-
-# Settings for dhcpcd-6.8.2.
-DHCPCD_USE_IPV6=yes
-DHCPCD_USE_DBUS=yes
+include device/generic/brillo/net_packages_config.mk
 
 # Wireless debugging.
 PRODUCT_PACKAGES += \
@@ -339,18 +316,6 @@ BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) device/generic/brillo/sepolicy
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     debug.atrace.tags.enableflags=0 \
     ro.build.shutdown_timeout=5 \
-
-# Define a make variable that identifies Brillo targets.
-BRILLO := 1
-
-# Java is not used or required for Brillo.
-JAVA_NOT_REQUIRED := true
-
-# Brillo does not use the Android recovery image.
-TARGET_NO_RECOVERY := true
-
-# Generate Breakpad symbols.
-BREAKPAD_GENERATE_SYMBOLS := true
 
 # TODO(jorgelo): Move into main build.
 define generate-initrc-file
