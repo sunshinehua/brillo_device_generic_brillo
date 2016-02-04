@@ -157,6 +157,7 @@ PRODUCT_PACKAGES += \
 
 # Audio dependencies.
 PRODUCT_PACKAGES += \
+  brilloaudioservice \
   libaudioroute \
   libtinyalsa \
   libtinycompress \

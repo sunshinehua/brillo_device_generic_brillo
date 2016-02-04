@@ -57,6 +57,10 @@
 
 /system/bin/peripheralman  u:object_r:peripheralman_exec:s0
 
+# Defining the contexts for brilloaudioservice.
+/system/bin/brilloaudioservice         u:object_r:brillo_audio_service_exec:s0
+/sys/devices/virtual/switch/h2w/state  u:object_r:brillo_audio_service_state:s0
+
 # This service only runs during tests for webservd's correctness
 /system/bin/webservd_test_client      u:object_r:webservd_test_client_exec:s0
 
