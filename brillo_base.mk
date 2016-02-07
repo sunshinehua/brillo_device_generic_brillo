@@ -254,13 +254,6 @@ PRODUCT_3RD_PARTY_PACKAGES :=
 PRODUCT_PACKAGES += \
   3rd-party-packages \
 
-# Packages needed by autotools.
-ifeq ($(TARGET_BUILD_VARIANT),eng)
-PRODUCT_3RD_PARTY_PACKAGES += \
-  dev-lang/python:2.7 \
-
-endif
-
 # TPM packages.
 PRODUCT_PACKAGES += \
   libtrunks \
