@@ -190,8 +190,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
   libsensor \
   sensorservice \
-  sensors-hal-example-app \
-  sensors-ndk-example-app \
 
 # Connectivity packages.
 PRODUCT_PACKAGES += \
