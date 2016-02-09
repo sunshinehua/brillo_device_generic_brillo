@@ -25,6 +25,21 @@ on boot
 on property:firewall.init=1
     enable firewalld
 
+on property:firewall.init=1 && property:persist.adb.tcp.port=* && property:init.svc.adbd=running
+    start fwall-adbd-setup
+
+on property:firewall.init=1 && property:service.adb.tcp.port=* && property:init.svc.adbd=running
+    start fwall-adbd-setup
+
+# Only allow adbd auto-start on debuggable (userdebug/eng) builds.
+on boot && property:ro.debuggable=1 && property:adbd-setup.autostart=1
+    start adbd
+
+service fwall-adbd-setup /system/etc/init.firewall-adbd-setup.sh
+    user root
+    group root net_admin net_raw
+    oneshot
+
 service firewall-setup /system/etc/init.firewall-setup.sh
     user root
     group root net_admin net_raw
@@ -47,3 +62,12 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     socket wpa_wlan0 dgram 0660 wifi wifi
     user wifi
     group wifi dbus inet
+
+# Normally system/core/rootdir/init.usb.rc declares the adbd service, but since
+# Brillo does not require USB, not all builds include this file. If init.usb.rc
+# is included, it will define adbd first and this redefinition will be ignored.
+service adbd /sbin/adbd --root_seclabel=u:r:su:s0
+    class core
+    socket adbd stream 660 system system
+    disabled
+    seclabel u:r:adbd:s0

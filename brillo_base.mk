@@ -24,6 +24,7 @@ BRILLO := 1
 PRODUCT_COPY_FILES += \
   device/generic/brillo/brillo.rc:system/etc/init/brillo.rc \
   device/generic/brillo/sensorservice.rc:system/etc/init/sensorservice.rc \
+  device/generic/brillo/init.firewall-adbd-setup.sh:system/etc/init.firewall-adbd-setup.sh \
   device/generic/brillo/init.firewall-setup.sh:system/etc/init.firewall-setup.sh \
   device/generic/brillo/init.wifi-setup.sh:system/etc/init.wifi-setup.sh \
 
@@ -364,4 +365,18 @@ endef
 
 define add_kernel_configs
   $(eval TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(1))
+endef
+
+# Configures adbd to listen for connections on the given TCP port on userdebug
+# and eng builds. The host can then use `adb connect <ip>:<port>` to connect.
+# Usage: $(call enable_adb_over_tcp, <port>[, <start_on_boot>])
+#   port: TCP port for adbd to listen on.
+#   start_on_boot: set to true to auto-start adbd on userdebug and eng builds.
+#       Normally init.usb.rc handles this, but boards that do not include it
+#       (e.g. boards without USB) may want to use this option.
+define enable_adb_over_tcp
+  $(if $(filter userdebug eng,$(TARGET_BUILD_VARIANT)), \
+    $(eval PRODUCT_DEFAULT_PROPERTY_OVERRIDES += persist.adb.tcp.port=$(strip $(1))) \
+    $(if $(filter true,$(2)), \
+      $(eval PRODUCT_DEFAULT_PROPERTY_OVERRIDES += adbd-setup.autostart=1)))
 endef
