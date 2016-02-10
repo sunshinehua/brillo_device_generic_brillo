@@ -140,15 +140,6 @@ PRODUCT_PACKAGES += \
   dbus-send
 endif
 
-# Brillo audio tests for libmedia and libstagefright.
-PRODUCT_PACKAGES += \
-  brillo_audio_test \
-
-# Audio HAL tests.
-PRODUCT_PACKAGES += \
-  audio_hal_playback_test \
-  audio_hal_record_test \
-
 # Audio NDK tests.
 PRODUCT_PACKAGES += \
   slesTest_playFdPath \
