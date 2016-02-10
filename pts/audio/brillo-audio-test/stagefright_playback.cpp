@@ -21,39 +21,39 @@
 #include <media/stagefright/DataSource.h>
 #include <media/stagefright/FileSource.h>
 #include <media/stagefright/MediaExtractor.h>
-#include <media/stagefright/MetaData.h>
 #include <media/stagefright/SimpleDecodingSource.h>
 #include <media/stagefright/foundation/AMessage.h>
-
-#include "include/MP3Extractor.h"
 
 #include "SineSource.h"
 
 namespace android {
 
-status_t PlayStagefrightMp3(const char* filename, int duration_secs) {
+status_t PlayStagefrightFile(const char* filename, int duration_secs) {
   CHECK(filename);
 
   FileSource* file_source = new FileSource(filename);
   status_t status = file_source->initCheck();
   if (status != OK) {
-    LOG(ERROR) << "Could not open the mp3 file source.";
+    LOG(ERROR) << "Could not open the file.";
     return status;
   }
 
-  // Extract track.
-  sp<AMessage> message = new AMessage();
+  // Register default sniffers so MediaExtractor knows what kind of sniffer to
+  // use.
+  file_source->RegisterDefaultSniffers();
 
-  sp<MediaExtractor> media_extractor = new MP3Extractor(file_source, message);
-  LOG(INFO) << "Num tracks: " << media_extractor->countTracks();
+  // Extract media.
+  sp<MediaExtractor> media_extractor = MediaExtractor::Create(file_source,
+                                                              NULL);
+  CHECK(media_extractor.get()) << "Extractor is NULL";
+  CHECK(media_extractor->countTracks()) << "File must have at least one track.";
   sp<MediaSource> media_source = media_extractor->getTrack(0);
 
-  // Decode mp3.
-  sp<MetaData> meta_data = media_source->getFormat();
+  // Decode audio.
   sp<MediaSource> decoded_source =
       SimpleDecodingSource::Create(media_source);
 
-  // Play mp3.
+  // Play audio.
   AudioPlayer* player = new AudioPlayer(nullptr);  // Initialize without source.
   player->setSource(decoded_source);
   status = player->start();

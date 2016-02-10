@@ -26,7 +26,8 @@ LOCAL_SRC_FILES := \
   libmedia_playback.cpp \
   libmedia_record.cpp \
   stagefright_playback.cpp \
-  stagefright_record.cpp
+  stagefright_record.cpp \
+  utils.cpp
 LOCAL_CFLAGS += -Wall -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \

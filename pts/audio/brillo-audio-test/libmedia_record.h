@@ -35,11 +35,6 @@ class LibmediaRecord {
   // frameworks/include/av/media/AudioRecord.h for more information.
   static void RecordCallback(int event, void* user, void* info);
 
-  // Callback function called when audio is being replayed. This function copies
-  // data from audio_data to the buffer so it can be played. See
-  // frameworks/include/av/media/AudioRecord.h for more information.
-  static void PlayCallback(int event, void* user, void* info);
-
   // Records audio for a few seconds and stores it to a file.
   // Parameters:
   //   filename: WAV file to save audio to.
@@ -52,7 +47,7 @@ class LibmediaRecord {
 
  private:
   // A buffer used to store the captured audio.
-  static std::vector<int8_t> audio_data;
+  std::vector<uint8_t> audio_data_;
 };
 
 }  // namespace android

@@ -56,9 +56,7 @@ status_t LibstagefrightRecordAudio(const char* filename, int sample_rate,
   // Under the hood, AudioSource uses AUDIO_FORMAT_PCM_16_BIT.
   audio_format_t kAudioFormat = AUDIO_FORMAT_PCM_16_BIT;
   size_t frame_size = audio_bytes_per_sample(kAudioFormat) * num_channels;
-  int num_bytes_to_write =
-      (num_channels * audio_bytes_per_sample(kAudioFormat) * sample_rate *
-       duration_secs);
+  int num_bytes_to_write = frame_size * sample_rate * duration_secs;
   int num_bytes_written = 0;
   // We don't have to worry about reading more data than has been recorded since
   // audio_source is still recording.

@@ -30,8 +30,7 @@
 
 enum TestMode {
   kPlayLibmedia,
-  kPlayStagefrightSine,
-  kPlayStagefrightMp3,
+  kPlayStagefright,
   kPlayMultiple,
   kRecordLibmedia,
   kRecordStageFright,
@@ -98,10 +97,7 @@ int main(int argc, char* argv[]) {
       mode = kRecordLibmedia;
   } else {
     if (FLAGS_playback) {
-      if (FLAGS_sine)
-        mode = kPlayStagefrightSine;
-      else
-        mode = kPlayStagefrightMp3;
+      mode = kPlayStagefright;
     } else {
       mode = kRecordStageFright;
     }
@@ -113,18 +109,20 @@ int main(int argc, char* argv[]) {
   switch (mode) {
     case kPlayLibmedia: {
       android::LibmediaPlayback l_play;
-      l_play.Init(FLAGS_sample_rate, FLAGS_num_channels);
-      status = l_play.Play(audio_format, FLAGS_duration_secs);
+      if (FLAGS_sine)
+        l_play.InitSine(audio_format, FLAGS_sample_rate, FLAGS_num_channels);
+      else
+        l_play.InitFile(FLAGS_filename.c_str());
+      status = l_play.Play(FLAGS_duration_secs);
       break;
     }
-    case kPlayStagefrightMp3: {
-      status = android::PlayStagefrightMp3(FLAGS_filename.c_str(),
-                                           FLAGS_duration_secs);
-      break;
-    }
-    case kPlayStagefrightSine: {
-      status = android::PlayStagefrightSine(
-          FLAGS_sample_rate, FLAGS_num_channels, FLAGS_duration_secs);
+    case kPlayStagefright: {
+      if (FLAGS_sine)
+        status = android::PlayStagefrightSine(
+            FLAGS_sample_rate, FLAGS_num_channels, FLAGS_duration_secs);
+      else
+        status = android::PlayStagefrightFile(FLAGS_filename.c_str(),
+                                              FLAGS_duration_secs);
       break;
     }
     case kRecordLibmedia: {

@@ -21,12 +21,12 @@
 
 namespace android {
 
-// Plays audio using stagefright. Specifically, this function opens a .mp3 file,
-// decodes it and plays it.
+// Plays audio using stagefright. Specifically, this function opens a file,
+// decodes it (if needed) and plays it.
 // Parameters:
-//   filename:  MP3 file to be played.
+//   filename: Audio file to be played.
 //   duration_secs: Duration to play audio for in seconds.
-status_t PlayStagefrightMp3(const char* filename, int duration_secs);
+status_t PlayStagefrightFile(const char* filename, int duration_secs);
 
 // Plays audio using stagefright. This function plays a sine wave for 10 secs.
 // Parameters:
