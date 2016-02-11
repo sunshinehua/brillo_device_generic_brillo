@@ -25,9 +25,6 @@ BOARD_USES_FULL_RECOVERY_IMAGE := true
 # This is an emulator build.
 TARGET_SKIP_OTA_PACKAGE := true
 
-# Use clang.
-USE_CLANG_PLATFORM_BUILD := true
-
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brilloemulator/ueventd.rc:root/ueventd.qemu.rc \
 
