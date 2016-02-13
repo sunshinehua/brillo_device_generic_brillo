@@ -22,8 +22,7 @@
 #include <media/stagefright/FileSource.h>
 #include <media/stagefright/MediaExtractor.h>
 #include <media/stagefright/MetaData.h>
-#include <media/stagefright/OMXClient.h>
-#include <media/stagefright/OMXCodec.h>
+#include <media/stagefright/SimpleDecodingSource.h>
 #include <media/stagefright/foundation/AMessage.h>
 
 #include "include/MP3Extractor.h"
@@ -34,8 +33,6 @@ namespace android {
 
 status_t PlayStagefrightMp3(const char* filename, int duration_secs) {
   CHECK(filename);
-  OMXClient client;
-  CHECK_EQ(client.connect(), (status_t)OK);
 
   FileSource* file_source = new FileSource(filename);
   status_t status = file_source->initCheck();
@@ -54,7 +51,7 @@ status_t PlayStagefrightMp3(const char* filename, int duration_secs) {
   // Decode mp3.
   sp<MetaData> meta_data = media_source->getFormat();
   sp<MediaSource> decoded_source =
-      OMXCodec::Create(client.interface(), meta_data, false, media_source);
+      SimpleDecodingSource::Create(media_source);
 
   // Play mp3.
   AudioPlayer* player = new AudioPlayer(nullptr);  // Initialize without source.
