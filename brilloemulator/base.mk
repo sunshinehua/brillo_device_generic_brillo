@@ -40,3 +40,7 @@ PRODUCT_PACKAGES += \
     camera.$(TARGET_BOARD_PLATFORM) \
     gralloc.$(TARGET_BOARD_PLATFORM) \
     gralloc.default
+
+# Software NVRAM HAL.
+PRODUCT_PACKAGES += nvram.testing
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.hardware.nvram=testing

@@ -291,6 +291,9 @@ PRODUCT_PACKAGES += \
 
 endif
 
+# Access-Controlled NVRAM
+PRODUCT_PACKAGES += nvram-client
+
 # TODO(derat): Move this config file to a saner place.
 PRODUCT_COPY_FILES += \
   device/generic/brillo/dbus.conf:system/etc/dbus.conf \
