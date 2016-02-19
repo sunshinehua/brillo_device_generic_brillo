@@ -55,6 +55,9 @@ JAVA_NOT_REQUIRED := true
 # Brillo does not use the Android recovery image.
 TARGET_NO_RECOVERY := true
 
+# Brillo does not run a surface flinger.
+TARGET_BOARD_HAS_NO_SURFACE_FLINGER := true
+
 # Generate Breakpad symbols.
 BREAKPAD_GENERATE_SYMBOLS := true
 
