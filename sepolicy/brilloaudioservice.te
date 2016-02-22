@@ -10,6 +10,9 @@ brillo_domain(brillo_audio_service)
 allow brillo_audio_service mediaserver_service:service_manager find;
 binder_call(brillo_audio_service, mediaserver)
 
+# Allow brilloaudioservice to register with the service manager.
+allow brillo_audio_service brilloaudioservice:service_manager { add find };
+
 # Allow reading of initial headphone state.
 allow brillo_audio_service sysfs:file read;
 allow brillo_audio_service brillo_audio_service_state:file r_file_perms;
