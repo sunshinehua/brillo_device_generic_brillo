@@ -83,6 +83,9 @@ ifneq ($(TARGET_KERNEL_CROSS_COMPILE_PREFIX),)
 KERNEL_CROSS_COMPILE := $(TARGET_KERNEL_CROSS_COMPILE_PREFIX)
 endif
 
+# Use ccache if requested by USE_CCACHE variable
+KERNEL_CROSS_COMPILE_WRAPPER := $(realpath $(CC_WRAPPER)) $(KERNEL_CROSS_COMPILE)
+
 KERNEL_GCC_NOANDROID_CHK := $(shell (echo "int main() {return 0;}" | $(KERNEL_CROSS_COMPILE)gcc -E -mno-android - > /dev/null 2>&1 ; echo $$?))
 ifeq ($(strip $(KERNEL_GCC_NOANDROID_CHK)),0)
 KERNEL_CFLAGS += -mno-android
@@ -148,7 +151,7 @@ $(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
-	$(MAKE) -C $(TARGET_KERNEL_SRC)  O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) KCFLAGS="$(KERNEL_CFLAGS)"
+	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(KERNEL_CROSS_COMPILE_WRAPPER)" KCFLAGS="$(KERNEL_CFLAGS)"
 	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) headers_install;
 
 # If the kernel generates VDSO files, generate breakpad symbol files for them.
