@@ -114,7 +114,7 @@ KERNEL_CONFIGS_VER := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/common.config
 KERNEL_CONFIGS_VER_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/$(KERNEL_ARCH).config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
-
+KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
 
 ifdef TARGET_KERNEL_DTB
 KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
@@ -158,6 +158,8 @@ $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	# Disable CCACHE_DIRECT so that header location changes are noticed.
 	CCACHE_NODIRECT="true" $(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(KERNEL_CROSS_COMPILE_WRAPPER)" KCFLAGS="$(KERNEL_CFLAGS)" KAFLAGS="$(KERNEL_AFLAGS)"
+
+$(KERNEL_HEADERS_INSTALL): $(KERNEL_BIN)
 	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) headers_install;
 
 # If the kernel generates VDSO files, generate breakpad symbol files for them.
@@ -178,14 +180,14 @@ endif
 
 ifdef TARGET_KERNEL_DTB
 ifdef TARGET_KERNEL_DTB_APPEND
-$(PRODUCT_OUT)/kernel: $(PRODUCT_OUT)/kernel-dtb $(KERNEL_BIN).vdso | $(ACP)
+$(PRODUCT_OUT)/kernel: $(PRODUCT_OUT)/kernel-dtb $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
 	$(ACP) -fp $< $@
 else
-$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb $(KERNEL_BIN).vdso | $(ACP)
+$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
 	$(ACP) -fp $< $@
 endif
 else
-$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(KERNEL_BIN).vdso | $(ACP)
+$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
 	$(ACP) -fp $< $@
 endif
 
