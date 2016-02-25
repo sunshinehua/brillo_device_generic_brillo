@@ -103,3 +103,52 @@ $(autotest_server_package) :
 
 $(call dist-for-goals, dist_files, $(autotest_server_package))
 # End building autotest server side package.
+
+# Building autotest test_suites package.
+ifndef AUTOTEST_TEST_SUITES
+# If AUTOTEST_TEST_SUITES is not set in board config, include all suite control
+# files in autotest repo.
+TEST_SUITES_DIR := $(AUTOTEST_DIR)/test_suites
+AUTOTEST_TEST_SUITES := $(addprefix $(TEST_SUITES_DIR)/, $(call find-files-in-subdirs,$(TEST_SUITES_DIR),control.*,.))
+else  # AUTOTEST_TEST_SUITES is defined
+@echo "AUTOTEST_TEST_SUITES is already assigned:"
+@echo ${AUTOTEST_TEST_SUITES}
+endif  # ifndef AUTOTEST_TEST_SUITES
+
+# The staging directory to store test suites.
+test_suites_intermediates := $(call intermediates-dir-for, PACKAGING, test_suites)
+target_test_suites_dir := $(test_suites_intermediates)/autotest/test_suites
+
+test_suites_package := $(test_suites_intermediates)/$(name)-test_suites-$(FILE_NAME_TAG).tar.bz2
+dependency_info := $(target_test_suites_dir)/dependency_info
+suite_to_control_file_map := $(target_test_suites_dir)/suite_to_control_file_map
+
+# Trigger rebuilding the test_suites package when a control file is add or
+# removed from the directory.
+$(test_suites_package) : $(TEST_SUITES_DIR)
+
+# Note that the test suites tar ball won't be regenerated if the depended
+# AUTOTEST_TEST_SUITES is not changed. For example, change in autotest module
+# control_file_preprocessor.py will not lead to the rebuild of the test suites
+# tar ball.
+# The recipe does following in order:
+# 1. Copy the test suites in AUTOTEST_TEST_SUITES to the intermediate folder.
+# 2. Run suite_preprocessor.py to create a dependency_info file, which includes
+#    the dependencies for the test suites.
+# 3. Run control_file_preprocessor.py to create a file mapping suites to the
+#    test control files for each suite.
+# 4. tar the autotest intermediate folder as the desired test_suites package.
+$(test_suites_package) : $(AUTOTEST_TEST_SUITES)
+	@echo "Package test suites: $@"
+	$(hide) rm -rf $(target_test_suites_dir)
+	$(hide) mkdir -p $(target_test_suites_dir)
+	$(foreach f, $(AUTOTEST_TEST_SUITES), \
+		$(shell cp $(f) $(target_test_suites_dir)/))
+	$(hide) python -B $(AUTOTEST_DIR)/site_utils/suite_preprocessor.py \
+		-a $(AUTOTEST_DIR) -o $(dependency_info)
+	$(hide) python -B $(AUTOTEST_DIR)/site_utils/control_file_preprocessor.py \
+		-a $(AUTOTEST_DIR) -o $(suite_to_control_file_map)
+	$(hide) tar -jcf $@ -C $(dir $@) autotest
+
+$(call dist-for-goals, dist_files, $(test_suites_package))
+# End building autotest test_suites package.
