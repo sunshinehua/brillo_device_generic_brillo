@@ -34,6 +34,7 @@ static const struct fs_path_config android_device_files[] = {
     { 00700, AID_SYSTEM,  AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND),    "system/bin/nativepowerman" },
     { 00700, AID_SYSTEM,  AID_SHELL, CAP_MASK_LONG(CAP_SYS_TIME),         "system/bin/tlsdated" },
     { 00700, AID_WEBSERV, AID_SHELL, CAP_MASK_LONG(CAP_NET_BIND_SERVICE), "system/bin/webservd" },
+
     { 00700, AID_DHCP,    AID_DBUS,  CAP_MASK_LONG(CAP_NET_ADMIN) |
                                      CAP_MASK_LONG(CAP_NET_BIND_SERVICE) |
                                      CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/dhcpcd-6.8.2" },
@@ -43,10 +44,20 @@ static const struct fs_path_config android_device_files[] = {
                                      CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/apmanager" },
     { 00755, AID_WIFI,    AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
                                      CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/hostapd" },
-    { 00700, AID_BLUETOOTH, AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND) |
-                                       CAP_MASK_LONG(CAP_WAKE_ALARM),    "system/bin/bluetoothtbd" },
 
-    { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/etc/init.firewall-adbd-setup.sh" },
-    { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/etc/init.firewall-setup.sh" },
-    { 00550, AID_ROOT,   AID_SHELL, 0,                                   "system/etc/init.wifi-setup.sh" },
+    /*
+     * 00755 because 'ip(6)tables' is also executed by root in
+     * 'init.firewall(-adb)-setup.sh'.
+     */
+    { 00755, AID_FIREWALL,  AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
+                                       CAP_MASK_LONG(CAP_NET_RAW),        "system/bin/iptables" },
+    { 00755, AID_FIREWALL,  AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
+                                       CAP_MASK_LONG(CAP_NET_RAW),        "system/bin/ip6tables" },
+
+    { 00700, AID_BLUETOOTH, AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND) |
+                                       CAP_MASK_LONG(CAP_WAKE_ALARM),     "system/bin/bluetoothtbd" },
+
+    { 00550, AID_ROOT,   AID_SHELL, 0,                                    "system/etc/init.firewall-adbd-setup.sh" },
+    { 00550, AID_ROOT,   AID_SHELL, 0,                                    "system/etc/init.firewall-setup.sh" },
+    { 00550, AID_ROOT,   AID_SHELL, 0,                                    "system/etc/init.wifi-setup.sh" },
 };
