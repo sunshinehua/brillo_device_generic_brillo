@@ -15,6 +15,17 @@
 #
 
 # -----------------------------------------------------------------
+LOCAL_PATH := $(call my-dir)
+
+# A simple package to include the whitelist file.
+include $(CLEAR_VARS)
+LOCAL_MODULE := brillo_test_whitelist
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_PATH := $(TARGET_OUT_DATA)/nativetest
+LOCAL_MODULE_STEM := tests.txt
+LOCAL_SRC_FILES := ../tests.txt
+include $(BUILD_PREBUILT)
 
 # Include the peripheral HALs
 $(foreach f,$(HAL_MAKEFILES), \
