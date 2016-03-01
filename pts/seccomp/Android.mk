@@ -16,7 +16,7 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := seccomp_bpf
+LOCAL_MODULE := seccomp_bpf_test
 
 # Ignore kernel-isms.
 LOCAL_CFLAGS += \
@@ -24,8 +24,10 @@ LOCAL_CFLAGS += \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers
 
-# Don't include this package in any configuration by default.
-LOCAL_MODULE_TAGS := optional
+# Include this in Brillo -eng builds only (for automated testing).
+ifdef BRILLO
+LOCAL_MODULE_TAGS := eng
+endif
 
 LOCAL_SRC_FILES := seccomp_bpf.c
 
