@@ -22,7 +22,8 @@ LOCAL_MODULE := seccomp_bpf_test
 LOCAL_CFLAGS += \
 	-Wno-sign-compare \
 	-Wno-unused-parameter \
-	-Wno-missing-field-initializers
+	-Wno-missing-field-initializers \
+	-Wno-empty-body
 
 # Include this in Brillo -eng builds only (for automated testing).
 ifdef BRILLO
@@ -31,4 +32,4 @@ endif
 
 LOCAL_SRC_FILES := seccomp_bpf.c
 
-include $(BUILD_EXECUTABLE)
+include $(BUILD_NATIVE_TEST)
