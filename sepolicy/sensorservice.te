@@ -10,9 +10,10 @@ allow sensorservice servicemanager:binder { transfer call };
 # Allow crash_reporter access to core dump files.
 allow_crash_reporter(sensorservice)
 
-allow sensorservice cpuctl_device:dir search;
-
 r_dir_file(sensorservice, proc_net)
 r_dir_file(sensorservice, sysfs)
+
+allow sensorservice input_device:chr_file r_file_perms;
+allow sensorservice input_device:dir search;
 
 allow sensorservice self:capability { net_admin sys_nice };
