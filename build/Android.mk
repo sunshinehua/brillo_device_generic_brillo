@@ -163,3 +163,25 @@ $(test_suites_package) : $(AUTOTEST_TEST_SUITES)
 
 $(call dist-for-goals, dist_files, $(test_suites_package))
 # End building autotest test_suites package.
+
+# Building autotest_control_files.tar package.
+control_files_intermediates := $(call intermediates-dir-for, PACKAGING, control_files)
+target_control_files_dir := $(control_files_intermediates)/autotest
+control_files_package := $(control_files_intermediates)/$(name)-autotest_control_files-$(FILE_NAME_TAG).tar
+
+control_files := $(addprefix $(AUTOTEST_DIR)/, \
+    $(filter-out test_suites/%,$(call find-files-in-subdirs,$(AUTOTEST_DIR),control*,.)))
+
+$(control_files_package) : $(control_files)
+	@echo "Package control files: $@"
+	$(hide) rm -rf $(target_control_files_dir)
+	$(hide) mkdir -p $(target_control_files_dir)
+	$(foreach f, $^, \
+		$(eval dest := $(subst $(AUTOTEST_DIR),$(target_control_files_dir),$(f))) \
+		$(shell mkdir -p $(dir $(dest))) \
+		$(shell cp $(f) $(dest)))
+	$(hide) tar -cf $@ -C $(dir $@) autotest
+
+$(call dist-for-goals, dist_files, $(control_files_package))
+# End building autotest_control_files.tar package.
+
