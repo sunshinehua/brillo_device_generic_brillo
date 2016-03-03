@@ -5,6 +5,7 @@
  * Test code for seccomp bpf.
  */
 
+#include <sys/types.h>
 #include <asm/siginfo.h>
 #define __have_siginfo_t 1
 #define __have_sigval_t 1
@@ -14,7 +15,6 @@
 #include <linux/filter.h>
 #include <sys/prctl.h>
 #include <sys/ptrace.h>
-#include <sys/types.h>
 #include <sys/user.h>
 #include <linux/prctl.h>
 #include <linux/ptrace.h>
@@ -1215,6 +1215,10 @@ TEST_F(TRACE_poke, getpid_runs_normally)
 # define ARCH_REGS     s390_regs
 # define SYSCALL_NUM   gprs[2]
 # define SYSCALL_RET   gprs[2]
+#elif defined(__mips__)
+# define ARCH_REGS     struct pt_regs
+# define SYSCALL_NUM   regs[2]
+# define SYSCALL_RET   regs[2]
 #else
 # error "Do not know how to find your architecture's registers and syscalls"
 #endif
