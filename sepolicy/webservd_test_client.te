@@ -13,4 +13,7 @@ userdebug_or_eng(`
 
   # Allow servicing HTTP(S) requests via webservd.
   use_webservd(webservd_test_client)
+
+  # Allow weaved to talk to webservd.
+  allow_call_webservd(webservd_test_client)
 ')
