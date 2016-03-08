@@ -70,3 +70,5 @@
 /system/etc/init\.wifi-setup\.sh      u:object_r:wifi_setup_exec:s0
 
 /system/etc/os-release\.d(/.*)?       u:object_r:os_release_file:s0
+
+/dev/spidev.*                         u:object_r:spi_device:s0
