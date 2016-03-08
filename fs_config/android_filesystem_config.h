@@ -43,6 +43,9 @@ static const struct fs_path_config android_device_files[] = {
     { 00755, AID_WIFI,    AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
                                      CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/apmanager" },
     { 00755, AID_WIFI,    AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
+                                     CAP_MASK_LONG(CAP_NET_BIND_SERVICE) |
+                                     CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/dnsmasq" },
+    { 00755, AID_WIFI,    AID_SHELL, CAP_MASK_LONG(CAP_NET_ADMIN) |
                                      CAP_MASK_LONG(CAP_NET_RAW),          "system/bin/hostapd" },
 
     /*
