@@ -101,8 +101,7 @@ exclude_dirs := .git \
     results \
     scheduler \
     server/site_tests/native_Benchmarks \
-    site-packages \
-    tko
+    site-packages
 
 excludes := $(addprefix --exclude , $(foreach d, $(exclude_dirs), $(d)))
 
