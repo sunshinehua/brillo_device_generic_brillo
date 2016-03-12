@@ -37,12 +37,12 @@ on boot && property:ro.debuggable=1 && property:adbd-setup.autostart=1
 
 service fwall-adbd-setup /system/etc/init.firewall-adbd-setup.sh
     user root
-    group root net_admin net_raw
+    group root
     oneshot
 
 service firewall-setup /system/etc/init.firewall-setup.sh
     user root
-    group root net_admin net_raw
+    group root
     oneshot
 
 service wifi-setup /system/etc/init.wifi-setup.sh
