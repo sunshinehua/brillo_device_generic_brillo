@@ -48,14 +48,14 @@ exec \
 ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/qemu/linux-x86_64/qemu-system-i386 \
   -m ${MEM}M \
   -kernel ${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/kernel \
-  -append "console=ttyS0 root=/dev/vda androidboot.hardware=qemu qemu=1 rootwait noinitrd init=/init androidboot.selinux=enforcing"\
+  -append "console=ttyS0 root=/dev/vda androidboot.hardware=qemu qemu=1 rootwait noinitrd init=/init androidboot.selinux=enforcing" \
   -nographic \
   -device virtio-blk-pci,drive=system\
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/system.img,if=none,id=system,format=raw" \
   -device virtio-blk-pci,drive=userdata \
   -drive file="${ANDROID_BUILD_TOP}/out/target/product/brilloemulator_x86/userdata.img,if=none,id=userdata,format=raw" \
-  -netdev user,id=mynet \
-  -device virtio-net-pci,netdev=mynet \
+  -netdev user,id=net0,hostfwd=tcp::5555-:5555 \
+  -device virtio-net-pci,netdev=net0 \
   -vga none \
   -L ${ANDROID_BUILD_TOP}/prebuilts/android-emulator/linux-x86_64/lib/pc-bios \
   "${opts[@]}" \

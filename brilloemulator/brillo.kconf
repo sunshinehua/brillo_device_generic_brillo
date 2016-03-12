@@ -20,10 +20,13 @@
 # Having timestamps in the emu is nice, especially wrt logging.
 CONFIG_PRINTK_TIME=y
 
-# The pipe driver the Android QEMU fork provides for fast access.
+# The pipe driver in the Android QEMU fork provides for fast access.
 # See external/qemu/docs/ANDROID-QEMU-PIPE.TXT for more details.
-CONFIG_GOLDFISH=y
-CONFIG_GOLDFISH_PIPE=y
+# NOTE: Disabled temporarily since the pipe is not working with the current
+# QEMU prebuilts.
+# TODO(b/27486119): Re-enable this.
+#CONFIG_GOLDFISH=y
+#CONFIG_GOLDFISH_PIPE=y
 
 # Misc virtual drivers we leverage.
 CONFIG_NET_9P=y
