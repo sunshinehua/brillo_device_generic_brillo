@@ -33,6 +33,12 @@ USE_CAMERA_STUB := true
 # For the TPM simulator.
 PRODUCT_PACKAGES += libtpm2
 
+# For the TPM software stack.
+PRODUCT_PACKAGES += \
+  libtrunks \
+  trunks_client \
+  trunksd \
+
 # Typically, BSPs define the set of HALs included for a board.
 # However, emulators all share this fake camera HAL and there is
 # currently no concept for a hierarchical BSP.

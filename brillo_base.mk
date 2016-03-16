@@ -247,12 +247,6 @@ PRODUCT_3RD_PARTY_PACKAGES :=
 PRODUCT_PACKAGES += \
   3rd-party-packages \
 
-# TPM packages.
-PRODUCT_PACKAGES += \
-  libtrunks \
-  trunks_client \
-  trunksd \
-
 # For android_filesystem_config.h
 # This configures filesystem capabilities.
 TARGET_ANDROID_FILESYSTEM_CONFIG_H := \
