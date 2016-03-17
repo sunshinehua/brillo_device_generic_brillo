@@ -43,6 +43,7 @@ endif
 KERNEL_TOOLCHAIN_ABS := $(realpath $(TARGET_TOOLCHAIN_ROOT)/bin)
 TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
 KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
+KERNEL_CC_WRAPPER := $(CC_WRAPPER)
 
 ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
@@ -73,6 +74,8 @@ KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/mips64el-linux-android-
 KERNEL_SRC_ARCH := mips
 KERNEL_CFLAGS :=
 KERNEL_NAME := compressed/vmlinux.bin
+# TODO(b/27679097): Re-enable after Goma issues are fixed.
+KERNEL_CC_WRAPPER :=
 else
 $(error kernel arch not supported at present)
 endif
@@ -84,7 +87,7 @@ KERNEL_CROSS_COMPILE := $(TARGET_KERNEL_CROSS_COMPILE_PREFIX)
 endif
 
 # Use ccache if requested by USE_CCACHE variable
-KERNEL_CROSS_COMPILE_WRAPPER := $(realpath $(CC_WRAPPER)) $(KERNEL_CROSS_COMPILE)
+KERNEL_CROSS_COMPILE_WRAPPER := $(realpath $(KERNEL_CC_WRAPPER)) $(KERNEL_CROSS_COMPILE)
 
 KERNEL_GCC_NOANDROID_CHK := $(shell (echo "int main() {return 0;}" | $(KERNEL_CROSS_COMPILE)gcc -E -mno-android - > /dev/null 2>&1 ; echo $$?))
 ifeq ($(strip $(KERNEL_GCC_NOANDROID_CHK)),0)
