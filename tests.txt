@@ -5,18 +5,19 @@
 # * second column is "yes" or "no" whether we want to run the test as root or
 #   not.
 # Everything after a # is ignored.
-apmanager_test, no
-bluetoothtbd_test, no
-crash_reporter_tests, yes
-libbrillo_test, no
-libchrome_test, yes
-libminijail_unittest, no
-libnativepower_tests, no
-libweave_test, no
-metrics_collector_tests, no
-metricsd_tests, no
-nativepowerman_tests, no
-seccomp_bpf_test, no
-shill_test, no
-syscall_filter_unittest, no
-weaved_test, no
+apmanager_test, no,
+bluetoothtbd_test, no,
+crash_reporter_tests, yes,
+libbrillo_test, no,
+libchrome_test, yes,
+libminijail_unittest, no,
+libnativepower_tests, no,
+libperipheralman_tests, no, -j1
+libweave_test, no,
+metrics_collector_tests, no,
+metricsd_tests, no,
+nativepowerman_tests, no,
+seccomp_bpf_test, no,
+shill_test, no,
+syscall_filter_unittest, no,
+weaved_test, no,
