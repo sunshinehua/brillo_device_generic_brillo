@@ -57,6 +57,7 @@ static const struct fs_path_config android_device_files[] = {
                                        CAP_MASK_LONG(CAP_NET_RAW),        "system/bin/ip6tables" },
 
     { 00700, AID_BLUETOOTH, AID_SHELL, CAP_MASK_LONG(CAP_BLOCK_SUSPEND) |
+                                       CAP_MASK_LONG(CAP_NET_ADMIN)     |
                                        CAP_MASK_LONG(CAP_WAKE_ALARM),     "system/bin/bluetoothtbd" },
 
     { 00550, AID_ROOT,   AID_SHELL, 0,                                    "system/etc/init.firewall-adbd-setup.sh" },
