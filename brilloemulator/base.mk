@@ -48,5 +48,7 @@ PRODUCT_PACKAGES += \
     gralloc.default
 
 # Software NVRAM HAL.
-PRODUCT_PACKAGES += nvram.testing
+PRODUCT_PACKAGES += \
+    fake-nvram \
+    nvram.testing
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.hardware.nvram=testing
