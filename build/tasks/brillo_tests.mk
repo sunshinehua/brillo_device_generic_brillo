@@ -20,7 +20,7 @@ ifneq ($(filter $(MAKECMDGOALS),brillo_tests),)
 # Include the whitelist itself and all files from it.
 my_modules := \
     brillo_test_whitelist \
-    $(shell sed -n -e 's/\(^[^#].*\),.*/\1/p' device/generic/brillo/tests.txt)
+    $(shell sed -n -e 's/\(^[^#][^,]*\),.*/\1/p' device/generic/brillo/tests.txt)
 
 my_package_name := brillo_tests
 
