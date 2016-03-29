@@ -1,1 +1,2 @@
 type spi_device, dev_type;
+type tpm_device, dev_type;

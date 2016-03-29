@@ -42,6 +42,7 @@
 /system/bin/tlsdate-helper u:object_r:tlsdated_exec:s0
 /system/bin/tlsdate        u:object_r:tlsdated_exec:s0
 
+/dev/tpm[0-9]+             u:object_r:tpm_device:s0
 /data/misc/trunksd(/.*)?   u:object_r:trunksd_data_file:s0
 /system/bin/trunksd        u:object_r:trunksd_exec:s0
 
