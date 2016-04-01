@@ -47,7 +47,7 @@ KERNEL_CC_WRAPPER := $(CC_WRAPPER)
 KERNEL_AFLAGS :=
 
 ifeq ($(TARGET_KERNEL_ARCH), arm)
-KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androideabi-
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androidkernel-
 KERNEL_SRC_ARCH := arm
 KERNEL_CFLAGS :=
 ifdef TARGET_KERNEL_DTB
@@ -56,22 +56,22 @@ else
 KERNEL_NAME := zImage-dtb
 endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
-KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-android-
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-androidkernel-
 KERNEL_SRC_ARCH := arm64
 KERNEL_CFLAGS :=
 KERNEL_NAME := Image
 else ifeq ($(TARGET_KERNEL_ARCH), i386)
-KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-androidkernel-
 KERNEL_SRC_ARCH := x86
 KERNEL_CFLAGS := -mstack-protector-guard=tls
 KERNEL_NAME := bzImage
 else ifeq ($(TARGET_KERNEL_ARCH), x86_64)
-KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-android-
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-androidkernel-
 KERNEL_SRC_ARCH := x86
 KERNEL_CFLAGS := -mstack-protector-guard=tls
 KERNEL_NAME := bzImage
 else ifeq ($(TARGET_KERNEL_ARCH), mips)
-KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/mips64el-linux-android-
+KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/mips64el-linux-androidkernel-
 KERNEL_SRC_ARCH := mips
 KERNEL_CFLAGS :=
 KERNEL_NAME := compressed/vmlinux.bin
