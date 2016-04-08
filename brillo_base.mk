@@ -44,6 +44,8 @@ PRODUCT_COPY_FILES += \
 # Include the cfgtree helpers for loading config values from disk.
 include device/generic/brillo/cfgtree.mk
 
+BOARD_BPT_INPUT_FILES := device/generic/brillo/brillo_partitions.bpt
+
 # Global Brillo USE flags.
 BRILLO_USE_BINDER := 1
 BRILLO_USE_DBUS := 1

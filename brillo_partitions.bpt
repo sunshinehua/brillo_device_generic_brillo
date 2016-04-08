@@ -1,0 +1,39 @@
+{
+    "settings": {
+        "disk_size": "4 GiB"
+    },
+    "partitions": [
+        {
+            "ab": true,
+            "label": "boot",
+            "size": "32 MiB",
+            "guid": "auto",
+            "type_guid": "brillo_boot"
+        },
+        {
+            "ab": true,
+            "label": "system",
+            "size": "512 MiB",
+            "guid": "auto",
+            "type_guid": "brillo_system"
+        },
+        {
+            "ab": true,
+            "label": "odm",
+            "size": "1 GiB",
+            "guid": "auto",
+            "type_guid": "brillo_odm"
+        },
+        {
+            "label": "misc",
+            "size": "1 MiB",
+            "type_guid": "brillo_misc"
+        },
+        {
+            "label": "userdata",
+            "grow": true,
+            "guid": "auto",
+            "type_guid": "brillo_userdata"
+        }
+    ]
+}
