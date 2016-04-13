@@ -83,6 +83,7 @@ PRODUCT_PACKAGES = \
   linker \
   logcat \
   logd \
+  nativeperms \
   nativepowerman \
   peripheralman \
   power_example \
