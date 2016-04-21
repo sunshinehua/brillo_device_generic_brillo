@@ -21,7 +21,10 @@ LOCAL_SRC_FILES := SineSource.cpp
 LOCAL_MODULE := libsinesource
 LOCAL_CFLAGS += -Wall -Werror
 LOCAL_SHARED_LIBRARIES := \
+  libbinder \
   liblog \
+  libmedia \
   libstagefright \
+  libstagefright_foundation \
   libutils
 include $(BUILD_SHARED_LIBRARY)

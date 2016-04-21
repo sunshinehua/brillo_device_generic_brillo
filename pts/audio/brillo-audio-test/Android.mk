@@ -31,6 +31,7 @@ LOCAL_SRC_FILES := \
 LOCAL_CFLAGS += -Wall -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \
+  libbinder \
   libbrillo \
   libchrome \
   libmedia \

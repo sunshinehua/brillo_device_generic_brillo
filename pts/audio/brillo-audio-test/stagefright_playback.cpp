@@ -29,7 +29,6 @@
 namespace android {
 
 status_t PlayStagefrightFile(const char* filename, int duration_secs) {
-  CHECK(filename);
 
   FileSource* file_source = new FileSource(filename);
   status_t status = file_source->initCheck();
@@ -43,11 +42,12 @@ status_t PlayStagefrightFile(const char* filename, int duration_secs) {
   file_source->RegisterDefaultSniffers();
 
   // Extract media.
-  sp<MediaExtractor> media_extractor = MediaExtractor::Create(file_source,
-                                                              NULL);
-  CHECK(media_extractor.get()) << "Extractor is NULL";
-  CHECK(media_extractor->countTracks()) << "File must have at least one track.";
-  sp<MediaSource> media_source = media_extractor->getTrack(0);
+  sp<MediaExtractor> media_extractor =
+      reinterpret_cast<android::MediaExtractor*>(MediaExtractor::Create(
+         file_source, NULL).get());
+
+  sp<MediaSource> media_source = reinterpret_cast<android::MediaSource*>(
+      media_extractor->getTrack(0).get());
 
   // Decode audio.
   sp<MediaSource> decoded_source =
