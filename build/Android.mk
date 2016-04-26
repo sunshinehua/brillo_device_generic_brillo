@@ -104,26 +104,43 @@ exclude_dirs := .git \
     site-packages
 
 excludes := $(addprefix --exclude , $(foreach d, $(exclude_dirs), $(d)))
+# autotest_server_package should be rebuilt if there is any change on control or python files.
+server_package_deps := \
+    $(call find-files-in-subdirs,.,'*.py' -and -type f,$(AUTOTEST_DIR) $(EXTRA_AUTOTEST_DIRS)) \
+    $(call find-files-in-subdirs,.,'control*' -and -type f,$(AUTOTEST_DIR) $(EXTRA_AUTOTEST_DIRS))
 
-$(autotest_server_package) :
+$(autotest_server_package): PRIVATE_AUTOTEST_SERVER_PKG_INTERMEDIATES = $(autotest_server_pkg_intermediates)
+$(autotest_server_package): PRIVATE_EXCLUDES := $(excludes)
+$(autotest_server_package) : $(server_package_deps)
 	@echo "Package autotest server package: $@"
-	$(hide) rm -rf $(autotest_server_pkg_intermediates)/autotest
-	$(hide) rsync -r $(excludes) $(AUTOTEST_DIR) $(autotest_server_pkg_intermediates)
+	$(hide) rm -rf $(PRIVATE_AUTOTEST_SERVER_PKG_INTERMEDIATES)/autotest
+	$(hide) rsync -r $(PRIVATE_EXCLUDES) $(AUTOTEST_DIR) $(PRIVATE_AUTOTEST_SERVER_PKG_INTERMEDIATES)
+	# Copy private autotest code from each project folder to autotest_server_pkg_intermediates
+	$(hide) rsync -r $(EXTRA_AUTOTEST_DIRS) $(PRIVATE_AUTOTEST_SERVER_PKG_INTERMEDIATES)
+	# Copy autotest server package folder to OUT_DIR. This allows user to run
+	# test_droid directly in OUT_DIR/autotest.
+	# Before copy autotest files, delete existing files except site-packages
+	# folder. This saves user a minute before running test_droid which requires
+	# site-packages to be set up first.
+	$(hide) find $(OUT_DIR)/autotest -maxdepth 1 ! -name site-packages ! -name autotest -exec rm -rf {} + || true
+	$(hide) rsync -r $(PRIVATE_AUTOTEST_SERVER_PKG_INTERMEDIATES)/autotest $(OUT_DIR)/
 	$(hide) tar -jcf $@ -C $(dir $@) autotest
 
 $(call dist-for-goals, dist_files, $(autotest_server_package))
+
+# Create a phony target for brillo_autotest_server_package. This allows user to
+# run `m dist brillo_autotest_server_package` to only build the autotest server
+# package.
+.PHONY : brillo_autotest_server_package
+brillo_autotest_server_package : $(autotest_server_package)
+$(call dist-for-goals,brillo_autotest_server_package,$(autotest_server_package))
 # End building autotest server side package.
 
 # Building autotest test_suites package.
-ifndef AUTOTEST_TEST_SUITES
-# If AUTOTEST_TEST_SUITES is not set in board config, include all suite control
-# files in autotest repo.
-TEST_SUITES_DIR := $(AUTOTEST_DIR)/test_suites
-AUTOTEST_TEST_SUITES := $(addprefix $(TEST_SUITES_DIR)/, $(call find-files-in-subdirs,$(TEST_SUITES_DIR),control.*,.))
-else  # AUTOTEST_TEST_SUITES is defined
-@echo "AUTOTEST_TEST_SUITES is already assigned:"
-@echo ${AUTOTEST_TEST_SUITES}
-endif  # ifndef AUTOTEST_TEST_SUITES
+# Include all suite control files in autotest repo and EXTRA_AUTOTEST_DIRS.
+AUTOTEST_TEST_SUITES := \
+    $(call find-files-in-subdirs,.,'control.*', \
+        $(AUTOTEST_DIR)/test_suites $(addsuffix /test_suites,$(EXTRA_AUTOTEST_DIRS)))
 
 # The staging directory to store test suites.
 test_suites_intermediates := $(call intermediates-dir-for, PACKAGING, test_suites)
@@ -133,14 +150,12 @@ test_suites_package := $(test_suites_intermediates)/$(name)-test_suites-$(FILE_N
 dependency_info := $(target_test_suites_dir)/dependency_info
 suite_to_control_file_map := $(target_test_suites_dir)/suite_to_control_file_map
 
-# Trigger rebuilding the test_suites package when a control file is add or
-# removed from the directory.
-$(test_suites_package) : $(TEST_SUITES_DIR)
+# Tell control_file_preprocessor.py when we have extra autotest directories.
+preprocessor_arg :=
+ifneq ($(EXTRA_AUTOTEST_DIRS),)
+    preprocessor_arg := -e $(subst $(space),$(comma),$(EXTRA_AUTOTEST_DIRS))
+endif
 
-# Note that the test suites tar ball won't be regenerated if the depended
-# AUTOTEST_TEST_SUITES is not changed. For example, change in autotest module
-# control_file_preprocessor.py will not lead to the rebuild of the test suites
-# tar ball.
 # The recipe does following in order:
 # 1. Copy the test suites in AUTOTEST_TEST_SUITES to the intermediate folder.
 # 2. Run suite_preprocessor.py to create a dependency_info file, which includes
@@ -148,16 +163,21 @@ $(test_suites_package) : $(TEST_SUITES_DIR)
 # 3. Run control_file_preprocessor.py to create a file mapping suites to the
 #    test control files for each suite.
 # 4. tar the autotest intermediate folder as the desired test_suites package.
+$(test_suites_package) : PRIVATE_TARGET_TEST_SUITES_DIR := $(target_test_suites_dir)
+$(test_suites_package) : PRIVATE_DEPENDENCY_INFO := $(dependency_info)
+$(test_suites_package) : PRIVATE_SUITE_TO_CONTROL_FILE_MAP := $(suite_to_control_file_map)
+$(test_suites_package) : PRIVATE_CMD_ARG := $(preprocessor_arg)
+$(test_suites_package) : $(AUTOTEST_DIR)/site_utils/suite_preprocessor.py
+$(test_suites_package) : $(AUTOTEST_DIR)/site_utils/control_file_preprocessor.py
 $(test_suites_package) : $(AUTOTEST_TEST_SUITES)
 	@echo "Package test suites: $@"
-	$(hide) rm -rf $(target_test_suites_dir)
-	$(hide) mkdir -p $(target_test_suites_dir)
-	$(foreach f, $(AUTOTEST_TEST_SUITES), \
-		$(shell cp $(f) $(target_test_suites_dir)/))
+	$(hide) rm -rf $(PRIVATE_TARGET_TEST_SUITES_DIR)
+	$(hide) mkdir -p $(PRIVATE_TARGET_TEST_SUITES_DIR)
+	$(hide) cp $(AUTOTEST_TEST_SUITES) $(PRIVATE_TARGET_TEST_SUITES_DIR)/
 	$(hide) python -B $(AUTOTEST_DIR)/site_utils/suite_preprocessor.py \
-		-a $(AUTOTEST_DIR) -o $(dependency_info)
+		-a $(AUTOTEST_DIR) -o $(PRIVATE_DEPENDENCY_INFO)
 	$(hide) python -B $(AUTOTEST_DIR)/site_utils/control_file_preprocessor.py \
-		-a $(AUTOTEST_DIR) -o $(suite_to_control_file_map)
+		-a $(AUTOTEST_DIR) -o $(PRIVATE_SUITE_TO_CONTROL_FILE_MAP) $(PRIVATE_CMD_ARG)
 	$(hide) tar -jcf $@ -C $(dir $@) autotest
 
 $(call dist-for-goals, dist_files, $(test_suites_package))
@@ -168,17 +188,26 @@ control_files_intermediates := $(call intermediates-dir-for, PACKAGING, control_
 target_control_files_dir := $(control_files_intermediates)/autotest
 control_files_package := $(control_files_intermediates)/$(name)-autotest_control_files-$(FILE_NAME_TAG).tar
 
-control_files := $(addprefix $(AUTOTEST_DIR)/, \
-    $(filter-out test_suites/%,$(call find-files-in-subdirs,$(AUTOTEST_DIR),control*,.)))
+control_files := \
+    $(foreach f, $(addprefix $(AUTOTEST_DIR)/, \
+            $(filter-out test_suites/%,$(call find-files-in-subdirs,$(AUTOTEST_DIR),control* -and -type f,.))), \
+        $(eval dest := $(subst $(AUTOTEST_DIR),$(target_control_files_dir),$(f))) \
+        $(eval $(call copy-one-file, $(f), $(dest))) \
+        $(dest))
+
+# Include control files in EXTRA_AUTOTEST_DIRS's server/tests and server/site_tests folders.
+# Only server side tests are supported for now.
+control_files += \
+    $(foreach d, $(EXTRA_AUTOTEST_DIRS), \
+        $(foreach tests_dir, $(d)/server/tests $(d)/server/site_tests, \
+            $(foreach f, $(addprefix $(tests_dir)/, \
+                    $(filter-out test_suites/%,$(call find-files-in-subdirs,$(tests_dir),control* -and -type f,.))), \
+                $(eval dest := $(subst $(d),$(target_control_files_dir),$(f))) \
+                $(eval $(call copy-one-file, $(f), $(dest))) \
+                $(dest))))
 
 $(control_files_package) : $(control_files)
 	@echo "Package control files: $@"
-	$(hide) rm -rf $(target_control_files_dir)
-	$(hide) mkdir -p $(target_control_files_dir)
-	$(foreach f, $^, \
-		$(eval dest := $(subst $(AUTOTEST_DIR),$(target_control_files_dir),$(f))) \
-		$(shell mkdir -p $(dir $(dest))) \
-		$(shell cp $(f) $(dest)))
 	$(hide) tar -cf $@ -C $(dir $@) autotest
 
 $(call dist-for-goals, dist_files, $(control_files_package))
