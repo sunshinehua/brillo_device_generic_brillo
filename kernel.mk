@@ -117,9 +117,9 @@ KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
 
 ifdef TARGET_KERNEL_DTB
-KERNEL_DTB := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/$(TARGET_KERNEL_DTB)
-$(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN) | $(ACP)
-	$(ACP) -fp $(KERNEL_DTB) $@
+KERNEL_DTB := $(addprefix $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/, $(TARGET_KERNEL_DTB))
+$(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN)
+	$(hide) cat $(KERNEL_DTB) > $@
 $(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
 	$(hide) cat $^ > $@
 endif
