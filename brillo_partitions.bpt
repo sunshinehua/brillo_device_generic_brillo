@@ -20,7 +20,7 @@
         {
             "ab": true,
             "label": "odm",
-            "size": "1 GiB",
+            "size": "512 MiB",
             "guid": "auto",
             "type_guid": "brillo_odm"
         },
