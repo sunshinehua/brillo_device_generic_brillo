@@ -15,17 +15,23 @@
 #
 
 # Targets for builing kernels
-# The following must be set before including this file.
+#
+# The following must be set before including this file:
 # TARGET_KERNEL_SRC must be set the base of a kernel tree.
 # TARGET_KERNEL_DEFCONFIG must name a base kernel config.
 # TARGET_KERNEL_ARCH must be set to match kernel arch.
+#
+# The following maybe set:
+# TARGET_KERNEL_CROSS_COMPILE_PREFIX to override toolchain.
+# TARGET_KERNEL_CONFIGS to specify a set of additional kernel configs.
+# TARGET_KERNEL_DTB to define a DTB to build.
+# TARGET_KERNEL_DTB_APPEND to append the built DTB to the kernel.
 
-# The following maybe set.
-# TARGET_KERNEL_CROSS_COMPILE_PREFIX to override toolchain
-# TARGET_PREBUILT_KERNEL to use a pre-built kernel
 
-# Only build kernel if caller has not defined a prebuild
-ifeq ($(TARGET_PREBUILT_KERNEL),)
+# Brillo does not support prebuilt kernels.
+ifneq ($(TARGET_PREBUILT_KERNEL),)
+$(error TARGET_PREBUILT_KERNEL defined but Brillo kernels build from source)
+endif
 
 ifeq ($(TARGET_KERNEL_SRC),)
 $(error TARGET_KERNEL_SRC not defined)
@@ -108,6 +114,7 @@ KERNEL_CONFIGS_COMMON := $(KERNEL_CONFIGS_DIR)/common.config
 KERNEL_CONFIGS_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_ARCH).config
 KERNEL_CONFIGS_VER := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/common.config
 KERNEL_CONFIGS_VER_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/$(KERNEL_ARCH).config
+KERNEL_CONFIGS_RECOMMENDED := $(KERNEL_CONFIGS_DIR)/recommended.config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
@@ -147,7 +154,12 @@ $(KERNEL_CONFIG_REQUIRED): $(KERNEL_OUT) \
 
 # Merge the final target kernel config.
 $(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
-	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) $(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) $(TARGET_KERNEL_CONFIGS) $(realpath $(KERNEL_CONFIG_REQUIRED))
+	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) \
+		$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) \
+		arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) \
+		$(realpath $(KERNEL_CONFIGS_RECOMMENDED)) \
+		$(TARGET_KERNEL_CONFIGS) \
+		$(realpath $(KERNEL_CONFIG_REQUIRED))
 
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
@@ -186,6 +198,3 @@ else
 $(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
 	$(ACP) -fp $< $@
 endif
-
-endif
-
