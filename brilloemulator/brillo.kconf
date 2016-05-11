@@ -37,3 +37,6 @@ CONFIG_SCSI_VIRTIO=y
 CONFIG_VIRTIO_BLK=y
 CONFIG_VIRTIO_NET=y
 CONFIG_VIRTIO_PCI=y
+
+# Enable loop device, used in update_engine_unittests.
+CONFIG_BLK_DEV_LOOP=y
