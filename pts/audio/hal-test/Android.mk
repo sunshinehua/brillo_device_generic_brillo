@@ -27,6 +27,7 @@ LOCAL_SHARED_LIBRARIES := \
   libbase \
   libhardware \
   liblog \
+  libmedia \
   libsinesource \
   libstagefright \
   libstagefright_foundation \
