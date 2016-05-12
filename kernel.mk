@@ -56,12 +56,16 @@ ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/arm-linux-androidkernel-
 KERNEL_SRC_ARCH := arm
 KERNEL_CFLAGS :=
+ifdef TARGET_KERNEL_DTB
 KERNEL_NAME := zImage
+else
+KERNEL_NAME := zImage-dtb
+endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/aarch64-linux-androidkernel-
 KERNEL_SRC_ARCH := arm64
 KERNEL_CFLAGS :=
-KERNEL_NAME := Image.gz
+KERNEL_NAME := Image
 else ifeq ($(TARGET_KERNEL_ARCH), i386)
 KERNEL_CROSS_COMPILE := $(KERNEL_TOOLCHAIN_ABS)/x86_64-linux-androidkernel-
 KERNEL_SRC_ARCH := x86
