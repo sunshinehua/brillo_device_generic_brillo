@@ -59,6 +59,8 @@ KERNEL_CFLAGS :=
 ifdef TARGET_KERNEL_DTB
 KERNEL_NAME := zImage
 else
+# If TARGET_KERNEL_DTB is not defined, the source tree already has logic
+# built into it to produce a merged kernel/DTB image.
 KERNEL_NAME := zImage-dtb
 endif
 else ifeq ($(TARGET_KERNEL_ARCH), arm64)
@@ -110,6 +112,13 @@ KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
 
+# The final kernel image is either the raw kernel binary or merged kernel+dtb.
+ifdef TARGET_KERNEL_DTB_APPEND
+KERNEL_IMAGE := $(PRODUCT_OUT)/kernel-and-dtb
+else
+KERNEL_IMAGE := $(KERNEL_BIN)
+endif
+
 # Figure out which kernel version is being built (disregard -stable version).
 KERNEL_VERSION := $(shell $(MAKE) --no-print-directory -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
 
@@ -122,14 +131,6 @@ KERNEL_CONFIGS_RECOMMENDED := $(KERNEL_CONFIGS_DIR)/recommended.config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
-
-ifdef TARGET_KERNEL_DTB
-KERNEL_DTB := $(addprefix $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/, $(TARGET_KERNEL_DTB))
-$(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN)
-	$(hide) cat $(KERNEL_DTB) > $@
-$(PRODUCT_OUT)/kernel-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
-	$(hide) cat $^ > $@
-endif
 
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
@@ -165,10 +166,8 @@ $(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
 		$(TARGET_KERNEL_CONFIGS) \
 		$(realpath $(KERNEL_CONFIG_REQUIRED))
 
-$(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
-	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel..."
-	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
-	# Disable CCACHE_DIRECT so that header location changes are noticed.
+# Disable CCACHE_DIRECT so that header location changes are noticed.
+define build_kernel
 	CCACHE_NODIRECT="true" $(MAKE) -C $(TARGET_KERNEL_SRC) \
 		O=$(realpath $(KERNEL_OUT)) \
 		ARCH=$(KERNEL_ARCH) \
@@ -176,11 +175,20 @@ $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 		KCFLAGS="$(KERNEL_CFLAGS)" \
 		KAFLAGS="$(KERNEL_AFLAGS)" \
 		INSTALL_MOD_PATH=$(realpath $(TARGET_OUT)) \
-		all \
-		`grep -q ^CONFIG_MODULES=y $(KERNEL_CONFIG) && echo modules_install`
+		$(1)
+endef
+
+$(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
+	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
+	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
+	$(call build_kernel,all)
+	if grep -q ^CONFIG_MODULES=y $(KERNEL_CONFIG) ; then \
+		$(call build_kernel,modules_install) ; \
+	fi
 
 $(KERNEL_HEADERS_INSTALL): $(KERNEL_BIN)
-	$(MAKE) -C $(TARGET_KERNEL_SRC) O=$(realpath $(KERNEL_OUT)) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) headers_install;
+	$(hide) echo "Installing kernel headers ..."
+	$(call build_kernel,headers_install)
 
 # If the kernel generates VDSO files, generate breakpad symbol files for them.
 # VDSO libraries are mapped as linux-gate.so, so rename the symbol file to
@@ -188,7 +196,7 @@ $(KERNEL_HEADERS_INSTALL): $(KERNEL_BIN)
 .PHONY: $(KERNEL_BIN).vdso
 $(KERNEL_BIN).vdso: $(KERNEL_BIN)
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
-	@echo "BREAKPAD: Generating kernel VDSO symbol files."
+	$(hide) echo "BREAKPAD: Generating kernel VDSO symbol files."
 	$(hide) set -e; \
 	for sofile in `cd $(KERNEL_OUT) && find . -type f -name '*.so'`; do \
 		mkdir -p $(TARGET_OUT_BREAKPAD)/kernel/$${sofile}; \
@@ -198,15 +206,15 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	done
 endif
 
-ifdef TARGET_KERNEL_DTB
-ifdef TARGET_KERNEL_DTB_APPEND
-$(PRODUCT_OUT)/kernel: $(PRODUCT_OUT)/kernel-dtb $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
+# Merges all TARGET_KERNEL_DTB files together into a single kernel.dtb.
+KERNEL_DTB := $(addprefix $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/dts/, $(TARGET_KERNEL_DTB))
+$(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN)
+	$(hide) cat $(KERNEL_DTB) > $@
+
+# Produces a merged kernel and kernel.dtb file.
+$(PRODUCT_OUT)/kernel-and-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
+	$(hide) cat $^ > $@
+
+# Produces the actual kernel image!
+$(PRODUCT_OUT)/kernel: $(KERNEL_IMAGE) $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
 	$(ACP) -fp $< $@
-else
-$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
-	$(ACP) -fp $< $@
-endif
-else
-$(PRODUCT_OUT)/kernel: $(KERNEL_BIN) $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
-	$(ACP) -fp $< $@
-endif
