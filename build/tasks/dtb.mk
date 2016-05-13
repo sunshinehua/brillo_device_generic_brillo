@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Make a zipfile containing the arm emulator's kernel.dtb
+# Make a zipfile containing the DTB if it has been built but not appended
+# to the kernel image already.
 
-ifeq ($(TARGET_DEVICE), brilloemulator_arm)
+ifdef TARGET_KERNEL_DTB
+ifndef TARGET_KERNEL_DTB_APPEND
 
 emul_name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE), debug)
@@ -35,4 +37,5 @@ $(EMUL_ZIP): $(EMUL_DTB)
 
 $(call dist-for-goals, dist_files, $(EMUL_ZIP))
 
+endif
 endif
