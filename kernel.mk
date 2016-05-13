@@ -112,13 +112,6 @@ KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
 
-# The final kernel image is either the raw kernel binary or merged kernel+dtb.
-ifdef TARGET_KERNEL_DTB_APPEND
-KERNEL_IMAGE := $(PRODUCT_OUT)/kernel-and-dtb
-else
-KERNEL_IMAGE := $(KERNEL_BIN)
-endif
-
 # Figure out which kernel version is being built (disregard -stable version).
 KERNEL_VERSION := $(shell $(MAKE) --no-print-directory -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
 
@@ -181,6 +174,7 @@ endef
 $(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
+	$(hide) rm -rf $(PRODUCT_OUT)/kernel.dtb $(PRODUCT_OUT)/kernel-and-dtb
 	$(call build_kernel,all)
 	if grep -q ^CONFIG_MODULES=y $(KERNEL_CONFIG) ; then \
 		$(call build_kernel,modules_install) ; \
@@ -215,6 +209,20 @@ $(PRODUCT_OUT)/kernel.dtb: $(KERNEL_BIN)
 $(PRODUCT_OUT)/kernel-and-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
 	$(hide) cat $^ > $@
 
+# The list of dependencies for the final kernel.
+KERNEL_DEPS := $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL)
+ifdef TARGET_KERNEL_DTB
+# If we need the DTB, include it in the build list.
+KERNEL_DEPS += $(PRODUCT_OUT)/kernel.dtb
+endif
+
+# The final kernel image is either the raw kernel binary or merged kernel+dtb.
+ifdef TARGET_KERNEL_DTB_APPEND
+KERNEL_IMAGE := $(PRODUCT_OUT)/kernel-and-dtb
+else
+KERNEL_IMAGE := $(KERNEL_BIN)
+endif
+
 # Produces the actual kernel image!
-$(PRODUCT_OUT)/kernel: $(KERNEL_IMAGE) $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) | $(ACP)
+$(PRODUCT_OUT)/kernel: $(KERNEL_IMAGE) $(KERNEL_DEPS) | $(ACP)
 	$(ACP) -fp $< $@
