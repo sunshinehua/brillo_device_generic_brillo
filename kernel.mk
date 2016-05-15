@@ -45,6 +45,11 @@ ifeq ($(TARGET_KERNEL_ARCH),)
 $(error TARGET_KERNEL_ARCH not defined)
 endif
 
+# This is optional, but we'd like to use it as a dependency.
+ifndef TARGET_KERNEL_CONFIGS
+TARGET_KERNEL_CONFIGS := /dev/null
+endif
+
 # Check target arch.
 KERNEL_TOOLCHAIN_ABS := $(realpath $(TARGET_TOOLCHAIN_ROOT)/bin)
 TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
@@ -107,8 +112,12 @@ endif
 # Set the output for the kernel build products.
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
 
-KERNEL_CONFIG := $(KERNEL_OUT)/.config
+# The kernel configs, in precedence order.
+KERNEL_CONFIG_DEFAULT := $(KERNEL_OUT)/.config.default
+KERNEL_CONFIG_RECOMMENDED := $(KERNEL_OUT)/.config.recommended
+KERNEL_CONFIG_PRODUCT := $(KERNEL_OUT)/.config.product
 KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
+KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
 
@@ -128,35 +137,31 @@ KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 
+$(KERNEL_CONFIG_DEFAULT): $(TARGET_KERNEL_SRC)/arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) | $(KERNEL_OUT)
+	$(hide) cat $< > $@
+
+$(KERNEL_CONFIG_RECOMMENDED): $(KERNEL_CONFIGS_RECOMMENDED) | $(KERNEL_OUT)
+	$(hide) cat $< > $@
+
+$(KERNEL_CONFIG_PRODUCT): $(TARGET_KERNEL_CONFIGS) | $(KERNEL_OUT)
+	$(hide) cat $< > $@
+
 # Merge the required kernel config elements.
-$(KERNEL_CONFIG_REQUIRED): $(KERNEL_OUT) \
-			   $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
-			   $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH)
-	$(hide) if [ ! -f $(KERNEL_CONFIGS_ARCH) ] ; then \
-		echo "Missing common kernel configs for $(KERNEL_ARCH)"; \
-		echo "$(KERNEL_CONFIGS_ARCH)"; \
-		exit 1; \
-	fi
-	$(hide) if [ ! -f $(KERNEL_CONFIGS_VER) ] ; then \
-		echo "Missing common $(KERNEL_VERSION) kernel configs"; \
-		echo "$(KERNEL_CONFIGS_VER)"; \
-		exit 1; \
-	fi
-	$(hide) if [ ! -f $(KERNEL_CONFIGS_VER_ARCH) ] ; then \
-		echo "Missing $(KERNEL_VERSION) kernel configs for $(KERNEL_ARCH)"; \
-		echo "$(KERNEL_CONFIGS_VER_ARCH)"; \
-		exit 1; \
-	fi
-	$(hide) cat $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
-		    $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH) > $@
+$(KERNEL_CONFIG_REQUIRED): $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
+			   $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH) \
+			   | $(KERNEL_OUT)
+	$(hide) cat $(filter-out $(KERNEL_OUT),$^) > $@
 
 # Merge the final target kernel config.
-$(KERNEL_CONFIG): $(KERNEL_OUT) $(KERNEL_CONFIG_REQUIRED)
+$(KERNEL_CONFIG): $(KERNEL_CONFIG_DEFAULT) $(KERNEL_CONFIG_RECOMMENDED) \
+		  $(KERNEL_CONFIG_PRODUCT) $(KERNEL_CONFIG_REQUIRED) \
+		  | $(KERNEL_OUT)
+	$(hide) echo Merging kernel config
 	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) \
 		$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) \
-		arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) \
-		$(realpath $(KERNEL_CONFIGS_RECOMMENDED)) \
-		$(TARGET_KERNEL_CONFIGS) \
+		$(realpath $(KERNEL_CONFIG_DEFAULT)) \
+		$(realpath $(KERNEL_CONFIG_RECOMMENDED)) \
+		$(realpath $(KERNEL_CONFIG_PRODUCT)) \
 		$(realpath $(KERNEL_CONFIG_REQUIRED))
 
 # Disable CCACHE_DIRECT so that header location changes are noticed.
@@ -171,7 +176,7 @@ define build_kernel
 		$(1)
 endef
 
-$(KERNEL_BIN): $(KERNEL_OUT) $(KERNEL_CONFIG)
+$(KERNEL_BIN): $(KERNEL_CONFIG) | $(KERNEL_OUT)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(hide) rm -rf $(PRODUCT_OUT)/kernel.dtb $(PRODUCT_OUT)/kernel-and-dtb
