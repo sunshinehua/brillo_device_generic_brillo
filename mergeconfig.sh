@@ -15,18 +15,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-array=( "$@" )
+args=( "$@" )
+confs=( )
 
-KERNEL_PATH=${array[0]}
-OUTPUT=${array[1]}
-TARGET_ARCH=${array[2]}
-TARGET_CROSS_COMPILE=${array[3]}
+KERNEL_PATH=${args[0]}
+OUTPUT=${args[1]}
+TARGET_ARCH=${args[2]}
+TARGET_CROSS_COMPILE=${args[3]}
 
-unset "array[0]"
-unset "array[1]"
-unset "array[2]"
-unset "array[3]"
+unset "args[0]"
+unset "args[1]"
+unset "args[2]"
+unset "args[3]"
+
+curdir=$(pwd)
+
+# Explicitly record the list of config files used to build .config, and
+# canonicalize the path since we have to have our current directory in
+# the kernel source tree.
+for conf in ${args[*]} ; do
+	fullpath=$conf
+	if [ ${fullpath:0:1} != "/" ] ; then
+		fullpath=$curdir/$fullpath
+	fi
+	confs+=($fullpath)
+	echo $conf
+done > $OUTPUT/config.list
 
 cd $KERNEL_PATH
 
-ARCH=$TARGET_ARCH CROSS_COMPILE=$TARGET_CROSS_COMPILE ./scripts/kconfig/merge_config.sh -O $OUTPUT ${array[*]}
+ARCH=$TARGET_ARCH CROSS_COMPILE=$TARGET_CROSS_COMPILE ./scripts/kconfig/merge_config.sh -O $OUTPUT ${confs[*]}

@@ -23,7 +23,7 @@
 #
 # The following maybe set:
 # TARGET_KERNEL_CROSS_COMPILE_PREFIX to override toolchain.
-# TARGET_KERNEL_CONFIGS to specify a set of additional kernel configs.
+# TARGET_KERNEL_CONFIGS to specify a set of additional kernel config files.
 # TARGET_KERNEL_DTB to define a DTB to build.
 # TARGET_KERNEL_DTB_APPEND to append the built DTB to the kernel.
 
@@ -43,11 +43,6 @@ endif
 
 ifeq ($(TARGET_KERNEL_ARCH),)
 $(error TARGET_KERNEL_ARCH not defined)
-endif
-
-# This is optional, but we'd like to use it as a dependency.
-ifndef TARGET_KERNEL_CONFIGS
-TARGET_KERNEL_CONFIGS := /dev/null
 endif
 
 # Check target arch.
@@ -111,25 +106,26 @@ endif
 
 # Set the output for the kernel build products.
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
-
-# The kernel configs, in precedence order.
-KERNEL_CONFIG_DEFAULT := $(KERNEL_OUT)/.config.default
-KERNEL_CONFIG_RECOMMENDED := $(KERNEL_OUT)/.config.recommended
-KERNEL_CONFIG_PRODUCT := $(KERNEL_OUT)/.config.product
-KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
-KERNEL_CONFIG := $(KERNEL_OUT)/.config
-
 KERNEL_BIN := $(KERNEL_OUT)/arch/$(KERNEL_SRC_ARCH)/boot/$(KERNEL_NAME)
 
 # Figure out which kernel version is being built (disregard -stable version).
 KERNEL_VERSION := $(shell $(MAKE) --no-print-directory -C $(TARGET_KERNEL_SRC) -s SUBLEVEL="" kernelversion)
 
-KERNEL_CONFIGS_DIR := device/generic/brillo/kconfig
-KERNEL_CONFIGS_COMMON := $(KERNEL_CONFIGS_DIR)/common.config
-KERNEL_CONFIGS_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_ARCH).config
-KERNEL_CONFIGS_VER := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/common.config
-KERNEL_CONFIGS_VER_ARCH := $(KERNEL_CONFIGS_DIR)/$(KERNEL_VERSION)/$(KERNEL_ARCH).config
-KERNEL_CONFIGS_RECOMMENDED := $(KERNEL_CONFIGS_DIR)/recommended.config
+# Brillo kernel config file sources.
+KERNEL_CONFIG_DIR := device/generic/brillo/kconfig
+KERNEL_CONFIG_DEFAULT := $(TARGET_KERNEL_SRC)/arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG)
+KERNEL_CONFIG_RECOMMENDED := $(KERNEL_CONFIG_DIR)/recommended.config
+KERNEL_CONFIG_REQUIRED_SRC := \
+	$(KERNEL_CONFIG_DIR)/common.config \
+	$(KERNEL_CONFIG_DIR)/$(KERNEL_ARCH).config \
+	$(KERNEL_CONFIG_DIR)/$(KERNEL_VERSION)/common.config \
+	$(KERNEL_CONFIG_DIR)/$(KERNEL_VERSION)/$(KERNEL_ARCH).config
+KERNEL_CONFIG_REQUIRED := $(KERNEL_OUT)/.config.required
+KERNEL_CONFIG_SRC := $(KERNEL_CONFIG_DEFAULT) \
+		     $(KERNEL_CONFIG_RECOMMENDED) \
+		     $(TARGET_KERNEL_CONFIGS) \
+		     $(KERNEL_CONFIG_REQUIRED)
+KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
@@ -137,32 +133,16 @@ KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 
-$(KERNEL_CONFIG_DEFAULT): $(TARGET_KERNEL_SRC)/arch/$(KERNEL_SRC_ARCH)/configs/$(TARGET_KERNEL_DEFCONFIG) | $(KERNEL_OUT)
-	$(hide) cat $< > $@
-
-$(KERNEL_CONFIG_RECOMMENDED): $(KERNEL_CONFIGS_RECOMMENDED) | $(KERNEL_OUT)
-	$(hide) cat $< > $@
-
-$(KERNEL_CONFIG_PRODUCT): $(TARGET_KERNEL_CONFIGS) | $(KERNEL_OUT)
-	$(hide) cat $< > $@
-
-# Merge the required kernel config elements.
-$(KERNEL_CONFIG_REQUIRED): $(KERNEL_CONFIGS_COMMON) $(KERNEL_CONFIGS_ARCH) \
-			   $(KERNEL_CONFIGS_VER) $(KERNEL_CONFIGS_VER_ARCH) \
-			   | $(KERNEL_OUT)
-	$(hide) cat $(filter-out $(KERNEL_OUT),$^) > $@
+# Merge the required kernel config elements into a single file.
+$(KERNEL_CONFIG_REQUIRED): $(KERNEL_CONFIG_REQUIRED_SRC) | $(KERNEL_OUT)
+	$(hide) cat $^ > $@
 
 # Merge the final target kernel config.
-$(KERNEL_CONFIG): $(KERNEL_CONFIG_DEFAULT) $(KERNEL_CONFIG_RECOMMENDED) \
-		  $(KERNEL_CONFIG_PRODUCT) $(KERNEL_CONFIG_REQUIRED) \
-		  | $(KERNEL_OUT)
+$(KERNEL_CONFIG): $(KERNEL_CONFIG_SRC) | $(KERNEL_OUT)
 	$(hide) echo Merging kernel config
 	$(KERNEL_MERGE_CONFIG) $(TARGET_KERNEL_SRC) $(realpath $(KERNEL_OUT)) \
 		$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) \
-		$(realpath $(KERNEL_CONFIG_DEFAULT)) \
-		$(realpath $(KERNEL_CONFIG_RECOMMENDED)) \
-		$(realpath $(KERNEL_CONFIG_PRODUCT)) \
-		$(realpath $(KERNEL_CONFIG_REQUIRED))
+		$^
 
 # Disable CCACHE_DIRECT so that header location changes are noticed.
 define build_kernel
