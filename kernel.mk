@@ -129,9 +129,10 @@ KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
+KERNEL_MODULES_INSTALL := $(TARGET_OUT)/lib/modules
 
 $(KERNEL_OUT):
-	mkdir -p $(KERNEL_OUT)
+	mkdir -p $@
 
 # Merge the required kernel config elements into a single file.
 $(KERNEL_CONFIG_REQUIRED): $(KERNEL_CONFIG_REQUIRED_SRC) | $(KERNEL_OUT)
@@ -161,6 +162,11 @@ $(KERNEL_BIN): $(KERNEL_CONFIG) | $(KERNEL_OUT)
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(hide) rm -rf $(PRODUCT_OUT)/kernel.dtb $(PRODUCT_OUT)/kernel-and-dtb
 	$(call build_kernel,all)
+
+$(KERNEL_MODULES_INSTALL): $(KERNEL_BIN)
+	$(hide) echo "Installing kernel modules ..."
+	# Since there may be no modules built, at least create the empty dir.
+	mkdir -p $@
 	if grep -q ^CONFIG_MODULES=y $(KERNEL_CONFIG) ; then \
 		$(call build_kernel,modules_install) ; \
 	fi
@@ -195,7 +201,7 @@ $(PRODUCT_OUT)/kernel-and-dtb: $(KERNEL_BIN) $(PRODUCT_OUT)/kernel.dtb
 	$(hide) cat $^ > $@
 
 # The list of dependencies for the final kernel.
-KERNEL_DEPS := $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL)
+KERNEL_DEPS := $(KERNEL_BIN).vdso $(KERNEL_HEADERS_INSTALL) $(KERNEL_MODULES_INSTALL)
 ifdef TARGET_KERNEL_DTB
 # If we need the DTB, include it in the build list.
 KERNEL_DEPS += $(PRODUCT_OUT)/kernel.dtb
@@ -207,6 +213,9 @@ KERNEL_IMAGE := $(PRODUCT_OUT)/kernel-and-dtb
 else
 KERNEL_IMAGE := $(KERNEL_BIN)
 endif
+
+# Makes sure any built modules will be included in the system image build.
+ALL_DEFAULT_INSTALLED_MODULES += $(KERNEL_MODULES_INSTALL)
 
 # Produces the actual kernel image!
 $(PRODUCT_OUT)/kernel: $(KERNEL_IMAGE) $(KERNEL_DEPS) | $(ACP)
