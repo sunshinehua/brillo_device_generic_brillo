@@ -49,6 +49,7 @@ BOARD_BPT_INPUT_FILES := device/generic/brillo/brillo_partitions.bpt
 # Global Brillo USE flags.
 BRILLO_USE_BINDER := 1
 BRILLO_USE_DBUS := 1
+BRILLO_USE_OMAHA := 1
 BRILLO_USE_WEAVE := 1
 
 # Java is not used or required for Brillo.
