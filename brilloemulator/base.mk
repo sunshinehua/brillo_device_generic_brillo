@@ -38,6 +38,9 @@ PRODUCT_PACKAGES += \
   libtrunks \
   trunks_client \
   trunksd \
+  libtpm_manager \
+  tpm_manager_client \
+  tpm_managerd \
 
 # Typically, BSPs define the set of HALs included for a board.
 # However, emulators all share this fake camera HAL and there is

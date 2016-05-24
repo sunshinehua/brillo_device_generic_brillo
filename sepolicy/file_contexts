@@ -46,6 +46,9 @@
 /data/misc/trunksd(/.*)?   u:object_r:trunksd_data_file:s0
 /system/bin/trunksd        u:object_r:trunksd_exec:s0
 
+/data/misc/tpm_managerd(/.*)?  u:object_r:tpm_managerd_data_file:s0
+/system/bin/tpm_managerd       u:object_r:tpm_managerd_exec:s0
+
 /dev/socket/nvram           u:object_r:fake-nvram_socket:s0
 /data/misc/fake-nvram(/.*)? u:object_r:fake-nvram_data_file:s0
 /system/bin/fake-nvram      u:object_r:fake-nvram_exec:s0
