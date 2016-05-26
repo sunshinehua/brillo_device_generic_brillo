@@ -161,6 +161,7 @@ $(KERNEL_BIN): $(KERNEL_CONFIG) | $(KERNEL_OUT)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
 	$(hide) rm -rf $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts
 	$(hide) rm -rf $(PRODUCT_OUT)/kernel.dtb $(PRODUCT_OUT)/kernel-and-dtb
+	$(hide) $(MAKE) -C $(TARGET_KERNEL_SRC) mrproper
 	$(call build_kernel,all)
 
 $(KERNEL_MODULES_INSTALL): $(KERNEL_BIN)
