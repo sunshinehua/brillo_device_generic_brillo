@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#
+# Copyright 2016 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+OS=${ANDROID_PROVISION_OS_PARTITIONS:-${ANDROID_PRODUCT_OUT}}
+
+# TODO: Add --image parameters for EFI and misc partitions.
+bpttool make_disk_image \
+        --output ${OS}/full-disk-image.img \
+        --input ${OS}/partition-table.bpt \
+        --image boot_a:${OS}/boot.img \
+        --image boot_b:${OS}/boot.img \
+        --image system_a:${OS}/system.img \
+        --image system_b:${OS}/system.img \
+        --image userdata:${OS}/userdata.img \
+        --allow_empty_partitions
+
+# Need EFI.img combined into full-disk-image.img to use it as a boot partition
+# and to test this command.
+if [ $? -eq 0 ]
+then
+  echo "UEFI-compatible disk image created. 'full-disk-image.img' located in" \
+       "directory"
+  echo "${OS}."
+  echo "Boot this image using QEMU:"
+  echo "(e.g. '\$ qemu-system-x86_64 -enable-kvm -bios OVMF.fd" \
+       "${OS}/full-disk-image.img). "
+  echo "To obtain OVMF binary see http://www.tianocore.org/ovmf/"
+fi

@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 786432000
+# 512 MiB - keep in sync with brillo_partitions.bpt
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 536870912
 # No ramdisk.
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
@@ -34,3 +35,4 @@ TARGET_RECOVERY_FSTAB = \
 
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brillo_uefi_x86_64/fstab.brillo_uefi_x86_64:root/fstab.brillo_uefi_x86_64 \
+    device/generic/brillo/brillo_uefi_x86_64/provision-device:provision-device
