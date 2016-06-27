@@ -1,0 +1,31 @@
+This sub-directory defines an x86_64 UEFI-compatbile Brillo board target.
+
+-- FILES AND DIRECTORIES
+
+boot_loader/
+
+    Contains the EFI source code files, a Makefile, and EFI binaries needed for
+    the A/B boot loader of the system.  The binaries will be placed on the EFI
+    partition of the final disk image.  Currently, developers using the x86_64
+    UEFI board target must manually install gnu-efi on their workstations in
+    order to build the boot loader binary.  Once this is done, simply run 'make'
+    in the boot_loader/ directory to produce the necessary *.efi binaries.
+
+make_efi_image/
+
+    Contains a bash script (make_efi_image) which creates an image to be put
+    on the EFI partition of the final disk image. The script takes image size
+    in bytes, resulting image output path, and a list of EFI application
+    'host/target' paths as inputs.  The EFI applications will placed on the
+    final image's EFI partition with absolute paths specified by the latter
+    argument. Each 'host/target' element must be of the form
+    "/PATH/TO/HOST_EFI_FILE:/PATH/TO/TARGET_EFI_FILE"
+    NOTE: mtools utility is required on the system in order to create the EFI
+    image.
+
+-- BUILD SYSTEM INTEGRATION NOTES
+
+If EFI_INPUT_FILE_PATHS is non-empty, the build system system will call the
+make_efi_image script, passing EFI_IMAGE_SIZE, $(ANDROID_OUT)/EFI.img, and
+EFI_INPUT_FILE_PATHS arguments. The variables are defined globally in the
+BoardConfig.mk file.

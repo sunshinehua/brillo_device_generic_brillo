@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#
+# Copyright 2016 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# This script writes an image with EFI applications to be copied over onto
+# an EFI partition.
+#
+# Arguments:
+#   $1:     Size in bytes for the EFI image.
+#   $2:     Output EFI image path.
+#   $3...:  EFI application files host and target paths. Each element is of the
+#           form: /PATH/TO/HOST_EFI_FILE:/PATH/TO/TARGET_EFI_FILE
+#
+# Outputs:
+#   Disk image containing EFI applications to be put in EFI partition located
+#   in the path defined by argument 2.
+#
+
+IMAGE_SIZE=$1
+BLOCK_SIZE=512
+NUM_BLOCKS=$(((IMAGE_SIZE + BLOCK_SIZE - 1) / BLOCK_SIZE))
+FILES=${@:3}
+EFI_IMAGE="$2"
+
+# Create disk image to be put in EFI partition.
+dd if=/dev/zero of="$EFI_IMAGE" bs=$BLOCK_SIZE count=0 seek=$NUM_BLOCKS \
+    &> /dev/null
+mkfs.vfat "$EFI_IMAGE"
+
+# Copy over EFI application files specified by EFI_INPUT_FILES variable.
+# TODO: Need mtools installed on system to accomplish this. See b/27389310
+for app in $FILES; do
+    IFS=":"
+    set $app
+
+    # Create directory structures as necessary.
+    dstruct=''
+    IFS='/' read -a ds <<< "${2}"
+    unset "ds[${#ds[@]}-1]"
+    for d in "${ds[@]}"; do
+        dstruct+=$d
+        mmd -D s -i "$EFI_IMAGE" $dstruct
+        dstruct+=/
+    done
+
+    mcopy -i "$EFI_IMAGE" "${1}" ::"${2}"
+done
