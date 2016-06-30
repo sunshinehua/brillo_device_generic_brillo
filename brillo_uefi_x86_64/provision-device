@@ -22,6 +22,7 @@ OS=${ANDROID_PROVISION_OS_PARTITIONS:-${ANDROID_PRODUCT_OUT}}
 bpttool make_disk_image \
         --output ${OS}/full-disk-image.img \
         --input ${OS}/partition-table.bpt \
+        --image EFI:${OS}/EFI.img \
         --image boot_a:${OS}/boot.img \
         --image boot_b:${OS}/boot.img \
         --image system_a:${OS}/system.img \

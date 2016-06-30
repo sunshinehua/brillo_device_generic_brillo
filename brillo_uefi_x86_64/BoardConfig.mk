@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# 512 MiB - keep in sync with brillo_partitions.bpt
+# 512 MiB - keep in sync with brillo_partitions.bpt.
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 536870912
 # No ramdisk.
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
@@ -23,7 +23,7 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 # No ramdisk.
 BOARD_USES_FULL_RECOVERY_IMAGE := true
 
-# Additional bpt file specifying EFI
+# Additional bpt file specifying EFI.
 BOARD_BPT_INPUT_FILES += device/generic/brillo/brillo_uefi_x86_64/device-partitions.bpt
 
 # Standard devices would usually define an SoC. Here we define
@@ -36,3 +36,9 @@ TARGET_RECOVERY_FSTAB = \
 PRODUCT_COPY_FILES += \
     device/generic/brillo/brillo_uefi_x86_64/fstab.brillo_uefi_x86_64:root/fstab.brillo_uefi_x86_64 \
     device/generic/brillo/brillo_uefi_x86_64/provision-device:provision-device
+
+# EFI partitions size attribute.
+EFI_IMAGE_SIZE := 314572800
+
+# UEFI-specific applications.
+EFI_INPUT_FILES := device/generic/brillo/brillo_uefi_x86_64/boot_loader/brillo_boot_loader.efi:brillo_boot_loader.efi
