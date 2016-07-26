@@ -70,7 +70,7 @@ WITHOUT_CHECK_API := true
 # dependencies on the framework.
 ANDROID_NO_TEST_CHECK := true
 
-PRODUCT_PACKAGES = \
+PRODUCT_PACKAGES := \
   adbd \
   bootctl \
   firewalld \
@@ -109,19 +109,46 @@ PRODUCT_PACKAGES = \
 PRODUCT_PACKAGES += \
   libstdc++ \
 
-ifneq (,$(filter $(TARGET_BUILD_VARIANT),eng userdebug))
 # Packages included only for eng or userdebug builds.
-PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES_DEBUG += \
   dumpsys \
   webservd_test_client
-endif
 
-ifneq ($(TARGET_BUILD_VARIANT),eng)
 # eng builds don't include the official payload key so developers can test
 # providing their own testing key.
-PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES_ENG += \
   brillo-update-payload-key
-endif
+
+# Packages for eng and userdebug images
+PRODUCT_PACKAGES_DEBUG += \
+  webservd_testc
+
+# Packages for eng images
+PRODUCT_PACKAGES_ENG += \
+  apmanager_test \
+  audio_hal_playback_test \
+  audio_hal_record_test \
+  brillo_audio_test \
+  brillo_camera_client \
+  crash_reporter_tests \
+  firewalld_unittest \
+  libbrillo_test \
+  libchrome_test \
+  libminijail_test \
+  libminijail_unittest \
+  libnativepower_tests \
+  libperipheralman_tests \
+  metrics_collector_tests \
+  metricsd_tests \
+  nativepowerman_tests \
+  seccomp_bpf_test \
+  sensors-hal-example-app \
+  sensors-ndk-example-app \
+  shill_setup_wifi \
+  shill_test \
+  syscall_filter_unittest \
+  update_engine_unittests \
+  weaved_test \
 
 # SELinux packages.
 PRODUCT_PACKAGES += \

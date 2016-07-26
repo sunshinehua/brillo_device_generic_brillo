@@ -18,9 +18,6 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := brillo_audio_test
-ifdef BRILLO
-LOCAL_MODULE_TAGS := eng
-endif
 LOCAL_SRC_FILES := \
   brillo_audio_test.cpp \
   libmedia_playback.cpp \

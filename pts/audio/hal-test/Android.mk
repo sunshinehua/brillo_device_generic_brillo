@@ -21,9 +21,6 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := audio_hal_playback_test.cpp
 LOCAL_MODULE := audio_hal_playback_test
-ifdef BRILLO
-LOCAL_MODULE_TAGS := eng
-endif
 LOCAL_CFLAGS += -Wall -Werror
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \
@@ -45,9 +42,6 @@ include $(BUILD_EXECUTABLE)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := audio_hal_record_test.cpp
 LOCAL_MODULE := audio_hal_record_test
-ifdef BRILLO
-LOCAL_MODULE_TAGS := eng
-endif
 LOCAL_CFLAGS += -Wall -Werror -Wno-sign-compare
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \

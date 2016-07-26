@@ -25,11 +25,6 @@ LOCAL_CFLAGS += \
 	-Wno-missing-field-initializers \
 	-Wno-empty-body
 
-# Include this in Brillo -eng builds only (for automated testing).
-ifdef BRILLO
-LOCAL_MODULE_TAGS := eng
-endif
-
 LOCAL_SRC_FILES := seccomp_bpf.c
 
 include $(BUILD_NATIVE_TEST)
