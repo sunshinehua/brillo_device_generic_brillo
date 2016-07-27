@@ -24,11 +24,23 @@
 
 #include <efi.h>
 #include <efilib.h>
+#include "bub_boot_kernel.h"
+#include "bub_sysdeps.h"
+
 
 EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle,
                             EFI_SYSTEM_TABLE* SystemTable) {
+  int err;
+
   InitializeLib(ImageHandle, SystemTable);
-  Print(L"Brillo EFI A/B BOOT LOADER\n");
+  bub_print("Brillo UEFI A/B BOOT LOADER\n");
+
+  err = bub_boot_kernel(ImageHandle, "boot_a");
+  if (err) {
+    bub_error("Error loading kernel.\n");
+    uefi_call_wrapper(BS->Stall, 1, 15 * 1000 * 1000);
+    return EFI_LOAD_ERROR;
+  }
 
   return EFI_SUCCESS;
 }
