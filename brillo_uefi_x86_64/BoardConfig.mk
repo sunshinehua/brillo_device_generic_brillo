@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+# TODO: Fill with UEFI board-specific kernel command line string and
+# 		programatically substitute with Brillo UEFI bootloader.
+BOARD_KERNEL_CMDLINE := root=UUID= rootfstype=ext4 init=/init
+
 # 512 MiB - keep in sync with brillo_partitions.bpt.
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 536870912
 # No ramdisk.

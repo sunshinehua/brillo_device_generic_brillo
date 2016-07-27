@@ -41,4 +41,7 @@ then
   echo "(e.g. '\$ qemu-system-x86_64 -enable-kvm -bios OVMF.fd" \
        "${OS}/full-disk-image.img). "
   echo "To obtain OVMF binary see http://www.tianocore.org/ovmf/"
+else
+  exit 1
 fi
+exit 0

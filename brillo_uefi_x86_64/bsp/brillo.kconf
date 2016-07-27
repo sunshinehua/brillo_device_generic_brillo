@@ -14,4 +14,15 @@
 # limitations under the License.
 #
 
-# Kernel settings that are specific to this target.
+# Kernel settings that are specific to this target
+# EFI (Extensible Firmware Interface) Support
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_EFI_PARTITION=y
+CONFIG_FB_EFI=y
+CONFIG_EFI_BOOTLOADER_CONTROL=y
+
+# EFI variable filesystem support
+# CONFIG_EFIVAR_FS=y            # For kernels 3.10 and above.
+# CONFIG_EFI_VARS=n             # Disable for 3.10 and above.
+# CONFIG_EFI_VARS_PSTORE=m
