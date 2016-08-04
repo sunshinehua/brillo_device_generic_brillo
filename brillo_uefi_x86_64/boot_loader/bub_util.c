@@ -15,6 +15,7 @@
  */
 
 #include "bub_sysdeps.h"
+#include <stdio.h>
 
 int utf8_to_ucs2(const uint8_t* utf8_data,
                  size_t utf8_num_bytes,
@@ -39,13 +40,11 @@ int utf8_to_ucs2(const uint8_t* utf8_data,
     }
     else if (!(utf8_data[i8] >> 7)) {
       ucs2_data[i2] = (uint16_t)((uint16_t)utf8_data[i8] & 0x00FF);
-      //bub_print("(1) ucs2 = %lc, utf8 = %c ",ucs2_data[i2], utf8_data[i8]);
       i8++;
     }
     // invalid utf-8
     else
       return 1;
-    //bub_print("\nloop\n");
     i2++;
   } while (i8 < utf8_num_bytes - 1);
   return 0;
