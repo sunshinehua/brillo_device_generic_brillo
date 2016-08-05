@@ -38,6 +38,7 @@ bub_common_ldflags := \
 
 # Build for the host (for unit tests).
 include $(CLEAR_VARS)
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
 LOCAL_MODULE := libbub_host
 LOCAL_MODULE_HOST_OS := linux
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
@@ -48,7 +49,7 @@ LOCAL_C_INCLUDES :=
 LOCAL_SRC_FILES := \
     bub_sysdeps_posix.c \
     bub_ab_flow.c \
-    bub_util.c \
+    bub_util.c
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
