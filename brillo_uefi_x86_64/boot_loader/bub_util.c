@@ -58,3 +58,34 @@ void* bub_calloc(size_t size) {
 
   return x;
 }
+
+uint32_t bub_be32toh(uint32_t in) {
+  uint8_t* d = (uint8_t*)&in;
+  uint32_t ret;
+  ret = ((uint32_t)d[0]) << 24;
+  ret |= ((uint32_t)d[1]) << 16;
+  ret |= ((uint32_t)d[2]) << 8;
+  ret |= ((uint32_t)d[3]);
+  return ret;
+}
+
+uint64_t bub_be64toh(uint64_t in) {
+  uint8_t* d = (uint8_t*)&in;
+  uint64_t ret;
+  ret = ((uint64_t)d[0]) << 56;
+  ret |= ((uint64_t)d[1]) << 48;
+  ret |= ((uint64_t)d[2]) << 40;
+  ret |= ((uint64_t)d[3]) << 32;
+  ret |= ((uint64_t)d[4]) << 24;
+  ret |= ((uint64_t)d[5]) << 16;
+  ret |= ((uint64_t)d[6]) << 8;
+  ret |= ((uint64_t)d[7]);
+  return ret;
+}
+
+uint32_t bub_crc32(const uint8_t* data, size_t data_size) {
+
+  /* TODO: Determine crc polynomial and implement here. */
+
+  return 0;
+}

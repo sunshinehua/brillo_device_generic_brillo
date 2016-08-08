@@ -43,6 +43,15 @@ int utf8_to_ucs2(const uint8_t* utf8_data,
  */
 void* bub_calloc(size_t size);
 
+/* Converts a 32-bit unsigned integer from big-endian to host byte order. */
+uint32_t bub_be32toh(uint32_t in);
+
+/* Converts a 64-bit unsigned integer from big-endian to host byte order. */
+uint64_t bub_be64toh(uint64_t in);
+
+/* Calculates and returns crc32 value of |data| given byte size, |data_size|. */
+uint32_t bub_crc32(const uint8_t* data, size_t data_size);
+
 #ifdef __cplusplus
 }
 #endif

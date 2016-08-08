@@ -23,7 +23,7 @@ int bub_memcmp(const void* src1, const void* src2, size_t n) {
 }
 
 int bub_strcmp(const char* s1, const char* s2) {
-  return (int)StrCmp(s1, s2);
+  return (int)strcmpa(s1, s2);
 }
 
 void* bub_memcpy(void* dest, const void* src, size_t n) {

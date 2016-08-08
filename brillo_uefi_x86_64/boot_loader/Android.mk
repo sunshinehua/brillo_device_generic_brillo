@@ -47,8 +47,8 @@ LOCAL_CFLAGS := $(bub_common_cflags) -fno-stack-protector -DBUB_ENABLE_DEBUG -DB
 LOCAL_LDFLAGS := $(bub_common_ldflags)
 LOCAL_C_INCLUDES :=
 LOCAL_SRC_FILES := \
-    bub_sysdeps_posix.c \
     bub_ab_flow.c \
+    bub_sysdeps_posix.c \
     bub_util.c
 include $(BUILD_HOST_STATIC_LIBRARY)
 
@@ -61,8 +61,9 @@ LOCAL_CFLAGS := $(bub_common_cflags) -DBUB_ENABLE_DEBUG -DBUB_COMPILATION
 LOCAL_CPPFLAGS := $(bub_common_cppflags)
 LOCAL_LDFLAGS := $(bub_common_ldflags)
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/bub_sysdeps.h \
     $(LOCAL_PATH)/bub_ab_flow.h \
+    $(LOCAL_PATH)/bub_image_util.h \
+    $(LOCAL_PATH)/bub_sysdeps.h \
     $(LOCAL_PATH)/bub_util.h \
     external/gtest/include
 LOCAL_STATIC_LIBRARIES := \
@@ -72,6 +73,7 @@ LOCAL_STATIC_LIBRARIES := \
 LOCAL_SHARED_LIBRARIES := \
     libchrome
 LOCAL_SRC_FILES := \
-    bub_ab_flow_unittest.cc
+    bub_ab_flow_unittest.cc \
+    bub_image_util.cc
 LOCAL_LDLIBS_linux := -lrt
 include $(BUILD_HOST_NATIVE_TEST)

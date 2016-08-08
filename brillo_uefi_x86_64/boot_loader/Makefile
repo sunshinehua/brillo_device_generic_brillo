@@ -23,7 +23,12 @@ EFI_CC          = gcc
 EFI_LD          = ld
 EFI_OBJCOPY     = objcopy
 
-EFI_SRC_FILES   = bub_main.c bub_boot_kernel.c bub_sysdeps_uefi.c bub_util.c
+EFI_SRC_FILES   = bub_ab_flow.c \
+                  bub_boot_kernel.c \
+                  bub_main.c \
+                  bub_ops_uefi.c \
+                  bub_sysdeps_uefi.c \
+                  bub_util.c
 EFI_OBJ_FILES   = $(patsubst %.c,%.o,$(EFI_SRC_FILES))
 EFI_TARGET      = brillo_boot_loader.efi
 EFI_SHARED_OBJ  = $(patsubst %.efi,%.so,$(EFI_TARGET))
