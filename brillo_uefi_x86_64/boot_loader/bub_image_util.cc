@@ -159,7 +159,7 @@ base::FilePath MyOps::make_metadata_image(const BubAbData* ab_metadata,
 
   ab_metadata_be.crc32 = 0;
   ab_metadata_be.crc32 =
-    bub_be32toh(bub_crc32((uint8_t*)&ab_metadata_be, sizeof(BubAbData)));
+    bub_be32toh(bub_crc32(0, &ab_metadata_be, sizeof(BubAbData)));
 
   for (size_t n = 0; n < sizeof(BubAbData); n++) {
     image[n] = image_data[n];
@@ -206,7 +206,7 @@ int AbTest::CompareMiscImage(BubAbData ab_expected) {
 
   ab_expected_be.crc32 = 0;
   ab_expected_be.crc32 =
-    bub_be32toh(bub_crc32((uint8_t*)&ab_expected_be, sizeof(BubAbData)));
+    bub_be32toh(bub_crc32(0, &ab_expected_be, sizeof(BubAbData)));
 
   if ((ops_.bub_ops_)->parent.read_from_partition((BubOps *)ops_.bub_ops_,
                                                   "misc", ab_actual, 0,

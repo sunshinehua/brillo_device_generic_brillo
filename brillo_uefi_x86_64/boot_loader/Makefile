@@ -25,6 +25,7 @@ EFI_OBJCOPY     = objcopy
 
 EFI_SRC_FILES   = bub_ab_flow.c \
                   bub_boot_kernel.c \
+		  bub_crc32.c \
                   bub_main.c \
                   bub_ops_uefi.c \
                   bub_sysdeps_uefi.c \

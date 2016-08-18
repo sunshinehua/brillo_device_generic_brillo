@@ -176,7 +176,7 @@ BubAbFlowResult bub_read_ab_data_from_misc(BubOps* ops, BubAbData* data) {
 
   crc = bub_be32toh(data->crc32);
   data->crc32 = 0;
-  if (crc != bub_crc32((uint8_t *)data, sizeof(BubAbData))) {
+  if (crc != bub_crc32(0, data, sizeof(BubAbData))) {
     bub_warning("AB metadata crc is invalid.\n");
     return BUB_AB_FLOW_ERROR_INVALID_METADATA;
   }
@@ -197,8 +197,7 @@ int bub_write_ab_data_to_misc(BubOps* ops, const BubAbData* data) {
 
   // Calculate crc assign back to crc field, maintaining big endianness.
   metadata.crc32 = 0;
-  metadata.crc32 = bub_be32toh(bub_crc32((uint8_t*)&metadata,
-                                          sizeof(BubAbData)));
+  metadata.crc32 = bub_be32toh(bub_crc32(0, &metadata, sizeof(BubAbData)));
   io_result = ops->write_to_partition(ops,
                                       "misc",
                                       &metadata,

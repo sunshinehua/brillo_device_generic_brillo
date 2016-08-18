@@ -49,7 +49,8 @@ LOCAL_C_INCLUDES :=
 LOCAL_SRC_FILES := \
     bub_ab_flow.c \
     bub_sysdeps_posix.c \
-    bub_util.c
+    bub_util.c \
+    bub_crc32.c
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)

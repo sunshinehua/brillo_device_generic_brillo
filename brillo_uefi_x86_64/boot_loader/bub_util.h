@@ -50,7 +50,7 @@ uint32_t bub_be32toh(uint32_t in);
 uint64_t bub_be64toh(uint64_t in);
 
 /* Calculates and returns crc32 value of |data| given byte size, |data_size|. */
-uint32_t bub_crc32(const uint8_t* data, size_t data_size);
+uint32_t bub_crc32(uint32_t crc_in, const void *buf, int size);
 
 #ifdef __cplusplus
 }
