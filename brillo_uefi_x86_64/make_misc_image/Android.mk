@@ -51,7 +51,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../boot_loader/bub_util.h \
     external/gtest/include
 LOCAL_STATIC_LIBRARIES := \
-    libmakemisc_host \
+    libbub_host \
     libgmock_host \
     libgtest_host
 LOCAL_SHARED_LIBRARIES := \
@@ -80,7 +80,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../boot_loader/bub_sysdeps.h \
     $(LOCAL_PATH)/../boot_loader/bub_util.h
 LOCAL_STATIC_LIBRARIES := \
-    libmakemisc_host \
+    libbub_host \
     libgmock_host \
     libgtest_host
 LOCAL_SHARED_LIBRARIES := \
