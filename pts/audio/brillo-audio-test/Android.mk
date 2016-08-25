@@ -29,14 +29,23 @@ LOCAL_CFLAGS += -Wall -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \
   libbinder \
-  libbrillo \
-  libchrome \
+  liblog \
   libmedia \
-  libsinesource \
   libstagefright \
   libstagefright_foundation \
   libutils
-LOCAL_STATIC_LIBRARIES := libsndfile
+LOCAL_STATIC_LIBRARIES := \
+  libbrillo \
+  libchrome \
+  libsinesource \
+  libsndfile
+# Note: This is because of libchrome.
+LOCAL_LDFLAGS += \
+  -Wl,-wrap,calloc \
+  -Wl,-wrap,free \
+  -Wl,-wrap,malloc \
+  -Wl,-wrap,memalign \
+  -Wl,-wrap,realloc
 LOCAL_C_INCLUDES := \
   $(TOP)/device/generic/brillo/pts/audio/common \
   $(TOP)/frameworks/av/media/libstagefright \
