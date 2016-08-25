@@ -23,6 +23,25 @@ make_efi_image/
     NOTE: mtools utility is required on the system in order to create the EFI
     image.
 
+make_misc_image/
+
+    Contains source files for a utility which creates an image to be put into
+    the "misc" partition of the final disk image. This image will contain
+    metadata in binary format to be used for A/B booting. The utility program
+    takes attribute values for two slots, "a" and "b", as well as a path to the
+    output "misc" binary file.
+    Usage:
+      make_misc_image
+        --ab_metadata=a_priority,a_tries_remaining,a_successful_boot,
+                      b_priority,b_tries_remaining,b_successful_boot
+        --output=/PATH/TO/MISC_IMAGE
+    Where
+      0 <= [a,b]_priority <= 15
+      0 <= [a,b]_tries_remaining <= 7
+      0 <= [a,b]_successful_boot <= 1
+
+    TODO: Build system integration similar to make_efi_image.
+
 -- BUILD SYSTEM INTEGRATION NOTES
 
 If EFI_INPUT_FILE_PATHS is non-empty, the build system system will call the

@@ -15,7 +15,6 @@
  */
 
 #include "bub_sysdeps.h"
-#include <stdio.h>
 
 int utf8_to_ucs2(const uint8_t* utf8_data,
                  size_t utf8_num_bytes,
@@ -57,4 +56,35 @@ void* bub_calloc(size_t size) {
     bub_memset(x, 0, size);
 
   return x;
+}
+
+
+uint32_t bub_be32toh(uint32_t value) {
+ union {
+   uint8_t bytes[4];
+   uint32_t value;
+ } v;
+
+ v.bytes[0] = (value>>24) & 0xff;
+ v.bytes[1] = (value>>16) & 0xff;
+ v.bytes[2] = (value>>8) & 0xff;
+ v.bytes[3] = value & 0xff;
+ return v.value;
+}
+
+uint64_t bub_be64toh(uint64_t value) {
+ union {
+   uint8_t bytes[8];
+   uint64_t value;
+ } v;
+
+ v.bytes[0] = (value>>56) & 0xff;
+ v.bytes[1] = (value>>48) & 0xff;
+ v.bytes[2] = (value>>40) & 0xff;
+ v.bytes[3] = (value>>32) & 0xff;
+ v.bytes[4] = (value>>24) & 0xff;
+ v.bytes[5] = (value>>16) & 0xff;
+ v.bytes[6] = (value>>8) & 0xff;
+ v.bytes[7] = value & 0xff;
+ return v.value;
 }
