@@ -183,13 +183,13 @@ PRODUCT_PACKAGES += \
   slesTest_sawtoothBufferQueue \
 
 # Audio dependencies.
+# TODO(deymo): Add back brilloaudioservice and audioserver once crash-loop is
+# fixed.
 PRODUCT_PACKAGES += \
-  brilloaudioservice \
   libaudioroute \
   libtinyalsa \
   libtinycompress \
   local_time.default \
-  mediaserver \
 
 # Audio libraries.
 PRODUCT_PACKAGES += \
