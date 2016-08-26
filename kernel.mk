@@ -129,7 +129,7 @@ KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
 KERNEL_MERGE_CONFIG := device/generic/brillo/mergeconfig.sh
 KERNEL_HEADERS_INSTALL := $(KERNEL_OUT)/usr
-KERNEL_MODULES_INSTALL := $(TARGET_OUT)/lib/modules
+KERNEL_MODULES_INSTALL := $(PRODUCT_OUT)/modules
 
 $(KERNEL_OUT):
 	mkdir -p $@
@@ -153,7 +153,7 @@ define build_kernel
 		CROSS_COMPILE="$(KERNEL_CROSS_COMPILE_WRAPPER)" \
 		KCFLAGS="$(KERNEL_CFLAGS)" \
 		KAFLAGS="$(KERNEL_AFLAGS)" \
-		INSTALL_MOD_PATH=$(realpath $(TARGET_OUT)) \
+		INSTALL_MOD_PATH=$(realpath $(PRODUCT_OUT)) \
 		$(1)
 endef
 
