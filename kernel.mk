@@ -182,6 +182,7 @@ $(KERNEL_HEADERS_INSTALL): $(KERNEL_BIN)
 .PHONY: $(KERNEL_BIN).vdso
 $(KERNEL_BIN).vdso: $(KERNEL_BIN)
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
+$(KERNEL_BIN).vdso: $(BREAKPAD_DUMP_SYMS)
 	$(hide) echo "BREAKPAD: Generating kernel VDSO symbol files."
 	$(hide) set -e; \
 	for sofile in `cd $(KERNEL_OUT) && find . -type f -name '*.so'`; do \
