@@ -25,14 +25,16 @@ LOCAL_CFLAGS += -Wall -Werror
 LOCAL_SHARED_LIBRARIES := \
   libaudioutils \
   libbase \
+  libbinder \
   libhardware \
   liblog \
   libmedia \
-  libsinesource \
   libstagefright \
   libstagefright_foundation \
   libutils
-LOCAL_STATIC_LIBRARIES := libsndfile
+LOCAL_STATIC_LIBRARIES := \
+  libsinesource \
+  libsndfile
 LOCAL_C_INCLUDES := \
   $(TOP)/device/generic/brillo/pts/audio/common \
   $(TOP)/system/media/audio_utils/include
@@ -50,7 +52,9 @@ LOCAL_SHARED_LIBRARIES := \
   libhardware \
   liblog \
   libutils
-LOCAL_STATIC_LIBRARIES := libsndfile
+LOCAL_STATIC_LIBRARIES := \
+  libsinesource \
+  libsndfile
 LOCAL_C_INCLUDES := \
   $(TOP)/system/media/audio_utils/include
 include $(BUILD_EXECUTABLE)
