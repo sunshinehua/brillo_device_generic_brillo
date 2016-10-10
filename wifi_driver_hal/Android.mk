@@ -19,7 +19,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := wifi_init
 LOCAL_CPPFLAGS := -std=c++11 -Wall -Werror
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
-LOCAL_SHARED_LIBRARIES := libcutils libhardware
+LOCAL_SHARED_LIBRARIES := libcutils libhardware liblog
 LOCAL_REQUIRED_MODULES := $(WIFI_DRIVER_HAL_MODULE)
 LOCAL_SRC_FILES := src/wifi_init.c
 include $(BUILD_EXECUTABLE)
